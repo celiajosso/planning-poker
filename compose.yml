@@ -1,0 +1,25 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - 80:80
+  frontend:
+    build:
+      context: ./frontend
+    environment:
+      NODE_ENV: production
+    ports:
+      - 5173:5173
+  db:
+    image: mongo
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD
+    volumes:  
+      - dbdata:/data/db
+
+volumes:
+  dbdata:
