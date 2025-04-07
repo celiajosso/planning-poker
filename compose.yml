@@ -1,9 +1,20 @@
 services:
   backend:
+    env_file:
+      - .env   # Utilisation du fichier .env
+    environment:
+      - DB_MONGO_USER=$MONGO_USERNAME
+      - DB_MONGO_PASSWORD=$MONGO_PASSWORD
+      - DB_MONGO_HOST=db
+      - DB_MONGO_PORT=27017
+      - DB_MONGO_MAX_POOL_SIZE=20
+      - DB_MONGO_DB=$MONGO_DB
+    depends_on:
+      - db
     build:
       context: ./backend
     ports:
-      - 80:80
+      - 8080:8080
   frontend:
     build:
       context: ./frontend
@@ -14,7 +25,9 @@ services:
   db:
     image: mongo
     restart: unless-stopped
-    env_file: .env
+    env_file:
+      - .env   # Utilisation du fichier .env
+
     environment:
       - MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME
       - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD
