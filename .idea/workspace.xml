@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a8b6e94e-11b7-4539-b760-d519deb33c28" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/backend/src/main/kotlin/Databases.kt" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/kotlin/Databases.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/compose.yml" afterDir="false" />
-    </list>
+    <list default="true" id="a8b6e94e-11b7-4539-b760-d519deb33c28" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -186,7 +183,7 @@
       <updated>1743541148685</updated>
       <workItem from="1743541149875" duration="786000" />
       <workItem from="1743584599249" duration="26000" />
-      <workItem from="1744030911400" duration="2494000" />
+      <workItem from="1744030911400" duration="3109000" />
     </task>
     <servers />
   </component>

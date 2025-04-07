@@ -12,32 +12,49 @@
 		// Intialize the application.
 		await app.init({ background: '#1099bb', resizeTo: window, canvas: canvas });
 
-		// Load the bunny texture.
-		const texture = await Assets.load('https://pixijs.com/assets/bunny.png');
+		let textures = [];
+		let sprites = [];
 
-		// Create a new Sprite from an image path.
-		const bunny = new Sprite(texture);
+		for (let i = 0; i < 14; i++) {
+			const texture = await Assets.load({
+				src: `/cards/${i}.png`,
+				data: {
+					parseAsGraphicsContext: true
+				}
+			});
+			textures.push(texture);
+			const card = new Sprite(texture);
+			sprites.push(card);
+			app.stage.addChild(card);
+			// Center the sprite's anchor point.
+			card.anchor.set(0.5);
 
-		// Add to stage.
-		app.stage.addChild(bunny);
+			// Move the sprite to the center of the screen.
+			card.x = app.screen.width / 2 + 50 * (i - 7);
+			card.y = app.screen.height / 2;
+            card.zIndex = i
 
-		// Center the sprite's anchor point.
-		bunny.anchor.set(0.5);
+			card.on('pointerover', (event) => {
+				card.scale = 1.1;
+                card.zIndex = 10000
+			});
+			card.on('pointerout', (event) => {
+				card.scale = 1;
+                card.zIndex = i
+			});
+			card.eventMode = 'static';
+		}
 
-		// Move the sprite to the center of the screen.
-		bunny.x = app.screen.width / 2;
-		bunny.y = app.screen.height / 2;
-
-		// Add an animation loop callback to the application's ticker.
-		app.ticker.add((time) => {
-			/**
-			 * Just for fun, let's rotate mr rabbit a little.
-			 * Time is a Ticker object which holds time related data.
-			 * Here we use deltaTime, which is the time elapsed between the frame callbacks
-			 * to create frame-independent transformation. Keeping the speed consistent.
-			 */
-			bunny.rotation += 0.1 * time.deltaTime;
-		});
+		// // Add an animation loop callback to the application's ticker.
+		// app.ticker.add((time) => {
+		// 	/**
+		// 	 * Just for fun, let's rotate mr rabbit a little.
+		// 	 * Time is a Ticker object which holds time related data.
+		// 	 * Here we use deltaTime, which is the time elapsed between the frame callbacks
+		// 	 * to create frame-independent transformation. Keeping the speed consistent.
+		// 	 */
+		// 	bunny.rotation += 0.1 * time.deltaTime;
+		// });
 	});
 </script>
 
