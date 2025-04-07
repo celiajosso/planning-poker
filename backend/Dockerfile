@@ -3,10 +3,10 @@ COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle build --no-daemon
 
-FROM openjdk:8-jre-slim
+FROM openjdk:25-oraclelinux8
 
 RUN mkdir /app
 
 COPY --from=build /home/gradle/src/build/libs/ /app/
 
-ENTRYPOINT ["java","-jar","/app/kotlin-docker-gradle-app.jar"]
+ENTRYPOINT ["java","-jar","/app/backend-all.jar"]
