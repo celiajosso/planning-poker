@@ -16,9 +16,21 @@
 
     let hasPlayed = $state(false);
     const app = new Application();
+    let gameStarted = $state(false);
 
     function validate(selected : number) {
         hasPlayed = true;
+        players[0].card = selected;
+    }
+
+
+    function restartGame() {
+        hasPlayed = false;
+        for (let player of players) {
+            player.sprite.setCard(3);
+            player.sprite.hidden(false);
+        }
+        gameStarted = false;
     }
 
     onMount(async () => {
@@ -32,6 +44,12 @@
 
         // Intialize the application.
         await app.init({background: '#1099bb', resizeTo: window, canvas: canvas});
+
+        // simulate new play
+        setTimeout(() => {
+            gameStarted = true;
+            console.log("A player arrived");
+        }, 5000);
 
         // simulate a game with ten players
         {
@@ -47,7 +65,7 @@
         }
         // simulate a card change
         setTimeout(() => {
-            players[0].card = 5
+            players[1].card = 5
         }, 8000)
 
         // initialize the deck
@@ -57,9 +75,8 @@
             deckCards.push(card);
             app.stage.addChild(card);
 
-            card.x = app.screen.width / 2 + 50 * (i - 7);
+            card.x = app.screen.width / 2 + 75 * (i - 7);
             card.y = 3 * app.screen.height / 4;
-            card.zIndex = i
 
             card.on('pointerdown', (event) => {
                 validate(i)
@@ -69,6 +86,16 @@
                 card.select()
             });
         }
+
+        // add button to restart the game
+        setTimeout(() => {
+            if (players.every(player => player.card !== 3)) {
+                const button = document.createElement('button');
+                button.innerHTML = "Restart Game";
+                document.body.appendChild(button);
+                button.addEventListener('click', restartGame);
+            }
+        }, 10000);
 
         // // Add an animation loop callback to the application's ticker.
         // app.ticker.add((time) => {

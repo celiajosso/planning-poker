@@ -35,14 +35,6 @@ export class DeckCard extends Card {
 	constructor(i: number) {
 		super(i);
 		const ctx = this;
-		ctx.on('pointerover', (event) => {
-			ctx.scale = 1.1;
-			ctx.zIndex = 10000;
-		});
-		ctx.on('pointerout', (event) => {
-			ctx.scale = 1;
-			ctx.zIndex = i;
-		});
 		ctx.eventMode = 'static';
 
 		this.colorMatrix = new ColorMatrixFilter();
