@@ -1,8 +1,8 @@
 package services
 
+import Story
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters.eq
-import models.Story
 import org.bson.types.ObjectId
 
 class StoryService(private val db: MongoDatabase) {

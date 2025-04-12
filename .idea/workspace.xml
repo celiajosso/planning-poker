@@ -5,26 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a8b6e94e-11b7-4539-b760-d519deb33c28" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/routes/pixitest/script.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/static/Righteous-Regular.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/static/cards/Squircle.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/static/cards/Squircle.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/routes/pixitest/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/routes/pixitest/+page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/static/cards/0.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/static/cards/1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/static/cards/10.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/static/cards/11.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/static/cards/12.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/static/cards/13.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/static/cards/2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/static/cards/3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/static/cards/4.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/static/cards/5.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/static/cards/6.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/static/cards/7.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/static/cards/8.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/static/cards/9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/kotlin/Databases.kt" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/kotlin/Databases.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/kotlin/Routing.kt" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/kotlin/Routing.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/kotlin/services/RoomService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/kotlin/services/RoomService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/kotlin/services/StoryService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/kotlin/services/StoryService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/kotlin/services/UserService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/kotlin/services/UserService.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,7 +93,7 @@
       <command value="gradle build" />
     </option>
   </component>
-  <component name="RunManager" selected="npm.dev">
+  <component name="RunManager" selected="Gradle.backend [build]">
     <configuration name="backend [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -203,6 +188,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.backend [build]" />
         <item itemvalue="npm.dev" />
       </list>
     </recent_temporary>
