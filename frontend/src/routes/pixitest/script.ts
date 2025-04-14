@@ -1,7 +1,9 @@
-import {BlurFilter, ColorMatrixFilter, Sprite, Text} from 'pixi.js';
+import { BlurFilter, ColorMatrixFilter, Container, Sprite, Text } from 'pixi.js';
+import { game } from './socket';
 
 export class Card extends Sprite {
 	text: Text;
+	value: number;
 
 	public constructor(i: number) {
 		super(Sprite.from(`/cards/Squircle.png`));
@@ -14,6 +16,8 @@ export class Card extends Sprite {
 				fontFamily: 'righteous'
 			}
 		});
+
+		this.value = i;
 
 		this.text.anchor.set(0.5);
 		this.text.position.set(0.5);
@@ -32,6 +36,7 @@ export class Card extends Sprite {
 
 export class DeckCard extends Card {
 	colorMatrix: ColorMatrixFilter;
+
 	constructor(i: number) {
 		super(i);
 		const ctx = this;
@@ -41,29 +46,46 @@ export class DeckCard extends Card {
 		this.filters = [this.colorMatrix];
 		this.colorMatrix.contrast(0, false);
 	}
-	select(){
+
+	select() {
 		this.colorMatrix.matrix = [
-			0, 0, 0, 0, 0, // R
-			0, 0.8, 0, 0, 0, // G
-			0, 0, 0, 0, 0, // B
-			0, 0, 0, 1, 0  // A
+			0,
+			0,
+			0,
+			0,
+			0, // R
+			0,
+			0.8,
+			0,
+			0,
+			0, // G
+			0,
+			0,
+			0,
+			0,
+			0, // B
+			0,
+			0,
+			0,
+			1,
+			0 // A
 		];
 		this.colorMatrix.contrast(0, true);
 	}
-	unselect(){
+
+	unselect() {
 		this.colorMatrix.contrast(0, false);
 	}
 }
 
 export class Player extends Sprite {
-	private playerName: string;
-	private blur = new BlurFilter();
-	private card: Card;
+	playerName: string;
+	readonly card: Card;
 
 	constructor(name: string, card: number) {
 		super();
 
-		this.filters = [this.blur];
+		this.playerName = name;
 
 		const text = new Text({
 			text: name,
@@ -84,9 +106,52 @@ export class Player extends Sprite {
 
 	setCard(card: number) {
 		this.card.setText(`${card}`);
+		this.card.value = card;
 	}
+}
+
+export class GameContainer extends Container {
+	private blur = new BlurFilter();
+	players: {[id:string] :Player} = {};
 
 	hidden(bool: boolean) {
 		this.blur.blur = bool ? 8 : 0;
 	}
+
+	constructor() {
+		super();
+		this.filters = [this.blur];
+	}
+
+	layout() {
+		let i = 0;
+		for (const key of Object.keys(this.players)) {
+			const c = 50 + 100 * (i++);
+			this.players[key].position.set(c, 100);
+		}
+	}
+
+	setSize(width: number, height: number) {
+		this.width = width;
+		this.height = height;
+	}
+
+	addPlayer(playerInfo:any): void {
+		const p = new Player(playerInfo.name, playerInfo.card)
+		this.players[playerInfo.id] = p;
+		this.addChild(p);
+		this.layout();
+	}
+
+	removePlayer(playerInfo: any): void {
+		this.removeChild(this.players[playerInfo.id]);
+		delete this.players[playerInfo.id];
+		this.layout();
+	}
+
+
+	updateHidden(bool: boolean): void {
+		this.hidden(bool);
+	}
+
 }
