@@ -1,3 +1,7 @@
+import com.mongodb.client.MongoDatabase
+import com.mongodb.client.model.Filters.eq
+import org.bson.types.ObjectId
+
 class RoomService(private val db: MongoDatabase) {
     private val rooms = db.getCollection("rooms", Room::class.java)
 

@@ -1,24 +1,19 @@
 package com.example
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
-import com.mongodb.client.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.config.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.openapi.*
-import io.ktor.server.plugins.swagger.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
-import java.time.Duration
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.seconds
+
+@Serializable
+data class PlayerInfo(val id: String, val name: String, val card: Int)
+
+@Serializable
+data class SocketMessage(val type: String, val playerInfo: PlayerInfo)
+
 
 fun Application.configureSockets() {
     install(WebSockets) {
@@ -27,7 +22,56 @@ fun Application.configureSockets() {
         maxFrameSize = Long.MAX_VALUE
         masking = false
     }
+
     routing {
+        val connections = mutableSetOf<DefaultWebSocketServerSession>()
+        val players = HashMap<DefaultWebSocketServerSession, PlayerInfo>()
+
+        webSocket("/poker") {
+            connections += this
+            try {
+                for (frame in incoming) {
+                    if (frame is Frame.Text) {
+                        val text = frame.readText()
+                        val message = Json.decodeFromString<SocketMessage>(text)
+                        println("Received: $message")
+
+                        players[this] = message.playerInfo
+
+                        if (message.type == "join") {
+                            for ((conn, player) in players) {
+                                if (conn != this) {
+                                    println("Debug: $message")
+                                    val existingPlayerMsg = SocketMessage("join", player)
+                                    this.send(Json.encodeToString(SocketMessage.serializer(), existingPlayerMsg))
+                                }
+                            }
+                        }
+
+                        if (message.type == "quit") {
+                            players.remove(this)
+                            this.close()
+                        }
+
+                        //println("Players in room: ${players.values.map { it.name }}")
+
+                        // Broadcast to others
+                        for (conn in connections) {
+                            conn.send(text)
+                        }
+                    }
+                }
+            } finally {
+                val oldPlayer = players[this]
+                players.remove(this)
+                for ((conn, player) in players) {
+                    val existingPlayerMsg = oldPlayer?.let { SocketMessage("quit", it) }
+                    conn.send(Json.encodeToString(existingPlayerMsg))
+                }
+                connections -= this
+            }
+        }
+
         webSocket("/ws") { // websocketSession
             for (frame in incoming) {
                 if (frame is Frame.Text) {
