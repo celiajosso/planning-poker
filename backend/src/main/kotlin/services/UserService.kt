@@ -1,8 +1,8 @@
 package services
 
+import User
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters.eq
-import models.User
 import org.bson.types.ObjectId
 
 class UserService(private val db: MongoDatabase) {
