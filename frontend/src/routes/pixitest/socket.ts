@@ -11,12 +11,12 @@ export class Game {
 	hasPlayed = false;
 	playerName = randomName();
 	id = randomName("id");
-	container = new GameContainer();
+	container?: GameContainer;
 	socketSvelte?: WebSocket;
 
 	async init(canvas: HTMLCanvasElement) {
 		this.socketSvelte = new WebSocket('ws://localhost:8080/poker');
-
+		this.container = new GameContainer();
 
 		this.socketSvelte!.onmessage = (event) => {
 			const data = JSON.parse(event.data);
