@@ -1,6 +1,3 @@
-<script>
-    // Vous pouvez ajouter des variables ou des fonctions ici si nécessaire
-</script>
 
 <style>
     .container {
