@@ -1,7 +1,7 @@
 services:
   backend:
     env_file:
-      - .env   # Utilisation du fichier .env
+      - .env
     environment:
       - DB_MONGO_USER=$MONGO_USERNAME
       - DB_MONGO_PASSWORD=$MONGO_PASSWORD
@@ -26,7 +26,7 @@ services:
     image: mongo
     restart: unless-stopped
     env_file:
-      - .env   # Utilisation du fichier .env
+      - .env
 
     environment:
       - MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME
