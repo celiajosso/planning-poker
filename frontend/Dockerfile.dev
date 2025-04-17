@@ -1,11 +1,13 @@
 FROM node:23.11.0-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY . .
 
 EXPOSE 5173
 
 RUN npm install
+
+RUN apk add git
 
 CMD ["npm", "run", "dev"]
