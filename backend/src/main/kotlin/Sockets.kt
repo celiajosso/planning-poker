@@ -7,12 +7,18 @@ import io.ktor.websocket.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import com.mongodb.client.MongoDatabase
+import models.User
+import io.ktor.server.websocket.DefaultWebSocketServerSession
+import io.ktor.server.websocket.sendSerialized
 
 @Serializable
 data class PlayerInfo(val id: String, val name: String, val card: Int)
 
 @Serializable
-data class SocketMessage(val type: String, val playerInfo: PlayerInfo)
+data class SocketMessage(val type: String, val playerInfo: PlayerInfo, val roomId: String)
 
 
 fun Application.configureSockets() {
@@ -39,17 +45,31 @@ fun Application.configureSockets() {
                         players[this] = message.playerInfo
 
                         if (message.type == "join") {
+                            val roomId = message.roomId ?: return@forEach
+                            val user = User(id = message.playerInfo.id, username = message.playerInfo.name)
+                            roomService.joinRoom(roomId, user, this)
+
+                            players[this] = message.playerInfo
+
                             for ((conn, player) in players) {
                                 if (conn != this) {
                                     println("Debug: $message")
-                                    val existingPlayerMsg = SocketMessage("join", player)
-                                    this.send(Json.encodeToString(SocketMessage.serializer(), existingPlayerMsg))
+                                    val existingPlayerMsg = SocketMessage("join", player, roomId)
+                                    conn.send(Json.encodeToString(existingPlayerMsg))
                                 }
                             }
                         }
 
                         if (message.type == "quit") {
                             players.remove(this)
+                            val userId = message.playerInfo.id
+                            roomService.quitRoom(message.roomId ?: return@forEach, userId)
+
+                            for ((conn, player) in players) {
+                                val quitMessage = SocketMessage("quit", player, message.roomId)
+                                conn.send(Json.encodeToString(quitMessage))
+                            }
+
                             this.close()
                         }
 
