@@ -3,9 +3,9 @@
 {
 	"name": "PlanningPoker",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"dockerComposeFile": "../../compose.dev.yml",
+	"dockerComposeFile": "../compose.dev.yml",
 	"workspaceFolder": "/app",
-	"service": "frontend",
+	"service": "development",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
