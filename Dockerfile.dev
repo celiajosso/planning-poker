@@ -1,0 +1,7 @@
+FROM gradle:alpine
+WORKDIR /app
+COPY . .
+
+RUN apk add --update git nodejs npm
+
+CMD ["sleep","infinity"]
