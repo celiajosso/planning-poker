@@ -1,6 +1,6 @@
 package services
 
-import Story
+import com.example.models.Story
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters.eq
 import org.bson.types.ObjectId

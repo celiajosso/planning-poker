@@ -1,9 +1,9 @@
 package com.example
 
-import Room
 import RoomService
-import Story
-import User
+import com.example.models.Room
+import com.example.models.Story
+import com.example.models.User
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
 import io.ktor.http.*

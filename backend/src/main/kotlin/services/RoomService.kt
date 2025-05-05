@@ -1,93 +1,56 @@
-import com.mongodb.client.MongoDatabase
-import com.mongodb.client.model.Filters.eq
-import org.bson.types.ObjectId
-import io.ktor.websocket.*
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import models.User
+import com.example.models.Role
+import com.example.models.Room
+import com.example.models.SocketMessage
+import com.example.models.User
+import io.ktor.server.websocket.*
+import services.UserService
+import java.util.*
 
-class RoomService(private val db: MongoDatabase) {
-    private val rooms = db.getCollection("rooms", Room::class.java)
-    private val activeRooms = mutableMapOf<String, RoomInstance>()
+class RoomService() {
+    companion object {
+        private val rooms = mutableMapOf<String, Room>()
 
-    fun create(room: Room): String {
-        rooms.insertOne(room)
-        activeRooms[room.id!!] = RoomInstance(room)
-        return room.id ?: ""
-    }
+        suspend fun create(session : DefaultWebSocketServerSession, reqUser: User, reqRoom: Room) {
+            val user = UserService.create(session, reqUser, Role.Administrator)
 
-    fun getAll(): List<Room> = rooms.find().toList()
+            val id = UUID.randomUUID().toString()
+            val room = Room(id, reqRoom.name, administrator = user)
+            rooms[id] = room
 
-    fun getById(id: String): Room? =
-        rooms.find(eq("_id", ObjectId(id))).firstOrNull()
-
-    fun update(id: String, updatedRoom: Room): Boolean {
-        val result = rooms.replaceOne(eq("_id", ObjectId(id)), updatedRoom)
-        if (result.modifiedCount > 0) {
-            activeRooms[id]?.room = updatedRoom
-            return true
+            session.sendSerialized(SocketMessage("RoomCreated", room=room, user=user))
         }
-        return false
-    }
 
-    fun delete(id: String): Boolean {
-        val result = rooms.deleteOne(eq("_id", ObjectId(id)))
-        if (result.deletedCount > 0) {
-            activeRooms.remove(id)
-            return true
-        }
-        return false
-    }
+        suspend fun joinRoom(user: User) {
+            val room = rooms.getValue(user.roomId)
+            room.users += user
 
-    fun joinRoom(roomId: String, user: User, session: DefaultWebSocketServerSession) {
-        val roomInstance = activeRooms[roomId] ?: return
-        roomInstance.join(user, session)
-    }
+            user.session.sendSerialized("roomJoined")
 
-    fun quitRoom(roomId: String, userId: String) {
-        val roomInstance = activeRooms[roomId] ?: return
-        roomInstance.quit(userId)
-        removeIfEmpty(roomId)
-    }
-
-    private fun removeIfEmpty(roomId: String) {
-        val roomInstance = activeRooms[roomId]
-        if (roomInstance != null && roomInstance.isEmpty()) {
-            activeRooms.remove(roomId)
-        }
-    }
-}
-
-class RoomInstance(
-    var room: Room
-) {
-    private val users = mutableMapOf<String, User>()
-    private val sessions = mutableMapOf<String, DefaultWebSocketServerSession>()
-
-    fun join(user: User, session: DefaultWebSocketServerSession) {
-        val userId = user.id ?: return
-        users[userId] = user
-        sessions[userId] = session
-
-        session.sendSerialized("roomJoined", mapOf("id" to room.id))
-
-        users.forEach { (otherId, otherUser) ->
-            if (otherId != userId) {
-                sessions[otherId]?.sendSerialized("playerJoined", mapOf("id" to userId, "name" to user.username))
-                session.sendSerialized("playerJoined", mapOf("id" to otherId, "name" to otherUser.username))
+            for (otherUser in room.users) {
+                if (user.session != otherUser.session) {
+                    otherUser.session.sendSerialized(SocketMessage("PlayerJoined", user=user, room=null))
+                    user.session.sendSerialized(SocketMessage("PlayerJoined", user=otherUser, room=null))
+                }
             }
         }
-    }
 
-    fun quit(userId: String) {
-        users.remove(userId)
-        sessions.remove(userId)
-    }
+        fun quitRoom(session: DefaultWebSocketServerSession) {
+            val user = UserService.getBySession(session)
+            if (user == null) {
+                return
+            }
 
-    fun isEmpty(): Boolean = users.isEmpty()
+            val roomId = user.roomId
+            val room = rooms[roomId]
 
-    suspend fun DefaultWebSocketServerSession.sendSerialized(event: String, data: Map<String, Any?>) {
-        val message = Json.encodeToString(mapOf("event" to event, "data" to data))
-        send(message)
+            if (room == null) {
+                return
+            }
+            room.users -= user
+
+            if (room.users.isEmpty()) {
+                rooms.remove(roomId)
+            }
+        }
     }
 }
