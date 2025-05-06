@@ -1,22 +1,15 @@
 package com.example
 
 import RoomService
-import com.example.models.PlayerUpdate
-import com.example.models.Role
-import com.example.models.Room
-import com.example.models.RoomUpdate
 import com.example.models.SocketMessage
-import com.example.models.User
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import services.StoryService
 import services.UserService
 import kotlin.time.Duration.Companion.seconds
-
-
 
 
 fun Application.configureSockets() {
@@ -40,18 +33,33 @@ fun Application.configureSockets() {
                             "join" -> {
                                 RoomService.joinRoom(UserService.create(this, message.user!!))
                             }
-                            "create" -> {
-                                RoomService.create(this,message.user!!,message.room!!)
+                            "createRoom" -> {
+                                RoomService.create(this, message.user!!, message.room!!)
                             }
+//                            "createStory" -> {
+//                                StoryService.create(this, message.story!!)
+//                            }
                             "quit" -> {
                                 RoomService.quitRoom(this)
                             }
-
+                            "updateUser" -> {
+                                UserService.updateUser(this, message.user!!)
+                            }
+                            "updateRoom" -> {
+                                RoomService.updateRoom(this, message.room!!)
+                            }
+//                            "updateStory" -> {
+//                                StoryService.updateStory(this, message.story!!)
+//                            }
+                            "newStory" -> {
+                                RoomService.startNewStory(this, message.story!!)
+                            }
                             else -> {}
                         }
                     }
                 }
             } finally {
+                RoomService.quitRoom(this)
             }
         }
 

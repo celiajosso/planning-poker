@@ -15,7 +15,7 @@ import services.StoryService
 import services.UserService
 
 fun Application.configureDatabases() {
-    val mongoDatabase = connectToMongoDB()
+    /*val mongoDatabase = connectToMongoDB()
     val roomService = RoomService(mongoDatabase)
     val storyService = StoryService(mongoDatabase)
     val userService = UserService(mongoDatabase)
@@ -122,7 +122,7 @@ fun Application.configureDatabases() {
                 }
             }
         }
-    }
+    }*/
 }
 
 /**

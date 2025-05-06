@@ -1,8 +1,8 @@
 package services
 
 import com.example.models.Role
-import com.example.models.Room
 import com.example.models.User
+import com.example.models.SocketMessage
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import java.util.*
@@ -53,5 +53,19 @@ class UserService() {
 
             return deleteSession != null
         }
+
+        suspend fun updateUser(session: DefaultWebSocketServerSession, updatedUser: User) {
+            val user = getBySession(session) ?: return
+
+            user.username = updatedUser.username ?: user.username
+            user.role = updatedUser.role ?: user.role
+            user.card = updatedUser.card ?: user.card
+
+            val room = RoomService.getById(user.roomId) ?: return
+            for (otherUser in room.users) {
+                otherUser.session.sendSerialized(SocketMessage("UserUpdated", user = user, room = null, story = null))
+            }
+        }
+
     }
 }

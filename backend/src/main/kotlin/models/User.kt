@@ -8,8 +8,8 @@ open class User(
     val id: String,
     @Transient
     val session: DefaultWebSocketServerSession,
-    val username: String,
-    val role: Role = Role.Player,
+    var username: String,
+    var role: Role = Role.Player,
     val roomId: String,
-    val card : String?
+    var card: String?
 )
