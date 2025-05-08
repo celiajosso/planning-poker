@@ -10,3 +10,13 @@ open class Room(
     @Transient var administrator: User,
     @Transient var stories: List<Story> = listOf()
 )
+
+@Serializable
+data class RoomDTO(
+    val id: String,
+    val name: String
+)
+
+fun Room.toRoomDTO(): RoomDTO {
+    return RoomDTO(id, name)
+}

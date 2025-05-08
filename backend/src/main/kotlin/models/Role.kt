@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class Role {
+                Dummy,
     Player,
     Administrator
 }

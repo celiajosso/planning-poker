@@ -9,7 +9,20 @@ open class User(
     @Transient
     val session: DefaultWebSocketServerSession,
     var username: String,
-    var role: Role = Role.Player,
+    var role: Role,
     val roomId: String,
-    var card: String?
+    var card: Int
 )
+
+@Serializable
+data class UserDTO(
+    val id: String,
+    var username: String,
+    var role: Role,
+    val roomId: String,
+    var card: Int
+)
+
+fun User.toUserDTO(): UserDTO {
+    return UserDTO(id, username, role, roomId, card)
+}

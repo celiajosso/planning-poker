@@ -1,18 +1,8 @@
 package com.example
 
-import RoomService
-import com.example.models.Room
-import com.example.models.Story
-import com.example.models.User
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
-import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import services.StoryService
-import services.UserService
 
 fun Application.configureDatabases() {
     /*val mongoDatabase = connectToMongoDB()
