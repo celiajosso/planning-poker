@@ -67,16 +67,7 @@ class RoomService {
             }
 
             val roomId = user.roomId
-            val room = rooms[roomId]
-
-            if (room == null) {
-                return
-            }
-            room.users -= user
-
-            if (room.users.isEmpty()) {
-                rooms.remove(roomId)
-            }
+            val room = rooms[roomId] ?: return
 
             for (u in room.users) {
                 u.session.sendSerialized(
@@ -88,8 +79,13 @@ class RoomService {
                     )
                 )
             }
-        }
 
+            room.users -= user
+
+            if (room.users.isEmpty()) {
+                rooms.remove(roomId)
+            }
+        }
         suspend fun updateRoom(session: DefaultWebSocketServerSession, updatedRoom: RoomDTO) {
             val user = UserService.getBySession(session) ?: return
             val room = rooms[user.roomId] ?: return

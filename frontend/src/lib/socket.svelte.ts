@@ -1,6 +1,7 @@
 import randomName from '@scaleway/random-name';
 import { DeckCard, GameContainer } from './script';
 import { Application, Assets } from 'pixi.js';
+import { goto } from '$app/navigation';
 
 interface ServerMessage {
 	type: String
@@ -163,6 +164,7 @@ export namespace Game {
 
 	export function quitRoom() {
 		sendMessage('RoomQuit', null, null, null);
+		goto('/');
 	}
 
 	function sendMessage(type: string, user: UserDTO | null, room: RoomDTO | null, story: StoryDTO | null) {
