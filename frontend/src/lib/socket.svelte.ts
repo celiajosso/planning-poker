@@ -1,4 +1,4 @@
-import randomName from '@scaleway/random-name';
+// import randomName from '@scaleway/random-name';
 import { DeckCard, GameContainer } from './script';
 import { Application, Assets } from 'pixi.js';
 
@@ -16,7 +16,7 @@ export class UserDTO {
 	roomId: String
 	card: number = -1
 
-	constructor(username: String, roomId : String) {
+	constructor(username: String, roomId: String) {
 		this.username = username
 		this.roomId = roomId
 	}
@@ -40,10 +40,10 @@ export namespace Game {
 
 	let container: GameContainer
 
-	let player_cache : UserDTO[]= []
+	let player_cache: UserDTO[] = []
 
-	function addPlayer(user:UserDTO){
-		if (container === undefined){
+	function addPlayer(user: UserDTO) {
+		if (container === undefined) {
 			player_cache.push(user)
 		}
 		else {
@@ -51,16 +51,14 @@ export namespace Game {
 		}
 	}
 
-	function removePlayer(user:UserDTO){
+	function removePlayer(user: UserDTO) {
 		container?.removePlayer(user);
 	}
-
-
 
 	export let socket: WebSocket;
 
 	export function createSocket() {
-		socket = new WebSocket('ws://localhost:8080/poker');
+		socket = new WebSocket('ws://0.0.0.0:8080/poker');
 
 		socket.onmessage = (event) => {
 			const serverMessage: ServerMessage = JSON.parse(event.data);
@@ -125,7 +123,7 @@ export namespace Game {
 		app.stage.addChild(container);
 
 
-		for (let player of player_cache){
+		for (let player of player_cache) {
 			container.addPlayer(player)
 		}
 
