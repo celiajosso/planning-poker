@@ -1,21 +1,11 @@
 package com.example
 
-import Room
-import RoomService
-import Story
-import User
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
-import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import services.StoryService
-import services.UserService
 
 fun Application.configureDatabases() {
-    val mongoDatabase = connectToMongoDB()
+    /*val mongoDatabase = connectToMongoDB()
     val roomService = RoomService(mongoDatabase)
     val storyService = StoryService(mongoDatabase)
     val userService = UserService(mongoDatabase)
@@ -122,7 +112,7 @@ fun Application.configureDatabases() {
                 }
             }
         }
-    }
+    }*/
 }
 
 /**

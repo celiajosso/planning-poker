@@ -1,3 +1,8 @@
+package com.example.models
+
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Story(
     val id: String? = null,
     val title: String,
@@ -7,6 +12,7 @@ data class Story(
     val finalEstimate: String? = null
 )
 
+@Serializable
 data class Vote(
     val userId: String,
     val value: String

@@ -3,22 +3,30 @@
 {
 	"name": "PlanningPoker",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"dockerComposeFile": "../../compose.dev.yml",
+	"dockerComposeFile": "../compose.dev.yml",
 	"workspaceFolder": "/app",
-	"service": "frontend",
-
+	"service": "development",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
-
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [5173, 8080]
-
+	"forwardPorts": [
+		5173,
+		8080
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"mathiasfrohlich.Kotlin",
+				"vscjava.vscode-gradle",
+				"svelte.svelte-vscode",
+				"bradlc.vscode-tailwindcss"
+			]
+		}
+	}
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "uname -a",
-
 	// Configure tool-specific properties.
 	// "customizations": {},
-
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
 }

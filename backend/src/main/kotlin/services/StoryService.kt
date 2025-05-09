@@ -1,6 +1,6 @@
 package services
 
-import Story
+import com.example.models.Story
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters.eq
 import org.bson.types.ObjectId
@@ -21,7 +21,7 @@ class StoryService(private val db: MongoDatabase) {
     fun getByRoomId(roomId: String): List<Story> =
         stories.find(eq("roomId", roomId)).toList()
 
-    fun update(id: String, updatedStory: Story): Boolean {
+    fun updateStory(id: String, updatedStory: Story): Boolean {
         val result = stories.replaceOne(eq("_id", ObjectId(id)), updatedStory)
         return result.modifiedCount > 0
     }
