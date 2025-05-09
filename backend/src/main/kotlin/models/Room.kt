@@ -1,6 +1,22 @@
-data class Room(
-    val id: String? = null,
+package com.example.models
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+open class Room(
+    val id: String,
     val name: String,
-    val users: List<String> = listOf(),
-    val stories: List<String> = listOf()
+    @Transient var users: List<User> = listOf(),
+    @Transient var administrator: User,
+    @Transient var stories: List<Story> = listOf()
 )
+
+@Serializable
+data class RoomDTO(
+    val id: String,
+    val name: String
+)
+
+fun Room.toRoomDTO(): RoomDTO {
+    return RoomDTO(id, name)
+}

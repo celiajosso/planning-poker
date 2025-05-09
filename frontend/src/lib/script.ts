@@ -1,5 +1,4 @@
 import { BlurFilter, ColorMatrixFilter, Container, Sprite, Text } from 'pixi.js';
-import { game } from './socket';
 
 export class Card extends Sprite {
 	text: Text;

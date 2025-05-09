@@ -1,19 +1,16 @@
 package com.example
 
+import RoomService
+import com.example.models.SocketMessage
+import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import services.StoryService
+import services.UserService
 import kotlin.time.Duration.Companion.seconds
-
-@Serializable
-data class PlayerInfo(val id: String, val name: String, val card: Int)
-
-@Serializable
-data class SocketMessage(val type: String, val playerInfo: PlayerInfo)
-
 
 fun Application.configureSockets() {
     install(WebSockets) {
@@ -21,14 +18,15 @@ fun Application.configureSockets() {
         timeout = 15.seconds
         maxFrameSize = Long.MAX_VALUE
         masking = false
+        contentConverter = KotlinxWebsocketSerializationConverter(Json {
+            prettyPrint = true
+            isLenient = true
+            ignoreUnknownKeys = true
+        })
     }
 
     routing {
-        val connections = mutableSetOf<DefaultWebSocketServerSession>()
-        val players = HashMap<DefaultWebSocketServerSession, PlayerInfo>()
-
         webSocket("/poker") {
-            connections += this
             try {
                 for (frame in incoming) {
                     if (frame is Frame.Text) {
@@ -36,39 +34,41 @@ fun Application.configureSockets() {
                         val message = Json.decodeFromString<SocketMessage>(text)
                         println("Received: $message")
 
-                        players[this] = message.playerInfo
-
-                        if (message.type == "join") {
-                            for ((conn, player) in players) {
-                                if (conn != this) {
-                                    println("Debug: $message")
-                                    val existingPlayerMsg = SocketMessage("join", player)
-                                    this.send(Json.encodeToString(SocketMessage.serializer(), existingPlayerMsg))
-                                }
+                        when (message.type) {
+                            "RoomJoin" -> {
+                                RoomService.joinRoom(this, message.user!!)
                             }
-                        }
 
-                        if (message.type == "quit") {
-                            players.remove(this)
-                            this.close()
-                        }
+                            "RoomCreate" -> {
+                                RoomService.create(this, message.user!!, message.room!!)
+                            }
+                            "StoryCreate" -> {
+                                //StoryService.create(this, message.story!!)
+                            }
+                            "RoomQuit" -> {
+                                RoomService.quitRoom(this)
+                            }
 
-                        //println("Players in room: ${players.values.map { it.name }}")
+                            "UserUpdate" -> {
+                                UserService.updateUser(this, message.user!!)
+                            }
 
-                        // Broadcast to others
-                        for (conn in connections) {
-                            conn.send(text)
+                            "RoomUpdate" -> {
+                                RoomService.updateRoom(this, message.room!!)
+                            }
+                            "StoryUpdate" -> {
+                                //StoryService.updateStory(this, message.story!!)
+                            }
+                            "StoryNew" -> {
+                                RoomService.startNewStory(this, message.story!!)
+                            }
+
+                            else -> {}
                         }
                     }
                 }
             } finally {
-                val oldPlayer = players[this]
-                players.remove(this)
-                for ((conn, player) in players) {
-                    val existingPlayerMsg = oldPlayer?.let { SocketMessage("quit", it) }
-                    conn.send(Json.encodeToString(existingPlayerMsg))
-                }
-                connections -= this
+                RoomService.quitRoom(this)
             }
         }
 

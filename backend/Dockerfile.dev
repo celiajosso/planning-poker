@@ -1,4 +1,0 @@
-FROM gradle:latest AS build
-WORKDIR /app
-COPY . .
-CMD ["gradle", "run"]
