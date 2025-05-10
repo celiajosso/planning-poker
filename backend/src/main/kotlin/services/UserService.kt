@@ -12,7 +12,7 @@ class UserService() {
         private val usersById = mutableMapOf<String, User>()
         private val usersBySession = mutableMapOf<DefaultWebSocketServerSession, User>()
 
-        fun create(session: DefaultWebSocketServerSession, reqUser: UserDTO, roomId : String , role: Role): User {
+        fun create(session: DefaultWebSocketServerSession, reqUser: UserDTO, roomId: String, role: Role): User {
             val id = UUID.randomUUID().toString()
             val user = User(id, session, reqUser.username, role, roomId, reqUser.card)
             usersById.put(id, user)

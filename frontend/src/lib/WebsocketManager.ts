@@ -38,6 +38,7 @@ export namespace WebSocketManager {
 				Game.addPlayer(serverMessage.user!);
 				break;
 			case 'RoomUpdated':
+				Game.room = serverMessage.room!;
 				break;
 		}
 	}
