@@ -9,16 +9,17 @@
 		ArrowUpTray,
 		Plus,
 	} from "@steeze-ui/heroicons";
-	import { Game } from "$lib/socket.svelte";
 	import { goto } from "$app/navigation";
+	import { Game } from '$lib/Game.svelte';
+	import { WebSocketManager } from '$lib/WebsocketManager';
 
 	let canvas: HTMLCanvasElement;
 
 	let loaded = $state(false);
 
 	onMount(async () => {
-		if (Game.socket === undefined) {
-			goto("/");
+		if (WebSocketManager.socket === undefined) {
+			goto('/');
 		} else {
 			await Game.init(canvas);
 			loaded = true;
