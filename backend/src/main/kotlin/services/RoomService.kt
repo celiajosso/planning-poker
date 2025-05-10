@@ -1,7 +1,6 @@
 import com.example.models.*
 import com.mongodb.client.MongoDatabase
 import io.ktor.server.websocket.*
-import kotlinx.serialization.json.JsonNull
 import services.StoryService
 import services.UserService
 import java.util.*
@@ -12,13 +11,13 @@ class RoomService {
         private lateinit var storyService: StoryService
 
         fun init(db: MongoDatabase) {
-            storyService = StoryService(db)
+            /*storyService = StoryService(db)*/
         }
 
         suspend fun create(session: DefaultWebSocketServerSession, reqUser: UserDTO, reqRoom: RoomDTO) {
             val id = UUID.randomUUID().toString()
             val user = UserService.create(session, reqUser, id, Role.Administrator)
-            val room = Room(id, reqRoom.name, administrator = user)
+            val room = Room(id, reqRoom.name, null, administrator = user)
             rooms[id] = room
 
             room.users += user
@@ -36,7 +35,14 @@ class RoomService {
             val user = UserService.create(session, userDTO, userDTO.roomId, Role.Player)
             room.users += user
 
-            session.sendSerialized(SocketMessage("RoomJoined", room = room.toRoomDTO(), user = user.toUserDTO(), story = null))
+            session.sendSerialized(
+                SocketMessage(
+                    "RoomJoined",
+                    room = room.toRoomDTO(),
+                    user = user.toUserDTO(),
+                    story = null
+                )
+            )
 
             for (otherUser in room.users) {
                 if (session != otherUser.session) {
@@ -92,7 +98,7 @@ class RoomService {
 
         suspend fun updateRoom(session: DefaultWebSocketServerSession, updatedRoom: RoomDTO) {
             val user = UserService.getBySession(session) ?: return
-            val room = rooms[user.roomId] ?: return
+            val room = rooms[updatedRoom.id] ?: return
 
             if (room.administrator.id != user.id) {
                 session.sendSerialized(
@@ -106,12 +112,19 @@ class RoomService {
                 return
             }
 
-            //room.users = updatedRoom.users ?: room.users
             //room.administrator = updatedRoom.administrator ?: room.administrator
-            //room.stories = updatedRoom.stories ?: room.stories
+            room.stories = updatedRoom.stories.map { it.toStory() }
+            room.storySelected = updatedRoom.storySelected?.toStory()
 
-            for (otherUser in room.users) {
-                otherUser.session.sendSerialized(SocketMessage("RoomUpdated", user = null, room = room.toRoomDTO(), story = null))
+            for (user in room.users) {
+                user.session.sendSerialized(
+                    SocketMessage(
+                        "RoomUpdated",
+                        user = null,
+                        room = room.toRoomDTO(),
+                        story = null
+                    )
+                )
             }
         }
 

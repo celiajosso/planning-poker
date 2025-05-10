@@ -2,7 +2,7 @@ package com.example
 
 import RoomService
 import com.example.models.SocketMessage
-import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
+import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
@@ -35,32 +35,44 @@ fun Application.configureSockets() {
                         println("Received: $message")
 
                         when (message.type) {
-                            "RoomJoin" -> {
-                                RoomService.joinRoom(this, message.user!!)
-                            }
-
                             "RoomCreate" -> {
                                 RoomService.create(this, message.user!!, message.room!!)
                             }
-                            "StoryCreate" -> {
-                                //StoryService.create(this, message.story!!)
-                            }
-                            "RoomQuit" -> {
-                                RoomService.quitRoom(this)
-                            }
 
-                            "UserUpdate" -> {
-                                UserService.updateUser(this, message.user!!)
+                            "RoomJoin" -> {
+                                RoomService.joinRoom(this, message.user!!)
                             }
 
                             "RoomUpdate" -> {
                                 RoomService.updateRoom(this, message.room!!)
                             }
-                            "StoryUpdate" -> {
-                                //StoryService.updateStory(this, message.story!!)
+
+                            "RoomQuit" -> {
+                                RoomService.quitRoom(this)
                             }
-                            "StoryNew" -> {
-                                RoomService.startNewStory(this, message.story!!)
+
+                            "StoryCreate" -> {
+                                StoryService.createStory(this, message.story!!)
+                            }
+
+                            "StoryUpdate" -> {
+                                StoryService.updateStory(this, message.story!!)
+                            }
+
+                            "StorySelect" -> {
+                                StoryService.selectStory(this, message.story!!)
+                            }
+
+                            "StoryUnselect" -> {
+                                StoryService.unselectStory(this, message.story!!)
+                            }
+
+                            "StoryDelete" -> {
+                                StoryService.deleteStory(this, message.story!!)
+                            }
+
+                            "UserUpdate" -> {
+                                UserService.updateUser(this, message.user!!)
                             }
 
                             else -> {}

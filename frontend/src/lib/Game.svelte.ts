@@ -4,9 +4,10 @@ import { GameContainer } from './GameContainer';
 import { Application, Assets, Container, Texture, Text } from 'pixi.js';
 import '@pixi/layout';
 import { tw } from '@pixi/layout/tailwind';
-import type { RoomDTO } from './RoomDTO';
+import { RoomDTO } from './RoomDTO';
 import type { UserDTO } from './UserDTO';
 import { WebSocketManager } from './WebsocketManager';
+import { StoryDTO } from './StoryDTO';
 
 export namespace Game {
 	export let app: Application;
@@ -142,5 +143,22 @@ export namespace Game {
 
 	export function updatePlayer(user: UserDTO) {
 		Game.gameContainer.players[user.id].setCard(user.card);
+	}
+
+
+	export function createStory() {
+		WebSocketManager.sendMessage('StoryCreate', null, null, new StoryDTO("","title","description","finalEstimate",room.id));
+	}
+	export function updateStory() {
+		WebSocketManager.sendMessage('StoryUpdate', null, null, new StoryDTO("","title","description","finalEstimate",room.id));
+	}
+	export function selectStory(id:string) {
+		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO(id,"","","",room.id));
+	}
+	export function unselectStory() {
+		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO("","","","",room.id));
+	}
+	export function deleteStory(id:string) {
+		WebSocketManager.sendMessage('StoryDelete', null, null, new StoryDTO(id,"","","",room.id));
 	}
 }
