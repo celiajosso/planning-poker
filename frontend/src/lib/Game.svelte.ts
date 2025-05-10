@@ -17,6 +17,7 @@ export namespace Game {
 	export let user: UserDTO;
 	export let room: RoomDTO;
 	export let gameContainer: GameContainer;
+	export let deckContainer: DeckContainer;
 
 	let player_cache: UserDTO[] = [];
 
@@ -75,7 +76,7 @@ export namespace Game {
 
 		// initialize the deck
 
-		const containerDeck = new DeckContainer(
+		deckContainer = new DeckContainer(
 			{
 				layout: tw`flex flex-row items-center justify-center w-full gap-4 flex-wrap`
 			},
@@ -91,8 +92,11 @@ export namespace Game {
 
 		resizeObserver.observe(app.canvas);
 
+		gameContainer.alpha = 0
+		deckContainer.visible = true
+		
 		globalContainer.addChild(gameContainer);
-		globalContainer.addChild(containerDeck);
+		globalContainer.addChild(deckContainer);
 		app.stage.addChild(globalContainer);
 
 		for (let player of player_cache) {
@@ -103,9 +107,10 @@ export namespace Game {
 	}
 
 	export function restart() {
-		validate(-1);
-		hasPlayed = false;
-		// gameContainer!.updateHidden(hasPlayed);
+		user.card = -1;
+		WebSocketManager.sendMessage('UserUpdate', user, null, null);
+		gameContainer.alpha = 0
+		deckContainer.visible = true
 	}
 
 	export function createRoom(user: UserDTO, room: RoomDTO) {
@@ -125,8 +130,8 @@ export namespace Game {
 	}
 
 	export function validate(selected: number) {
-		hasPlayed = true;
-		// gameContainer!.updateHidden(hasPlayed);
+		gameContainer.alpha = 1
+		deckContainer.visible = false
 		user.card = selected;
 		WebSocketManager.sendMessage('UserUpdate', user, null, null);
 	}

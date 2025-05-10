@@ -4,10 +4,9 @@ import { Game } from './Game.svelte';
 
 export class Card extends Container {
 	text: Text;
-	value: number;
 	public tickerCallback: ((delta: Ticker) => void) | undefined;
 
-	public constructor(i: number) {
+	public constructor(card:string) {
 		super();
 
 		this.layout = true
@@ -28,7 +27,7 @@ export class Card extends Container {
 		sprite.position.set(0.5);
 
 		this.text = new Text({
-			text: `${i}`,
+			text: card,
 			style: {
 				fontSize: 24,
 				fill: 'gray',
@@ -36,8 +35,6 @@ export class Card extends Container {
 				align:'center'
 			}
 		});
-
-		this.value = i;
 
 		this.text.anchor.set(0.5);
 		this.text.position.set(w/2,h/2);
@@ -50,9 +47,8 @@ export class Card extends Container {
 		this.text.text = text;
 	}
 
-	animate(card: number) {
+	select(card: string) {
 		let ctx = this;
-		this.setText('');
 
 		const max = 1000;
 		const startTime = performance.now();
