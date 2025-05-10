@@ -50,7 +50,7 @@ export namespace Game {
 		// GlobalContainer
 
 		const globalContainer = new Container({
-			layout: tw`flex flex-col items-center justify-between w-full h-dvh m-8 mb-52`
+			layout: tw`flex flex-col items-center justify-between w-full h-dvh m-8 mb-8`
 		});
 
 		// GameContainer
