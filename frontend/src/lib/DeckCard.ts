@@ -5,8 +5,8 @@ import { Card } from './Card';
 export class DeckCard extends Card {
 	colorMatrix: ColorMatrixFilter;
 
-	constructor(i: number) {
-		super(i);
+	constructor(card:string) {
+		super(card);
 		const ctx = this;
 		ctx.eventMode = 'static';
 
