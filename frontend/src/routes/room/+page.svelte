@@ -90,12 +90,12 @@
 
 	</Sheet.Header>
 	<div class="grid gap-4 py-4">
-			<Button builders={[builder]} variant="" class="absolute top-4 right-4 z-50">	
+			<!-- <Button builders={[builder]} variant="" class="absolute top-4 right-4 z-50">	
 		<Icon class="color-gray-900 size-8" src={ArrowDownOnSquare} theme="solid" />
 	</Button>
 		<Button builders={[builder]} variant="" class="absolute top-4 right-4 z-50">	
 		<Icon class="color-gray-900 size-8" src={ArrowUpOnSquare} theme="solid" />
-	</Button>
+	</Button> -->
 	<Table.Root>
 	<Table.Header>
 	<Table.Row>
