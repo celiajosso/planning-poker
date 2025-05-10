@@ -1,34 +1,68 @@
 package services
 
-import com.example.models.Story
-import com.mongodb.client.MongoDatabase
-import com.mongodb.client.model.Filters.eq
-import org.bson.types.ObjectId
+import RoomService
+import com.example.models.StoryDTO
+import com.example.models.toRoomDTO
+import io.ktor.server.websocket.*
+import java.util.*
 
-class StoryService(private val db: MongoDatabase) {
-    private val stories = db.getCollection("stories", Story::class.java)
+class StoryService(/*private val db: MongoDatabase*/) {
+    //private val stories = db.getCollection("stories", Story::class.java)
+    companion object {
 
-    fun create(story: Story): String {
-        stories.insertOne(story)
-        return story.id ?: ""
-    }
+        suspend fun createStory(socket: DefaultWebSocketServerSession, story: StoryDTO) {
+            val id = UUID.randomUUID().toString()
+            story.id = id
+            val room = RoomService.getById(story.roomId) ?: return
+            val dto = room.toRoomDTO()
 
-    fun getAll(): List<Story> = stories.find().toList()
+            dto.stories += story
 
-    fun getById(id: String): Story? =
-        stories.find(eq("_id", ObjectId(id))).firstOrNull()
+            RoomService.updateRoom(socket, dto)
+        }
 
-    fun getByRoomId(roomId: String): List<Story> =
-        stories.find(eq("roomId", roomId)).toList()
+        suspend fun updateStory(socket: DefaultWebSocketServerSession, story: StoryDTO) {
+            val room = RoomService.getById(story.roomId) ?: return
+            val dto = room.toRoomDTO()
 
-    fun updateStory(id: String, updatedStory: Story): Boolean {
-        val result = stories.replaceOne(eq("_id", ObjectId(id)), updatedStory)
-        return result.modifiedCount > 0
-    }
+            dto.stories.find { it.id == story.id }?.apply {
+                this.title = story.title
+                this.description = story.description
+                this.finalEstimate = story.finalEstimate
+            }
 
-    fun delete(id: String): Boolean {
-        val result = stories.deleteOne(eq("_id", ObjectId(id)))
-        return result.deletedCount > 0
+            RoomService.updateRoom(socket, dto)
+        }
+
+        suspend fun selectStory(socket: DefaultWebSocketServerSession, story: StoryDTO) {
+            val room = RoomService.getById(story.roomId) ?: return
+            val dto = room.toRoomDTO()
+
+            val selected = dto.stories.find { it.id == story.id } ?: return
+            dto.storySelected = selected
+
+            RoomService.updateRoom(socket, dto)
+        }
+
+        suspend fun unselectStory(socket: DefaultWebSocketServerSession, story: StoryDTO) {
+            val room = RoomService.getById(story.roomId) ?: return
+            val dto = room.toRoomDTO()
+
+            dto.storySelected = null
+
+            RoomService.updateRoom(socket, dto)
+        }
+
+        suspend fun deleteStory(socket: DefaultWebSocketServerSession, story: StoryDTO) {
+            val room = RoomService.getById(story.roomId) ?: return
+            val dto = room.toRoomDTO()
+
+            val selected = dto.stories.find { it.id == story.id } ?: return
+            dto.stories -= selected
+
+            RoomService.updateRoom(socket, dto)
+        }
+
     }
 
 }
