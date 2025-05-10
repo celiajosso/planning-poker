@@ -16,7 +16,7 @@ export class Player extends Container {
 			text: name,
 			style: {
 				fill: 'white',
-				fontFamily: 'righteous',
+				fontFamily: 'Righteous Regular',
 				fontSize: 16,
 				align: 'center'
 			},

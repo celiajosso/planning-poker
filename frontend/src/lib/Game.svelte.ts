@@ -1,7 +1,7 @@
 // import randomName from '@scaleway/random-name';
 import { DeckContainer } from './DeckContainer';
 import { GameContainer } from './GameContainer';
-import { Application, Assets, Container, Texture } from 'pixi.js';
+import { Application, Assets, Container, Texture, Text } from 'pixi.js';
 import '@pixi/layout';
 import { tw } from '@pixi/layout/tailwind';
 import type { RoomDTO } from './RoomDTO';
@@ -34,18 +34,32 @@ export namespace Game {
 
 	export async function init(canvas: HTMLCanvasElement) {
 		app = new Application();
-		// put the card asset in the cache
-		textures['card'] = await Assets.load({
-			src: `/cards/Squircle.png`,
-			data: {
-				parseAsGraphicsContext: true
-			}
-		});
 
 		// Initialize the application.
 		await app.init({ resizeTo: window, canvas: canvas, background: '#e2e8f0' });
 
 		app.stage.layout = { width: app.screen.width, height: app.screen.height };
+
+		// Load assets
+
+
+		let manifest = {
+			bundles: [
+				{
+					name: "fonts",
+					assets: [{ alias: "Righteous", src: '/Righteous-Regular.ttf' }]
+				},
+				{
+					name: "textures",
+					assets: [{ alias: "Card", src: '/cards/Squircle.png', data: { parseAsGraphicsContext: true } }]
+				}
+			]
+		}
+
+		Assets.init({ manifest });
+
+		await Assets.loadBundle('fonts')
+		textures = await Assets.loadBundle('textures')
 
 		// GlobalContainer
 
