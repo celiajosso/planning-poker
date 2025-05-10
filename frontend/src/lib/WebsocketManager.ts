@@ -8,7 +8,9 @@ export namespace WebSocketManager {
 	export let socket: WebSocket;
 
 	export function createSocket() {
-		socket = new WebSocket(`${import.meta.env.PROD ? "" : "ws://localhost:8080"}/poker`);
+		const currentHost = window.location.host;
+		const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+		socket = new WebSocket(`${wsProtocol}//${import.meta.env.PROD ? currentHost : "localhost:8080"}/poker`);
 
 		socket.onmessage = handler;
 
