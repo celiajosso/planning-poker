@@ -71,17 +71,14 @@
 <canvas bind:this={canvas}></canvas>
 {#if loaded}
 	<Sheet.Root>
-		<Sheet.Trigger asChild let:builder>
-			<Button
-				builders={[builder]}
-				class="absolute top-4 right-4 z-50 p-0"
-			>
+		<Sheet.Trigger class="absolute top-5 right-5">
+			<ButtonIcon>
 				<Icon
-					class="color-gray-800 size-8"
+					class="color-gray-800 size-6"
 					src={ChevronDoubleLeft}
 					theme="solid"
 				/>
-			</Button>
+			</ButtonIcon>
 		</Sheet.Trigger>
 		<Sheet.Content side="right" class="bg-[#f4f4f9] text-gray-900">
 			<Tabs.Root value="issues" class="w-full">
