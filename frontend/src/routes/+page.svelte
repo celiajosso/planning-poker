@@ -59,5 +59,7 @@
 		</form>
 	</div>
     <a href="/about" class="text-sm">Learn More</a>
+    <a href="/test" class="text-sm">Access to testtttt</a>
+	<a href="/test2" class="text-sm">Access to Test2</a>
 </div>
 

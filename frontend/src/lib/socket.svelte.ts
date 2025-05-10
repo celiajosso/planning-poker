@@ -59,7 +59,7 @@ export namespace Game {
 	export let socket: WebSocket;
 
 	export function createSocket() {
-		socket = new WebSocket('ws://0.0.0.0:8080/poker');
+		socket = new WebSocket('ws://127.0.0.1:8080/poker');
 
 		socket.onmessage = (event) => {
 			const serverMessage: ServerMessage = JSON.parse(event.data);
