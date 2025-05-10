@@ -10,8 +10,8 @@
 		Plus,
 	} from "@steeze-ui/heroicons";
 	import { goto } from "$app/navigation";
-	import { Game } from '$lib/Game.svelte';
-	import { WebSocketManager } from '$lib/WebsocketManager';
+	import { Game } from "$lib/Game.svelte";
+	import { WebSocketManager } from "$lib/WebsocketManager";
 
 	let canvas: HTMLCanvasElement;
 
@@ -19,7 +19,7 @@
 
 	onMount(async () => {
 		if (WebSocketManager.socket === undefined) {
-			goto('/');
+			goto("/");
 		} else {
 			await Game.init(canvas);
 			loaded = true;
@@ -28,90 +28,24 @@
 
 	import * as Table from "$lib/components/ui/table/index.js";
 
-	const invoices = [
+	const issues = [
 		{
-			invoice: "INVd001",
-			paymentStatus: "Paid",
-			totalAmount: "$250.00",
-			paymentMethod: "Credit Card",
+			title: "SCRUM-1",
+			description:
+				"The User story related to SCRUM-1 (As a user, I want to be able to ... so that I can ...)",
+			score: "1",
 		},
 		{
-			invoice: "INV002",
-			paymentStatus: "Pending",
-			totalAmount: "$150.00",
-			paymentMethod: "PayPal",
+			title: "SCRUM-2",
+			description:
+				"The User story related to SCRUM-1 (As a user, I want to be able to ... so that I can ...)",
+			score: "7",
 		},
 		{
-			invoice: "INV003",
-			paymentStatus: "Unpaid",
-			totalAmount: "$350.00",
-			paymentMethod: "Bank Transfer",
-		},
-		{
-			invoice: "INV004",
-			paymentStatus: "Paid",
-			totalAmount: "$450.00",
-			paymentMethod: "Credit Card",
-		},
-		{
-			invoice: "INV005",
-			paymentStatus: "Paid",
-			totalAmount: "$550.00",
-			paymentMethod: "PayPal",
-		},
-		{
-			invoice: "INV006",
-			paymentStatus: "Pending",
-			totalAmount: "$200.00",
-			paymentMethod: "Bank Transfer",
-		},
-		{
-			invoice: "INV007",
-			paymentStatus: "Unpaid",
-			totalAmount: "$300.00",
-			paymentMethod: "Credit Card",
-		},
-		{
-			invoice: "INVd001",
-			paymentStatus: "Paid",
-			totalAmount: "$250.00",
-			paymentMethod: "Credit Card",
-		},
-		{
-			invoice: "INV002",
-			paymentStatus: "Pending",
-			totalAmount: "$150.00",
-			paymentMethod: "PayPal",
-		},
-		{
-			invoice: "INV003",
-			paymentStatus: "Unpaid",
-			totalAmount: "$350.00",
-			paymentMethod: "Bank Transfer",
-		},
-		{
-			invoice: "INV004",
-			paymentStatus: "Paid",
-			totalAmount: "$450.00",
-			paymentMethod: "Credit Card",
-		},
-		{
-			invoice: "INV005",
-			paymentStatus: "Paid",
-			totalAmount: "$550.00",
-			paymentMethod: "PayPal",
-		},
-		{
-			invoice: "INV006",
-			paymentStatus: "Pending",
-			totalAmount: "$200.00",
-			paymentMethod: "Bank Transfer",
-		},
-		{
-			invoice: "INV007",
-			paymentStatus: "Unpaid",
-			totalAmount: "$300.00",
-			paymentMethod: "Credit Card",
+			title: "SCRUM-3",
+			description:
+				"The User story related to SCRUM-1 (As a user, I want to be able to ... so that I can ...)",
+			score: "11",
 		},
 	];
 
@@ -138,48 +72,49 @@
 			</Button>
 		</Sheet.Trigger>
 		<Sheet.Content side="right" class="bg-white">
-			<Sheet.Header>
-				<Sheet.Title>Issues</Sheet.Title>
-				<Sheet.Description>
-					Make changes to your User Stories. Click save when you're
-					done.
-				</Sheet.Description>
+			<Sheet.Header class="flex flex-row justify-between items-center">
+				<div>
+					<Sheet.Title>Issues</Sheet.Title>
+					<Sheet.Description>
+						Make changes to your User Stories.
+					</Sheet.Description>
+				</div>
+				<div>
+					<Button builders={[]}>
+						<Icon
+							class="color-gray-900 size-6"
+							src={ArrowDownTray}
+							theme="solid"
+						/>
+					</Button>
+					<Button builders={[]}>
+						<Icon
+							class="color-gray-900 size-6"
+							src={ArrowUpTray}
+							theme="solid"
+						/>
+					</Button>
+				</div>
 			</Sheet.Header>
 			<div class="grid gap-4 py-4">
-				<Button builders={[]}>
-					<Icon
-						class="color-gray-900 size-8"
-						src={ArrowDownTray}
-						theme="solid"
-					/>
-				</Button>
-				<Button builders={[]}>
-					<Icon
-						class="color-gray-900 size-8"
-						src={ArrowUpTray}
-						theme="solid"
-					/>
-				</Button>
 				<Table.Root>
 					<Table.Header>
 						<Table.Row>
-							<Table.Head class="w-[100px]">Title</Table.Head>
+							<Table.Head>CB</Table.Head>
+							<Table.Head>Title</Table.Head>
 							<Table.Head>Description</Table.Head>
 							<Table.Head>Score</Table.Head>
-							<Table.Head class="text-right">ICONES</Table.Head>
+							<Table.Head>I</Table.Head>
 						</Table.Row>
 					</Table.Header>
 					<Table.Body>
-						{#each invoices as invoice, i (i)}
+						{#each issues as issue, i (i)}
 							<Table.Row>
-								<Table.Cell class="font-medium"
-									>{invoice.invoice}</Table.Cell
-								>
-								<Table.Cell>{invoice.paymentStatus}</Table.Cell>
-								<Table.Cell>{invoice.paymentMethod}</Table.Cell>
-								<Table.Cell class="text-right"
-									>{invoice.totalAmount}</Table.Cell
-								>
+								<Table.Cell>CB</Table.Cell>
+								<Table.Cell>{issue.title}</Table.Cell>
+								<Table.Cell>{issue.description}</Table.Cell>
+								<Table.Cell>{issue.score}</Table.Cell>
+								<Table.Cell>I</Table.Cell>
 							</Table.Row>
 						{/each}
 					</Table.Body>
@@ -188,17 +123,13 @@
 			<Sheet.Footer>
 				<Button builders={[]} class="outline items-center">
 					<Icon
-						class="color-gray-900 size-8"
+						class="color-gray-900 size-6"
 						src={Plus}
 						theme="solid"
 					/>
 					Add an issue
 				</Button>
-				<Sheet.Close asChild let:builder>
-					<Button builders={[builder]} type="submit"
-						>Save changes</Button
-					>
-				</Sheet.Close>
+				<Sheet.Close asChild let:builder></Sheet.Close>
 			</Sheet.Footer>
 		</Sheet.Content>
 	</Sheet.Root>
