@@ -1,37 +1,49 @@
-import { Matrix, Sprite, Text, Ticker } from 'pixi.js';
+import { Container, Matrix, Sprite, Text, Ticker } from 'pixi.js';
 import '@pixi/layout';
 import { Game } from './Game.svelte';
 
-export class Card extends Sprite {
+export class Card extends Container {
 	text: Text;
 	value: number;
 	public tickerCallback: ((delta: Ticker) => void) | undefined;
 
 	public constructor(i: number) {
-		super(Game.textures['card']);
+		super();
 
-		this.layout = {
-			width: this.texture.width / 2.5,
-			height: this.texture.height / 2.5
-		};
+		this.layout = true
+
+		let texture = Game.textures.Card
+
+		let w = texture.width / 2.5
+		let h = texture.height / 2.5
+
+		let sprite = new Sprite({
+			texture: texture, layout: {
+				width: w,
+				height: h
+			}
+		})
+
+		sprite.anchor.set(0.5);
+		sprite.position.set(0.5);
 
 		this.text = new Text({
 			text: `${i}`,
 			style: {
-				fontSize: 64,
+				fontSize: 24,
 				fill: 'gray',
-				fontFamily: 'righteous'
+				fontFamily: 'Righteous Regular',
+				align:'center'
 			}
 		});
 
 		this.value = i;
 
 		this.text.anchor.set(0.5);
-		this.text.position.set(0.5);
+		this.text.position.set(w/2,h/2);
 
+		this.addChild(sprite);
 		this.addChild(this.text);
-
-		this.anchor.set(0.5);
 	}
 
 	setText(text: string): void {
