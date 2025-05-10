@@ -2,18 +2,18 @@
 	import { onMount } from 'svelte';
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import { ArrowPath, ArrowRightEndOnRectangle } from '@steeze-ui/heroicons';
-	import { Game } from '$lib/socket.svelte';
+	import { Game } from '$lib/Game.svelte';
 	import { goto } from '$app/navigation';
+	import { WebSocketManager } from '$lib/WebsocketManager';
 
 	let canvas: HTMLCanvasElement;
 
 	let loaded = $state(false);
 
 	onMount(async () => {
-		if (Game.socket === undefined) {
+		if (WebSocketManager.socket === undefined) {
 			goto('/');
-		}
-		else {
+		} else {
 			await Game.init(canvas);
 			loaded = true;
 		}
