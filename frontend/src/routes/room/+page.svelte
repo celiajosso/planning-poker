@@ -25,8 +25,6 @@
 	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 
 	import * as Tabs from "$lib/components/ui/tabs/index.js";
-	import * as Card from "$lib/components/ui/card/index.js";
-	import { Content } from "$lib/components/ui/dropdown-menu";
 	import ButtonIcon from "$lib/ButtonIcon.svelte";
 
 	let checked = false;
@@ -49,23 +47,78 @@
 	const issues = [
 		{
 			title: "SCRUM-1",
-			description:
-				"The User story related to SCRUM-1 (As a user, I want to be able to ... so that I can ...)",
+			description: "The User story ...",
 			score: "1",
+			selectedScore: "1",
 		},
 		{
 			title: "SCRUM-2",
-			description:
-				"The User story related to SCRUM-1 (As a user, I want to be able to ... so that I can ...)",
+			description: "The User story ...",
 			score: "7",
+			selectedScore: "7",
 		},
 		{
 			title: "SCRUM-3",
-			description:
-				"The User story related to SCRUM-1 (As a user, I want to be able to ... so that I can ...)",
+			description: "The User story ...",
 			score: "11",
+			selectedScore: "11",
 		},
 	];
+
+	let fileInput;
+
+	function handleButtonClick() {
+		fileInput.click();
+	}
+
+	function handleFileChange(event) {
+		const file = event.target.files[0];
+		if (file && file.type === "text/csv") {
+			console.log("CSV file selected:", file);
+		} else {
+			alert("Please selectt a CSV file.");
+		}
+	}
+
+	// /!\ A CHANGER SELON LE FORMAT CSV DE JIRA !!!
+	function exportToCSV() {
+		const csvRows = [];
+
+		const headers = ["Title", "Description", "Score"];
+		csvRows.push(headers.join(","));
+
+		for (const issue of issues) {
+			const row = [issue.title, issue.description, issue.score];
+			csvRows.push(
+				row.map((value) => `"${value.replace(/"/g, '""')}"`).join(","),
+			);
+		}
+
+		const csvContent = csvRows.join("\n");
+
+		const blob = new Blob([csvContent], {
+			type: "text/csv;charset=utf-8;",
+		});
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		link.setAttribute("href", url);
+		link.setAttribute("download", "issues_export.csv");
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		URL.revokeObjectURL(url);
+	}
+
+	import * as Select from "$lib/components/ui/select/index.js";
+
+	const scores = Array.from({ length: 14 }, (_, i) => ({
+		value: i.toString(),
+		label: i.toString(),
+	}));
+
+	let value = $state("");
+
+	import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
 </script>
 
 <canvas bind:this={canvas}></canvas>
@@ -112,7 +165,7 @@
 							>
 								<Tooltip.Root>
 									<Tooltip.Trigger>
-										<ButtonIcon>
+										<ButtonIcon onclick={handleButtonClick}>
 											<Icon
 												class="color-gray-800 size-5"
 												src={ArrowDownTray}
@@ -121,12 +174,19 @@
 										</ButtonIcon>
 									</Tooltip.Trigger>
 									<Tooltip.Content>
-										<p>Import</p>
+										<p>Import CSV file</p>
 									</Tooltip.Content>
 								</Tooltip.Root>
+								<input
+									bind:this={fileInput}
+									type="file"
+									accept=".csv"
+									onchange={handleFileChange}
+									style="display: none;"
+								/>
 								<Tooltip.Root>
 									<Tooltip.Trigger>
-										<ButtonIcon>
+										<ButtonIcon onclick={exportToCSV}>
 											<Icon
 												class="color-gray-800 size-5"
 												src={ArrowUpTray}
@@ -135,7 +195,7 @@
 										</ButtonIcon>
 									</Tooltip.Trigger>
 									<Tooltip.Content>
-										<p>Export</p>
+										<p>Export CSV file</p>
 									</Tooltip.Content>
 								</Tooltip.Root>
 							</div>
@@ -175,7 +235,34 @@
 												{issue.description}
 											</p></Table.Cell
 										>
-										<Table.Cell>{issue.score}</Table.Cell>
+										<Table.Cell>
+											<!-- {issue.score} -->
+											<Select.Root>
+												<Select.Trigger
+													class="w-[100px]"
+												>
+													<Select.Value
+														placeholder="Score"
+													/>
+												</Select.Trigger>
+												<Select.Content>
+													<Select.Group>
+														<ScrollArea
+															class="h-20"
+														>
+															{#each scores as score}
+																<Select.Item
+																	value={score.value}
+																	label={score.value}
+																	>{score.value}</Select.Item
+																>
+															{/each}
+														</ScrollArea>
+													</Select.Group>
+												</Select.Content>
+												<Select.Input name="score" />
+											</Select.Root>
+										</Table.Cell>
 										<Table.Cell>
 											<div
 												class="flex flex-row items-center h-full gap-2"

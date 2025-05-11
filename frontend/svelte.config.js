@@ -7,7 +7,13 @@ const config = {
 		alias: {
 			"@/*": "./src/lib/*",
     	},
-	}
+	},
+	vitePlugin: {
+		experimental: {
+		inspector: true
+		},
+		include: [/\.svelte$/, /node_modules\/@lucide\/svelte\/.*\.svelte$/]
+  }
 };
 
 export default config;
