@@ -1,5 +1,9 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { goto } from "$app/navigation";
+	import { Game } from "$lib/Game.svelte";
+	import { WebSocketManager } from "$lib/WebsocketManager";
+
 	import { Icon } from "@steeze-ui/svelte-icon";
 	import {
 		ArrowPath,
@@ -11,21 +15,21 @@
 		Trash,
 		PaperAirplane,
 		PencilSquare,
+		Check,
 	} from "@steeze-ui/heroicons";
-	import { goto } from "$app/navigation";
-	import { Game } from "$lib/Game.svelte";
-	import { WebSocketManager } from "$lib/WebsocketManager";
+
 	import * as Sheet from "$lib/components/ui/sheet/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
-
+	import * as Table from "$lib/components/ui/table/index.js";
 	import { Checkbox } from "$lib/components/ui/checkbox/index.js";
-
 	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
-
 	import * as Tabs from "$lib/components/ui/tabs/index.js";
 	import ButtonIcon from "$lib/ButtonIcon.svelte";
+	import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
+	import * as Dialog from "$lib/components/ui/dialog/index.js";
+	import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
 
 	let checked = false;
 
@@ -42,26 +46,21 @@
 		}
 	});
 
-	import * as Table from "$lib/components/ui/table/index.js";
-
 	const issues = [
 		{
 			title: "SCRUM-1",
 			description: "The User story ...",
 			score: "1",
-			selectedScore: "1",
 		},
 		{
 			title: "SCRUM-2",
 			description: "The User story ...",
 			score: "7",
-			selectedScore: "7",
 		},
 		{
 			title: "SCRUM-3",
 			description: "The User story ...",
 			score: "11",
-			selectedScore: "11",
 		},
 	];
 
@@ -117,14 +116,24 @@
 	}));
 
 	let value = $state("");
-
-	import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
 </script>
 
 <canvas bind:this={canvas}></canvas>
 {#if loaded}
+	<div class="flex items-center justify-center">
+		<button onclick={() => Game.restart()}>
+			<Icon class="color-gray-800 size-8" src={ArrowPath} theme="solid" />
+		</button>
+		<button onclick={() => Game.quitRoom()}>
+			<Icon
+				class="color-gray-800 size-8"
+				src={ArrowRightEndOnRectangle}
+				theme="solid"
+			/>
+		</button>
+	</div>
 	<Sheet.Root>
-		<Sheet.Trigger class="absolute top-5 right-5">
+		<Sheet.Trigger class="absolute top-5 right-5 color-gray-700">
 			<ButtonIcon>
 				<Icon
 					class="color-gray-800 size-6"
@@ -144,7 +153,7 @@
 					>
 					<Tabs.Trigger
 						class="font-semibold  bg-white mr-1 flex-1"
-						value="profile">Profile</Tabs.Trigger
+						value="profile-settings">Profile Settings</Tabs.Trigger
 					>
 					<Tabs.Trigger
 						class="font-semibold  bg-white flex-1"
@@ -152,7 +161,9 @@
 					>
 				</Tabs.List>
 				<Tabs.Content value="issues">
-					<div class="grid gap-2 p-5 my-5 border rounded-lg">
+					<div
+						class="grid gap-2 p-5 my-5 border border-gray-300 rounded-lg"
+					>
 						<div class="flex flex-row justify-between items-center">
 							<div>
 								<p class="font-bold text-xl">Issues</p>
@@ -236,7 +247,6 @@
 											</p></Table.Cell
 										>
 										<Table.Cell>
-											<!-- {issue.score} -->
 											<Select.Root>
 												<Select.Trigger
 													class="w-[100px]"
@@ -267,34 +277,173 @@
 											<div
 												class="flex flex-row items-center h-full gap-2"
 											>
-												<Tooltip.Root>
-													<Tooltip.Trigger>
-														<ButtonIcon>
-															<Icon
-																class="color-gray-800 size-5"
-																src={Trash}
-																theme="outline"
-															/>
-														</ButtonIcon>
-													</Tooltip.Trigger>
-													<Tooltip.Content>
-														<p>Delete</p>
-													</Tooltip.Content>
-												</Tooltip.Root>
-												<Tooltip.Root>
-													<Tooltip.Trigger>
-														<ButtonIcon>
-															<Icon
-																class="color-gray-800 size-5"
-																src={PencilSquare}
-																theme="outline"
-															/>
-														</ButtonIcon>
-													</Tooltip.Trigger>
-													<Tooltip.Content>
-														<p>Modify</p>
-													</Tooltip.Content>
-												</Tooltip.Root>
+												<AlertDialog.Root>
+													<AlertDialog.Trigger
+														><Tooltip.Root>
+															<AlertDialog.Trigger
+																asChild
+															>
+																<Tooltip.Root>
+																	<Tooltip.Trigger
+																	>
+																		<ButtonIcon
+																		>
+																			<Icon
+																				class="color-gray-800 size-5"
+																				src={Trash}
+																				theme="outline"
+																			/>
+																		</ButtonIcon>
+																	</Tooltip.Trigger>
+																	<Tooltip.Content
+																	>
+																		<p>
+																			Delete
+																		</p>
+																	</Tooltip.Content>
+																</Tooltip.Root>
+															</AlertDialog.Trigger>
+
+															<Tooltip.Content>
+																<p>Delete</p>
+															</Tooltip.Content>
+														</Tooltip.Root></AlertDialog.Trigger
+													>
+													<AlertDialog.Content>
+														<AlertDialog.Header>
+															<AlertDialog.Title
+																>Are you sure?</AlertDialog.Title
+															>
+															<AlertDialog.Description
+															>
+																This action
+																cannot be
+																undone. This
+																will permanently
+																delete your
+																issue.
+															</AlertDialog.Description>
+														</AlertDialog.Header>
+														<AlertDialog.Footer>
+															<AlertDialog.Cancel
+																>Cancel</AlertDialog.Cancel
+															>
+															<AlertDialog.Action
+																>Continue</AlertDialog.Action
+															>
+														</AlertDialog.Footer>
+													</AlertDialog.Content>
+												</AlertDialog.Root>
+												<Dialog.Root>
+													<Dialog.Trigger>
+														<Tooltip.Root>
+															<Tooltip.Trigger>
+																<ButtonIcon>
+																	<Icon
+																		class="color-gray-800 size-5"
+																		src={PencilSquare}
+																		theme="outline"
+																	/>
+																</ButtonIcon>
+															</Tooltip.Trigger>
+															<Tooltip.Content>
+																<p>Modify</p>
+															</Tooltip.Content>
+														</Tooltip.Root>
+													</Dialog.Trigger>
+													<Dialog.Content
+														class="sm:max-w-[425px]"
+													>
+														<Dialog.Header>
+															<Dialog.Title
+																>Edit issue</Dialog.Title
+															>
+															<Dialog.Description>
+																Make changes to
+																your issue here.
+																Click save when
+																you're done.
+															</Dialog.Description>
+														</Dialog.Header>
+														<div
+															class="grid gap-4 py-4"
+														>
+															<div
+																class="grid grid-cols-4 items-center gap-4"
+															>
+																<Label
+																	for="name"
+																	class="text-right"
+																	>Title</Label
+																>
+																<Input
+																	id="name"
+																	value={issue.title}
+																	class="col-span-3"
+																/>
+															</div>
+															<div
+																class="grid grid-cols-4 items-center gap-4"
+															>
+																<Label
+																	for="issue-title"
+																	class="text-right"
+																	>Description</Label
+																>
+																<Input
+																	id="username"
+																	value={issue.description}
+																	class="col-span-3"
+																/>
+															</div>
+															<div
+																class="grid grid-cols-4 items-center gap-4"
+															>
+																<Label
+																	for="issue-description"
+																	class="text-right"
+																	>Score</Label
+																>
+																<Select.Root>
+																	<Select.Trigger
+																		class="w-[100px]"
+																	>
+																		<Select.Value
+																			placeholder="Score"
+																		/>
+																	</Select.Trigger>
+																	<Select.Content
+																	>
+																		<Select.Group
+																		>
+																			<ScrollArea
+																				class="h-20"
+																			>
+																				{#each scores as score}
+																					<Select.Item
+																						value={score.value}
+																						label={score.value}
+																						>{score.value}</Select.Item
+																					>
+																				{/each}
+																			</ScrollArea>
+																		</Select.Group>
+																	</Select.Content>
+																	<Select.Input
+																		name="score"
+																	/>
+																</Select.Root>
+															</div>
+														</div>
+														<Dialog.Footer>
+															<Button
+																type="submit"
+																>Save changes</Button
+															>
+														</Dialog.Footer>
+													</Dialog.Content>
+												</Dialog.Root>
+
 												<Tooltip.Root>
 													<Tooltip.Trigger>
 														<ButtonIcon>
@@ -316,23 +465,103 @@
 							</Table.Body>
 						</Table.Root>
 						<div class="flex justify-center w-full">
-							<Button
-								builders={[]}
-								class="outline flex flex-row gap-1 p-4 mx-auto m-2"
-							>
-								<Icon
-									class="color-gray-800 size-5"
-									src={Plus}
-									theme="solid"
-								/>
-								<div>Add an issue</div>
-							</Button>
+							<Dialog.Root>
+								<Dialog.Trigger>
+									<Button
+										builders={[]}
+										class="outline flex flex-row gap-1 p-4 mx-auto m-2"
+									>
+										<Icon
+											class="color-gray-800 size-5"
+											src={Plus}
+											theme="solid"
+										/>
+										<div>Add an issue</div>
+									</Button>
+								</Dialog.Trigger>
+								<Dialog.Content class="sm:max-w-[425px]">
+									<Dialog.Header>
+										<Dialog.Title>Add an issue</Dialog.Title
+										>
+										<Dialog.Description>
+											Add an issue here. Click save when
+											you're done.
+										</Dialog.Description>
+									</Dialog.Header>
+									<div class="grid gap-4 py-4">
+										<div
+											class="grid grid-cols-4 items-center gap-4"
+										>
+											<Label for="name" class="text-right"
+												>Title</Label
+											>
+											<Input
+												id="name"
+												class="col-span-3"
+											/>
+										</div>
+										<div
+											class="grid grid-cols-4 items-center gap-4"
+										>
+											<Label
+												for="issue-title"
+												class="text-right"
+												>Description</Label
+											>
+											<Input
+												id="username"
+												class="col-span-3"
+											/>
+										</div>
+										<div
+											class="grid grid-cols-4 items-center gap-4"
+										>
+											<Label
+												for="issue-description"
+												class="text-right">Score</Label
+											>
+											<Select.Root>
+												<Select.Trigger
+													class="w-[100px]"
+												>
+													<Select.Value
+														placeholder="Score"
+													/>
+												</Select.Trigger>
+												<Select.Content>
+													<Select.Group>
+														<ScrollArea
+															class="h-20"
+														>
+															{#each scores as score}
+																<Select.Item
+																	value={score.value}
+																	label={score.value}
+																	>{score.value}</Select.Item
+																>
+															{/each}
+														</ScrollArea>
+													</Select.Group>
+												</Select.Content>
+												<Select.Input name="score" />
+											</Select.Root>
+										</div>
+									</div>
+									<Dialog.Footer>
+										<Button type="submit"
+											>Save changes</Button
+										>
+									</Dialog.Footer>
+								</Dialog.Content>
+							</Dialog.Root>
 						</div>
 					</div>
 				</Tabs.Content>
 
 				<Tabs.Content value="room-settings">
-					<div class="grid gap-2 p-5 my-5 border rounded-lg">
+					<div
+						class="grid gap-2 p-5 my-5 border border-gray-300 rounded-lg"
+					>
 						<div class="flex gap-4 flex-col">
 							<div
 								class="flex flex-row justify-between items-center"
@@ -346,33 +575,123 @@
 									</p>
 								</div>
 							</div>
-							<input
-								bind:value={Game.user.username}
-								type="text"
-							/>
-							<input bind:value={Game.room.id} type="text" />
+							<div class="flex gap-4 items-center">
+								<Label for="name"
+									><p class="whitespace-nowrap">
+										Room Id
+									</p></Label
+								>
+								<Input
+									id="name"
+									bind:value={Game.room.id}
+									type="text"
+								/>
+							</div>
 						</div>
-					</div>
-				</Tabs.Content>
-				<Tabs.Content value="profile"
-					><div class="flex items-center justify-center">
-						<button onclick={() => Game.restart()}>
-							<Icon
-								class="color-gray-800 size-8"
-								src={ArrowPath}
-								theme="solid"
-							/>
-						</button>
-						<button onclick={() => Game.quitRoom()}>
-							<Icon
-								class="color-gray-800 size-8"
-								src={ArrowRightEndOnRectangle}
-								theme="solid"
-							/>
-						</button>
+						<div class="flex justify-center w-full">
+							<Button
+								builders={[]}
+								class="outline flex flex-row gap-1 p-4 mx-auto m-2"
+							>
+								<Icon
+									class="color-gray-800 size-5"
+									src={Check}
+									theme="solid"
+								/>
+								<div>Save</div>
+							</Button>
+						</div>
+					</div></Tabs.Content
+				>
+
+				<Tabs.Content value="profile-settings"
+					><div
+						class="grid gap-2 p-5 my-5 border border-gray-300 rounded-lg"
+					>
+						<div class="flex gap-4 flex-col">
+							<div
+								class="flex flex-row justify-between items-center"
+							>
+								<div>
+									<p class="font-bold text-xl">
+										Profile Settings
+									</p>
+									<p class="text-sm">
+										Make changes to your Profile Settings.
+									</p>
+								</div>
+							</div>
+
+							<div class="flex gap-4 items-center">
+								<Label for="name"
+									><p class="whitespace-nowrap">
+										Username
+									</p></Label
+								>
+								<Input
+									id="name"
+									bind:value={Game.user.username}
+									type="text"
+								/>
+							</div>
+						</div>
+						<div class="flex justify-center w-full">
+							<Button
+								builders={[]}
+								class="outline flex flex-row gap-1 p-4 mx-auto m-2"
+							>
+								<Icon
+									class="color-gray-800 size-5"
+									src={Check}
+									theme="solid"
+								/>
+								<div>Save</div>
+							</Button>
+						</div>
 					</div></Tabs.Content
 				>
 			</Tabs.Root>
 		</Sheet.Content>
 	</Sheet.Root>
+	<div
+		class="absolute left-0 bottom-4 flex justify-center items-center w-full"
+	>
+		<div
+			class="bg-white rounded-xl flex px-4 py-2 gap-4 flex-col border-2 border-gray-300"
+		>
+			<div
+				class="flex items-center gap-4 justify-center text-gray-700 mt-1"
+			>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						<button onclick={() => Game.restart()}>
+							<Icon
+								class="color-gray-700 size-6"
+								src={ArrowPath}
+								theme="solid"
+							/>
+						</button>
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<p>Reset animation</p>
+					</Tooltip.Content>
+				</Tooltip.Root>
+
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						<button onclick={() => Game.quitRoom()}>
+							<Icon
+								class="color-gray-800 size-6"
+								src={ArrowRightEndOnRectangle}
+								theme="solid"
+							/>
+						</button>
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<p>Exit Room</p>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</div>
+		</div>
+	</div>
 {/if}

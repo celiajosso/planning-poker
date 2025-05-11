@@ -1,12 +1,13 @@
 <script lang="ts">
-	import Button from "$lib/button.svelte";
-
 	import { goto } from "$app/navigation";
 	import { Game } from "$lib/Game.svelte";
 	import randomName from "@scaleway/random-name";
 	import { RoomDTO } from "$lib/RoomDTO";
 	import { UserDTO } from "$lib/UserDTO";
 	import { WebSocketManager } from "$lib/WebsocketManager";
+
+	import { Input } from "$lib/components/ui/input/index.js";
+	import { Button } from "$lib/components/ui/button/index.js";
 
 	let roomName = $state("");
 	let roomId = $state("");
@@ -34,12 +35,10 @@
 	<p class="text-lg my-4">
 		Collaborate and estimate tasks efficiently with your team.
 	</p>
-	<div
-		class="flex gap-8 p-8 rounded-2xl bg-main-900 border-1 border-main-900"
-	>
+	<div class="flex gap-8 p-8 rounded-2xl bg-main-900 border border-gray-400">
 		<form class="flex-1" onsubmit={create}>
 			<h2 class="text-center text-xl mb-8">Create a room</h2>
-			<input
+			<Input
 				placeholder="Pseudonym"
 				name="pseudonym"
 				bind:value={userName}
@@ -48,17 +47,17 @@
 			/>
 			<Button type="submit">Create</Button>
 		</form>
-		<div class="border-1 border-main-800"></div>
+		<div class="border border-gray-400"></div>
 		<form class="flex-1" onsubmit={join}>
 			<h2 class="text-center text-xl mb-8">Join a room</h2>
-			<input
+			<Input
 				placeholder="Pseudonym"
 				required
 				bind:value={userName}
 				name="pseudonym"
 				class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
 			/>
-			<input
+			<Input
 				placeholder="RoomId"
 				bind:value={roomId}
 				required
