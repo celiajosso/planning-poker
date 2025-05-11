@@ -1,30 +1,15 @@
 <script>
-
-	import Button from "$lib/button.svelte";
-
+    import { Button } from "$lib/components/ui/button";
 </script>
 
-<style>
-
-   
-
-
-
-    .team ul {
-        list-style: none;
-        padding: 0;
-    }
-    .team li {
-        font-size: 1.2rem;
-        margin: 0.5rem 0;
-    }
-</style>
-
-<div class="w-dvw p-2 text-[#333] flex flex-col h-dvh items-center justify-center bg-[#f4f4f9]">
+<div
+    class="w-dvw p-2 text-[#333] flex flex-col h-dvh items-center justify-center bg-[#f4f4f9]"
+>
     <h1 class="text-4xl font-bold">About Planning Poker</h1>
     <p class="my-4 text-justify max-w-lg">
-        Planning Poker is a collaborative tool designed to help agile teams estimate tasks efficiently. 
-        It fosters better communication, encourages team participation, and ensures accurate task estimation.
+        Planning Poker is a collaborative tool designed to help agile teams
+        estimate tasks efficiently. It fosters better communication, encourages
+        team participation, and ensures accurate task estimation.
     </p>
     <div>
         <h2 class="text-xl font-semibold text-center">Our Team</h2>

@@ -15,7 +15,7 @@ export class Player extends Container {
 		const text = new Text({
 			text: name,
 			style: {
-				fill: 'white',
+				fill: 'gray',
 				fontFamily: 'Righteous Regular',
 				fontSize: 16,
 				align: 'center'
