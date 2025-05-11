@@ -118,20 +118,8 @@
 	let value = $state("");
 </script>
 
-<canvas bind:this={canvas}></canvas>
+<canvas bind:this={canvas} class="h-dvh w-dvw"></canvas>
 {#if loaded}
-	<div class="flex items-center justify-center">
-		<button onclick={() => Game.restart()}>
-			<Icon class="color-gray-800 size-8" src={ArrowPath} theme="solid" />
-		</button>
-		<button onclick={() => Game.quitRoom()}>
-			<Icon
-				class="color-gray-800 size-8"
-				src={ArrowRightEndOnRectangle}
-				theme="solid"
-			/>
-		</button>
-	</div>
 	<Sheet.Root>
 		<Sheet.Trigger class="absolute top-5 right-5 color-gray-700">
 			<ButtonIcon>
