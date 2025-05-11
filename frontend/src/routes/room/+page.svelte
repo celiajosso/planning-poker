@@ -16,6 +16,8 @@
 		PaperAirplane,
 		PencilSquare,
 		Check,
+		Share,
+		Square2Stack,
 	} from "@steeze-ui/heroicons";
 
 	import * as Sheet from "$lib/components/ui/sheet/index.js";
@@ -30,6 +32,7 @@
 	import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
 	import * as Dialog from "$lib/components/ui/dialog/index.js";
 	import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
+	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 
 	let checked = false;
 
@@ -116,6 +119,28 @@
 	}));
 
 	let value = $state("");
+
+	function copyRoomIdClipboard() {
+		navigator.clipboard.writeText(Game.room.id).then(
+			function () {
+				console.log("Async: Copying to clipboard was successful!");
+			},
+			function (err) {
+				console.error("Async: Could not copy text: ", err);
+			},
+		);
+	}
+
+	// function copyRoomLinkClipboard() {
+	// 	navigator.clipboard.writeText(Game.room.link).then(
+	// 		function () {
+	// 			console.log("Async: Copying to clipboard was successful!");
+	// 		},
+	// 		function (err) {
+	// 			console.error("Async: Could not copy text: ", err);
+	// 		},
+	// 	);
+	// }
 </script>
 
 <canvas bind:this={canvas} class="h-dvh w-dvw"></canvas>
@@ -142,10 +167,6 @@
 					<Tabs.Trigger
 						class="font-semibold  bg-white mr-1 flex-1"
 						value="profile-settings">Profile Settings</Tabs.Trigger
-					>
-					<Tabs.Trigger
-						class="font-semibold  bg-white flex-1"
-						value="room-settings">Room Settings</Tabs.Trigger
 					>
 				</Tabs.List>
 				<Tabs.Content value="issues">
@@ -546,52 +567,6 @@
 					</div>
 				</Tabs.Content>
 
-				<Tabs.Content value="room-settings">
-					<div
-						class="grid gap-2 p-5 my-5 border border-gray-300 rounded-lg"
-					>
-						<div class="flex gap-4 flex-col">
-							<div
-								class="flex flex-row justify-between items-center"
-							>
-								<div>
-									<p class="font-bold text-xl">
-										Room Settings
-									</p>
-									<p class="text-sm">
-										Make changes to your Room Settings.
-									</p>
-								</div>
-							</div>
-							<div class="flex gap-4 items-center">
-								<Label for="name"
-									><p class="whitespace-nowrap">
-										Room Id
-									</p></Label
-								>
-								<Input
-									id="name"
-									bind:value={Game.room.id}
-									type="text"
-								/>
-							</div>
-						</div>
-						<div class="flex justify-center w-full">
-							<Button
-								builders={[]}
-								class="outline flex flex-row gap-1 p-4 mx-auto m-2"
-							>
-								<Icon
-									class="color-gray-800 size-5"
-									src={Check}
-									theme="solid"
-								/>
-								<div>Save</div>
-							</Button>
-						</div>
-					</div></Tabs.Content
-				>
-
 				<Tabs.Content value="profile-settings"
 					><div
 						class="grid gap-2 p-5 my-5 border border-gray-300 rounded-lg"
@@ -652,13 +627,13 @@
 			>
 				<Tooltip.Root>
 					<Tooltip.Trigger>
-						<button onclick={() => Game.restart()}>
+						<ButtonIcon onclick={() => Game.restart()}>
 							<Icon
 								class="color-gray-700 size-6"
 								src={ArrowPath}
 								theme="solid"
 							/>
-						</button>
+						</ButtonIcon>
 					</Tooltip.Trigger>
 					<Tooltip.Content>
 						<p>Reset animation</p>
@@ -667,18 +642,67 @@
 
 				<Tooltip.Root>
 					<Tooltip.Trigger>
-						<button onclick={() => Game.quitRoom()}>
+						<ButtonIcon onclick={() => Game.quitRoom()}>
 							<Icon
 								class="color-gray-800 size-6"
 								src={ArrowRightEndOnRectangle}
 								theme="solid"
 							/>
-						</button>
+						</ButtonIcon>
 					</Tooltip.Trigger>
 					<Tooltip.Content>
 						<p>Exit Room</p>
 					</Tooltip.Content>
 				</Tooltip.Root>
+
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger>
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								<ButtonIcon
+									
+								>
+									<Icon
+										class="color-gray-800 size-6"
+										src={Share}
+										theme="outline"
+									/>
+								</ButtonIcon>
+							</Tooltip.Trigger>
+							<Tooltip.Content>
+								<p>Share Room</p>
+							</Tooltip.Content>
+						</Tooltip.Root>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content class="w-40">
+						<DropdownMenu.Label>Share Room</DropdownMenu.Label>
+						<DropdownMenu.Separator />
+						<DropdownMenu.Group>
+							<DropdownMenu.Item
+								onclick={() => copyRoomIdClipboard()}
+							>
+								Share Id
+								<DropdownMenu.Shortcut
+									><Icon
+										class="color-gray-800 size-4"
+										src={Square2Stack}
+										theme="outline"
+									/></DropdownMenu.Shortcut
+								>
+							</DropdownMenu.Item>
+							<DropdownMenu.Item>
+								Share link
+								<DropdownMenu.Shortcut
+									><Icon
+										class="color-gray-800 size-4"
+										src={Square2Stack}
+										theme="outline"
+									/></DropdownMenu.Shortcut
+								>
+							</DropdownMenu.Item>
+						</DropdownMenu.Group>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
 			</div>
 		</div>
 	</div>
