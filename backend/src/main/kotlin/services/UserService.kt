@@ -14,7 +14,7 @@ class UserService() {
 
         fun create(session: DefaultWebSocketServerSession, reqUser: UserDTO, roomId: String, role: Role): User {
             val id = UUID.randomUUID().toString()
-            val user = User(id, session, reqUser.username, role, roomId, reqUser.card)
+            val user = User(id, session, reqUser.username, role, roomId, -1)
             usersById.put(id, user)
             usersBySession.put(session, user)
             return user
