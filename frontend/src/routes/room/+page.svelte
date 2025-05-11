@@ -224,15 +224,14 @@
 						<Table.Root>
 							<Table.Header>
 								<Table.Row>
-									<Table.Head class="text-center">
+									<!-- <Table.Head class="text-center">
 										<Checkbox
 											id="terms"
 											bind:checked
 											aria-labelledby="terms-label"
 											class="mx-auto"
 										/>
-									</Table.Head>
-
+									</Table.Head> -->
 									<Table.Head>Title</Table.Head>
 									<Table.Head>Description</Table.Head>
 									<Table.Head>Score</Table.Head>
@@ -242,13 +241,13 @@
 							<Table.Body>
 								{#each issues as issue, i (i)}
 									<Table.Row>
-										<Table.Cell
-											><Checkbox
+										<!--<Table.Cell>
+											 <Checkbox
 												id="terms"
 												bind:checked
 												aria-labelledby="terms-label"
-											/></Table.Cell
-										>
+											/> 
+										</Table.Cell>-->
 										<Table.Cell>{issue.title}</Table.Cell>
 										<Table.Cell>
 											<p class="truncate max-w-96">
@@ -642,7 +641,12 @@
 
 				<Tooltip.Root>
 					<Tooltip.Trigger>
-						<ButtonIcon onclick={() => Game.quitRoom()}>
+						<ButtonIcon
+							onclick={() => {
+								Game.quitRoom();
+								goto("/");
+							}}
+						>
 							<Icon
 								class="color-gray-800 size-6"
 								src={ArrowRightEndOnRectangle}
