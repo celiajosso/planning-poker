@@ -119,6 +119,5 @@
 			</form></Tabs.Content
 		>
 	</Tabs.Root>
-
 	<a href="/about" class="text-sm">Learn More</a>
 </div>

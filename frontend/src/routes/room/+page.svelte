@@ -232,7 +232,6 @@
 											class="mx-auto"
 										/>
 									</Table.Head> -->
-
 									<Table.Head>Title</Table.Head>
 									<Table.Head>Description</Table.Head>
 									<Table.Head>Score</Table.Head>
