@@ -13,7 +13,7 @@ WORKDIR /app
 
 RUN jlink \
     --module-path "$JAVA_HOME/jmods" \
-    --add-modules java.base,java.logging,java.sql,java.naming,java.desktop,java.security.jgss,java.net.http \
+    --add-modules java.base,java.xml,java.naming,java.net.http \
     --verbose \
     --strip-debug \
     --compress 2 \
