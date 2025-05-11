@@ -1,12 +1,13 @@
 // import randomName from '@scaleway/random-name';
 import { DeckContainer } from './DeckContainer';
 import { GameContainer } from './GameContainer';
-import { Application, Assets, Container, Texture } from 'pixi.js';
+import { Application, Assets, Container, Texture, Text } from 'pixi.js';
 import '@pixi/layout';
 import { tw } from '@pixi/layout/tailwind';
-import type { RoomDTO } from './RoomDTO';
+import { RoomDTO } from './RoomDTO';
 import type { UserDTO } from './UserDTO';
 import { WebSocketManager } from './WebsocketManager';
+import { StoryDTO } from './StoryDTO';
 
 export namespace Game {
 	export let app: Application;
@@ -17,6 +18,7 @@ export namespace Game {
 	export let user: UserDTO;
 	export let room: RoomDTO;
 	export let gameContainer: GameContainer;
+	export let deckContainer: DeckContainer;
 
 	let player_cache: UserDTO[] = [];
 
@@ -34,18 +36,32 @@ export namespace Game {
 
 	export async function init(canvas: HTMLCanvasElement) {
 		app = new Application();
-		// put the card asset in the cache
-		textures['card'] = await Assets.load({
-			src: `/cards/Squircle.png`,
-			data: {
-				parseAsGraphicsContext: true
-			}
-		});
 
 		// Initialize the application.
 		await app.init({ resizeTo: window, canvas: canvas, background: '#e2e8f0' });
 
 		app.stage.layout = { width: app.screen.width, height: app.screen.height };
+
+		// Load assets
+
+
+		let manifest = {
+			bundles: [
+				{
+					name: "fonts",
+					assets: [{ alias: "Righteous", src: '/Righteous-Regular.ttf' }]
+				},
+				{
+					name: "textures",
+					assets: [{ alias: "Card", src: '/cards/Squircle.png', data: { parseAsGraphicsContext: true } }]
+				}
+			]
+		}
+
+		Assets.init({ manifest });
+
+		await Assets.loadBundle('fonts')
+		textures = await Assets.loadBundle('textures')
 
 		// GlobalContainer
 
@@ -61,7 +77,7 @@ export namespace Game {
 
 		// initialize the deck
 
-		const containerDeck = new DeckContainer(
+		deckContainer = new DeckContainer(
 			{
 				layout: tw`flex flex-row items-center justify-center w-full gap-4 flex-wrap`
 			},
@@ -77,8 +93,11 @@ export namespace Game {
 
 		resizeObserver.observe(app.canvas);
 
+		gameContainer.alpha = 0
+		deckContainer.visible = true
+		
 		globalContainer.addChild(gameContainer);
-		globalContainer.addChild(containerDeck);
+		globalContainer.addChild(deckContainer);
 		app.stage.addChild(globalContainer);
 
 		for (let player of player_cache) {
@@ -89,9 +108,10 @@ export namespace Game {
 	}
 
 	export function restart() {
-		validate(-1);
-		hasPlayed = false;
-		// gameContainer!.updateHidden(hasPlayed);
+		user.card = -1;
+		WebSocketManager.sendMessage('UserUpdate', user, null, null);
+		gameContainer.alpha = 0
+		deckContainer.visible = true
 	}
 
 	export function createRoom(user: UserDTO, room: RoomDTO) {
@@ -111,8 +131,8 @@ export namespace Game {
 	}
 
 	export function validate(selected: number) {
-		hasPlayed = true;
-		// gameContainer!.updateHidden(hasPlayed);
+		gameContainer.alpha = 1
+		deckContainer.visible = false
 		user.card = selected;
 		WebSocketManager.sendMessage('UserUpdate', user, null, null);
 	}
@@ -123,5 +143,22 @@ export namespace Game {
 
 	export function updatePlayer(user: UserDTO) {
 		Game.gameContainer.players[user.id].setCard(user.card);
+	}
+
+
+	export function createStory() {
+		WebSocketManager.sendMessage('StoryCreate', null, null, new StoryDTO("","title","description","finalEstimate",room.id));
+	}
+	export function updateStory() {
+		WebSocketManager.sendMessage('StoryUpdate', null, null, new StoryDTO("","title","description","finalEstimate",room.id));
+	}
+	export function selectStory(id:string) {
+		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO(id,"","","",room.id));
+	}
+	export function unselectStory() {
+		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO("","","","",room.id));
+	}
+	export function deleteStory(id:string) {
+		WebSocketManager.sendMessage('StoryDelete', null, null, new StoryDTO(id,"","","",room.id));
 	}
 }

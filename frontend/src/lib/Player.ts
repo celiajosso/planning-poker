@@ -16,7 +16,7 @@ export class Player extends Container {
 			text: name,
 			style: {
 				fill: 'gray',
-				fontFamily: 'righteous',
+				fontFamily: 'Righteous Regular',
 				fontSize: 16,
 				align: 'center'
 			},
@@ -26,13 +26,17 @@ export class Player extends Container {
 			}
 		});
 
-		this.card = new Card(card);
+		this.card = new Card(card == -1 ? '' : card.toString() );
 		this.addChild(this.card);
 		this.addChild(text);
 	}
 
 	setCard(card: number) {
-		this.card.value = card;
-		this.card.animate(card);
+		if (card == -1){
+			this.card.select('');
+		}
+		else {
+			this.card.select(card.toString());
+		}
 	}
 }

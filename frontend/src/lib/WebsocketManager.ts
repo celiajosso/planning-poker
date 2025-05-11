@@ -8,7 +8,9 @@ export namespace WebSocketManager {
 	export let socket: WebSocket;
 
 	export function createSocket() {
-		socket = new WebSocket('ws://localhost:8080/poker');
+		const currentHost = window.location.host;
+		const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+		socket = new WebSocket(`${wsProtocol}//${import.meta.env.PROD ? currentHost : "localhost:8080"}/poker`);
 
 		socket.onmessage = handler;
 
@@ -38,6 +40,7 @@ export namespace WebSocketManager {
 				Game.addPlayer(serverMessage.user!);
 				break;
 			case 'RoomUpdated':
+				Game.room = serverMessage.room!;
 				break;
 		}
 	}

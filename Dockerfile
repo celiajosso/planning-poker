@@ -6,7 +6,7 @@ COPY ./frontend/package*.json ./
 RUN npm install
 
 COPY ./frontend .
-RUN npm run build
+RUN npm run buildprod
 
 FROM gradle:alpine AS gradle
 WORKDIR /app
@@ -18,7 +18,7 @@ RUN gradle dependencies
 COPY ./backend .
 RUN gradle build
 
-FROM openjdk:25-slim AS openjdk
+FROM eclipse-temurin:24-jre-noble AS jre
 WORKDIR /app
 
 COPY --from=node /app/build "/app/dist"
