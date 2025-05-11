@@ -165,7 +165,7 @@
 						value="issues">Issues</Tabs.Trigger
 					>
 					<Tabs.Trigger
-						class="font-semibold  bg-white mr-1 flex-1"
+						class="font-semibold bg-white flex-1"
 						value="profile-settings">Profile Settings</Tabs.Trigger
 					>
 				</Tabs.List>
@@ -659,9 +659,7 @@
 					<DropdownMenu.Trigger>
 						<Tooltip.Root>
 							<Tooltip.Trigger>
-								<ButtonIcon
-									
-								>
+								<ButtonIcon>
 									<Icon
 										class="color-gray-800 size-6"
 										src={Share}
