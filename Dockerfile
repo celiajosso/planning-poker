@@ -11,6 +11,16 @@ RUN npm run buildprod
 FROM gradle:alpine AS gradle
 WORKDIR /app
 
+RUN jlink \
+    --module-path "$JAVA_HOME/jmods" \
+    --add-modules java.base,java.logging,java.sql,java.naming,java.desktop,java.security.jgss,java.net.http \
+    --verbose \
+    --strip-debug \
+    --compress 2 \
+    --no-header-files \
+    --no-man-pages \
+    --output /opt/jre-minimal
+
 COPY ./backend/build.gradle.kts ./backend/settings.gradle.kts ./backend/gradle.properties ./
 COPY ./backend/gradle ./gradle
 RUN gradle dependencies
@@ -18,8 +28,13 @@ RUN gradle dependencies
 COPY ./backend .
 RUN gradle build
 
-FROM eclipse-temurin:24-jre-noble AS jre
+FROM alpine:latest AS jre
 WORKDIR /app
+
+COPY --from=gradle /opt/jre-minimal /opt/jre-minimal
+
+ENV JAVA_HOME=/opt/jre-minimal
+ENV PATH="$PATH:$JAVA_HOME/bin"
 
 COPY --from=node /app/build "/app/dist"
 COPY --from=gradle /app/build/libs/backend-all.jar "/app"
