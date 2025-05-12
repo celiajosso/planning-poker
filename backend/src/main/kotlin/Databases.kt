@@ -55,11 +55,6 @@ fun Application.configureDatabases() {
                 if (story != null) call.respond(story)
                 else call.respond(HttpStatusCode.NotFound)
             }
-            // get("/export") {
-            //     val stories = storyService.getAll()
-            //     val csv = exportStoriesToJiraCsv(stories)
-            //     call.respondText(csv, ContentType.Text.CSV)
-            // }            
             post {
                 val story = call.receive<Story>()
                 val id = storyService.create(story)
