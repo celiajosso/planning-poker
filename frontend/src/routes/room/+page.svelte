@@ -170,7 +170,7 @@
 										<ButtonIcon onclick={handleButtonClick}>
 											<Icon
 												class="color-gray-800 size-5"
-												src={ArrowDownTray}
+												src={ArrowUpTray}
 												theme="solid"
 											/>
 										</ButtonIcon>
@@ -191,7 +191,7 @@
 										<ButtonIcon onclick={exportToCSV}>
 											<Icon
 												class="color-gray-800 size-5"
-												src={ArrowUpTray}
+												src={ArrowDownTray}
 												theme="solid"
 											/>
 										</ButtonIcon>
