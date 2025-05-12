@@ -35,6 +35,10 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 
 	let checked = false;
+	let selectedIssue = null;
+
+	let isModifyOpen = $state(false);
+	let isAddOpen = $state(false);
 
 	let canvas: HTMLCanvasElement;
 
@@ -61,13 +65,13 @@
 			score: "7",
 		},
 		{
-			title: "SCRUM-3",
+			title: "SCCRUM-3",
 			description: "The User story ...",
 			score: "11",
 		},
 	];
 
-	let fileInput;
+	let fileInput: HTMLInputElement;
 
 	function handleButtonClick() {
 		fileInput.click();
@@ -121,7 +125,7 @@
 	let value = $state("");
 
 	function copyRoomIdClipboard() {
-		navigator.clipboard.writeText(Game.room.id).then(
+		navigator.clipboard.writeText(Game.storage.room.id).then(
 			function () {
 				console.log("Async: Copying to clipboard was successful!");
 			},
@@ -145,6 +149,12 @@
 
 <canvas bind:this={canvas} class="h-dvh w-dvw"></canvas>
 {#if loaded}
+	<!-- {#if selectedIssue}
+		<div class="p-4 border rounded my-4 bg-gray-100">
+			<h2 class="text-xl font-bold">{selectedIssue.title}</h2>
+			<p>{selectedIssue.description}</p>
+		</div>
+	{/if} -->
 	<Sheet.Root>
 		<Sheet.Trigger class="absolute top-5 right-5 color-gray-700">
 			<ButtonIcon>
@@ -220,11 +230,11 @@
 								</Tooltip.Root>
 							</div>
 						</div>
-
-						<Table.Root>
-							<Table.Header>
-								<Table.Row>
-									<!-- <Table.Head class="text-center">
+						{#if Game.storage.room.stories && Game.storage.room.stories.length != 0}
+							<Table.Root>
+								<Table.Header>
+									<Table.Row>
+										<!-- <Table.Head class="text-center">
 										<Checkbox
 											id="terms"
 											bind:checked
@@ -232,336 +242,280 @@
 											class="mx-auto"
 										/>
 									</Table.Head> -->
-									<Table.Head>Title</Table.Head>
-									<Table.Head>Description</Table.Head>
-									<Table.Head>Score</Table.Head>
-									<Table.Head></Table.Head>
-								</Table.Row>
-							</Table.Header>
-							<Table.Body>
-								{#each issues as issue, i (i)}
-									<Table.Row>
-										<!--<Table.Cell>
+										<Table.Head>Title</Table.Head>
+										<Table.Head>Description</Table.Head>
+										<Table.Head>Score</Table.Head>
+										<Table.Head></Table.Head>
+									</Table.Row>
+								</Table.Header>
+
+								<Table.Body>
+									{#each Game.storage.room.stories as issue}
+										<Table.Row>
+											<!--<Table.Cell>
 											 <Checkbox
 												id="terms"
 												bind:checked
 												aria-labelledby="terms-label"
 											/> 
 										</Table.Cell>-->
-										<Table.Cell>{issue.title}</Table.Cell>
-										<Table.Cell>
-											<p class="truncate max-w-96">
-												{issue.description}
-											</p></Table.Cell
-										>
-										<Table.Cell>
-											<Select.Root>
-												<Select.Trigger
-													class="w-[100px]"
-												>
-													<Select.Value
-														placeholder="Score"
-													/>
-												</Select.Trigger>
-												<Select.Content>
-													<Select.Group>
-														<ScrollArea
-															class="h-20"
-														>
-															{#each scores as score}
-																<Select.Item
-																	value={score.value}
-																	label={score.value}
-																	>{score.value}</Select.Item
-																>
-															{/each}
-														</ScrollArea>
-													</Select.Group>
-												</Select.Content>
-												<Select.Input name="score" />
-											</Select.Root>
-										</Table.Cell>
-										<Table.Cell>
-											<div
-												class="flex flex-row items-center h-full gap-2"
+											<Table.Cell
+												>{issue.title}</Table.Cell
 											>
-												<AlertDialog.Root>
-													<AlertDialog.Trigger
-														><Tooltip.Root>
-															<AlertDialog.Trigger
-																asChild
-															>
-																<Tooltip.Root>
-																	<Tooltip.Trigger
+											<Table.Cell>
+												<p class="truncate max-w-96">
+													{issue.description}
+												</p></Table.Cell
+											>
+											<Table.Cell>
+												<!-- <Select.Root>
+                        <Select.Trigger class="w-[100px]">
+                          <Select.Value placeholder="Score" />
+                        </Select.Trigger>
+                        <Select.Content>
+                          <Select.Group>
+                            <ScrollArea class="h-20">
+                              {#each scores as score}
+                                <Select.Item
+                                  value={score.value}
+                                  label={score.value}>{score.value}</Select.Item
+                                >
+                              {/each}
+                            </ScrollArea>
+                          </Select.Group>
+                        </Select.Content>
+                        <Select.Input name="score" />
+                      </Select.Root> -->
+												{issue.finalEstimate}
+											</Table.Cell>
+											<Table.Cell>
+												<div
+													class="flex flex-row items-center h-full gap-2"
+												>
+													<AlertDialog.Root>
+														<AlertDialog.Trigger
+															><Tooltip.Root>
+																<AlertDialog.Trigger
+																	asChild
+																>
+																	<Tooltip.Root
 																	>
-																		<ButtonIcon
+																		<Tooltip.Trigger
 																		>
-																			<Icon
-																				class="color-gray-800 size-5"
-																				src={Trash}
-																				theme="outline"
-																			/>
-																		</ButtonIcon>
-																	</Tooltip.Trigger>
-																	<Tooltip.Content
-																	>
-																		<p>
-																			Delete
-																		</p>
-																	</Tooltip.Content>
-																</Tooltip.Root>
-															</AlertDialog.Trigger>
-
-															<Tooltip.Content>
-																<p>Delete</p>
-															</Tooltip.Content>
-														</Tooltip.Root></AlertDialog.Trigger
-													>
-													<AlertDialog.Content>
-														<AlertDialog.Header>
-															<AlertDialog.Title
-																>Are you sure?</AlertDialog.Title
-															>
-															<AlertDialog.Description
-															>
-																This action
-																cannot be
-																undone. This
-																will permanently
-																delete your
-																issue.
-															</AlertDialog.Description>
-														</AlertDialog.Header>
-														<AlertDialog.Footer>
-															<AlertDialog.Cancel
-																>Cancel</AlertDialog.Cancel
-															>
-															<AlertDialog.Action
-																>Continue</AlertDialog.Action
-															>
-														</AlertDialog.Footer>
-													</AlertDialog.Content>
-												</AlertDialog.Root>
-												<Dialog.Root>
-													<Dialog.Trigger>
-														<Tooltip.Root>
-															<Tooltip.Trigger>
-																<ButtonIcon>
-																	<Icon
-																		class="color-gray-800 size-5"
-																		src={PencilSquare}
-																		theme="outline"
-																	/>
-																</ButtonIcon>
-															</Tooltip.Trigger>
-															<Tooltip.Content>
-																<p>Modify</p>
-															</Tooltip.Content>
-														</Tooltip.Root>
-													</Dialog.Trigger>
-													<Dialog.Content
-														class="sm:max-w-[425px]"
-													>
-														<Dialog.Header>
-															<Dialog.Title
-																>Edit issue</Dialog.Title
-															>
-															<Dialog.Description>
-																Make changes to
-																your issue here.
-																Click save when
-																you're done.
-															</Dialog.Description>
-														</Dialog.Header>
-														<div
-															class="grid gap-4 py-4"
-														>
-															<div
-																class="grid grid-cols-4 items-center gap-4"
-															>
-																<Label
-																	for="name"
-																	class="text-right"
-																	>Title</Label
-																>
-																<Input
-																	id="name"
-																	value={issue.title}
-																	class="col-span-3"
-																/>
-															</div>
-															<div
-																class="grid grid-cols-4 items-center gap-4"
-															>
-																<Label
-																	for="issue-title"
-																	class="text-right"
-																	>Description</Label
-																>
-																<Input
-																	id="username"
-																	value={issue.description}
-																	class="col-span-3"
-																/>
-															</div>
-															<div
-																class="grid grid-cols-4 items-center gap-4"
-															>
-																<Label
-																	for="issue-description"
-																	class="text-right"
-																	>Score</Label
-																>
-																<Select.Root>
-																	<Select.Trigger
-																		class="w-[100px]"
-																	>
-																		<Select.Value
-																			placeholder="Score"
-																		/>
-																	</Select.Trigger>
-																	<Select.Content
-																	>
-																		<Select.Group
-																		>
-																			<ScrollArea
-																				class="h-20"
+																			<ButtonIcon
 																			>
-																				{#each scores as score}
-																					<Select.Item
-																						value={score.value}
-																						label={score.value}
-																						>{score.value}</Select.Item
-																					>
-																				{/each}
-																			</ScrollArea>
-																		</Select.Group>
-																	</Select.Content>
-																	<Select.Input
-																		name="score"
-																	/>
-																</Select.Root>
-															</div>
-														</div>
-														<Dialog.Footer>
-															<Button
-																type="submit"
-																>Save changes</Button
-															>
-														</Dialog.Footer>
-													</Dialog.Content>
-												</Dialog.Root>
+																				<Icon
+																					class="color-gray-800 size-5"
+																					src={Trash}
+																					theme="outline"
+																				/>
+																			</ButtonIcon>
+																		</Tooltip.Trigger>
+																		<Tooltip.Content
+																		>
+																			<p>
+																				Delete
+																			</p>
+																		</Tooltip.Content>
+																	</Tooltip.Root>
+																</AlertDialog.Trigger>
 
-												<Tooltip.Root>
-													<Tooltip.Trigger>
-														<ButtonIcon>
-															<Icon
-																class="color-gray-800 size-5"
-																src={PaperAirplane}
-																theme="outline"
-															/>
-														</ButtonIcon>
-													</Tooltip.Trigger>
-													<Tooltip.Content>
-														<p>Vote</p>
-													</Tooltip.Content>
-												</Tooltip.Root>
-											</div>
-										</Table.Cell>
-									</Table.Row>
-								{/each}
-							</Table.Body>
-						</Table.Root>
-						<div class="flex justify-center w-full">
-							<Dialog.Root>
-								<Dialog.Trigger>
-									<Button
-										builders={[]}
-										class="outline flex flex-row gap-1 p-4 mx-auto m-2"
-									>
-										<Icon
-											class="color-gray-800 size-5"
-											src={Plus}
-											theme="solid"
-										/>
-										<div>Add an issue</div>
-									</Button>
-								</Dialog.Trigger>
-								<Dialog.Content class="sm:max-w-[425px]">
-									<Dialog.Header>
-										<Dialog.Title>Add an issue</Dialog.Title
-										>
-										<Dialog.Description>
-											Add an issue here. Click save when
-											you're done.
-										</Dialog.Description>
-									</Dialog.Header>
-									<div class="grid gap-4 py-4">
-										<div
-											class="grid grid-cols-4 items-center gap-4"
-										>
-											<Label for="name" class="text-right"
-												>Title</Label
-											>
-											<Input
-												id="name"
-												class="col-span-3"
-											/>
-										</div>
-										<div
-											class="grid grid-cols-4 items-center gap-4"
-										>
-											<Label
-												for="issue-title"
-												class="text-right"
-												>Description</Label
-											>
-											<Input
-												id="username"
-												class="col-span-3"
-											/>
-										</div>
-										<div
-											class="grid grid-cols-4 items-center gap-4"
-										>
-											<Label
-												for="issue-description"
-												class="text-right">Score</Label
-											>
-											<Select.Root>
-												<Select.Trigger
-													class="w-[100px]"
-												>
-													<Select.Value
-														placeholder="Score"
-													/>
-												</Select.Trigger>
-												<Select.Content>
-													<Select.Group>
-														<ScrollArea
-															class="h-20"
-														>
-															{#each scores as score}
-																<Select.Item
-																	value={score.value}
-																	label={score.value}
-																	>{score.value}</Select.Item
+																<Tooltip.Content
 																>
-															{/each}
-														</ScrollArea>
-													</Select.Group>
-												</Select.Content>
-												<Select.Input name="score" />
-											</Select.Root>
-										</div>
-									</div>
-									<Dialog.Footer>
-										<Button type="submit"
-											>Save changes</Button
+																	<p>
+																		Delete
+																	</p>
+																</Tooltip.Content>
+															</Tooltip.Root></AlertDialog.Trigger
+														>
+														<AlertDialog.Content>
+															<AlertDialog.Header>
+																<AlertDialog.Title
+																	>Are you
+																	sure?</AlertDialog.Title
+																>
+																<AlertDialog.Description
+																>
+																	This action
+																	cannot be
+																	undone. This
+																	will
+																	permanently
+																	delete your
+																	issue.
+																</AlertDialog.Description>
+															</AlertDialog.Header>
+															<AlertDialog.Footer>
+																<AlertDialog.Cancel
+																	>Cancel</AlertDialog.Cancel
+																>
+																<AlertDialog.Action
+																	onclick={() =>
+																		Game.deleteStory(
+																			issue.id,
+																		)}
+																	>Continue</AlertDialog.Action
+																>
+															</AlertDialog.Footer>
+														</AlertDialog.Content>
+													</AlertDialog.Root>
+													<Tooltip.Root>
+														<Tooltip.Trigger>
+															<ButtonIcon
+																onclick={() => {
+																	selectedIssue =
+																		issue;
+																	isModifyOpen = true;
+																}}
+															>
+																<Icon
+																	class="color-gray-800 size-5"
+																	src={PencilSquare}
+																	theme="outline"
+																/>
+															</ButtonIcon>
+														</Tooltip.Trigger>
+														<Tooltip.Content>
+															<p>Modify</p>
+														</Tooltip.Content>
+													</Tooltip.Root>
+													<Tooltip.Root>
+														<Tooltip.Trigger>
+															<ButtonIcon
+																onclick={() =>
+																	Game.selectStory(
+																		issue.id,
+																	)}
+															>
+																<Icon
+																	class="color-gray-800 size-5"
+																	src={PaperAirplane}
+																	theme="outline"
+																/>
+															</ButtonIcon>
+														</Tooltip.Trigger>
+														<Tooltip.Content>
+															<p>Vote</p>
+														</Tooltip.Content>
+													</Tooltip.Root>
+												</div>
+											</Table.Cell>
+										</Table.Row>
+									{/each}
+								</Table.Body>
+							</Table.Root>
+						{:else}
+							<p class="text-center w-full text-gray-500">
+								No issue
+							</p>
+						{/if}
+						<div class="flex justify-center w-full">
+							<Dialog.Root bind:open={isAddOpen}>
+								<form
+									onsubmit={(e) => {
+										Game.createStory(e);
+										isAddOpen = false;
+									}}
+								>
+									<Dialog.Trigger>
+										<Button
+											onclick={() => (isAddOpen = true)}
+											class="outline flex flex-row gap-1 p-4 mx-auto m-2"
 										>
-									</Dialog.Footer>
-								</Dialog.Content>
-							</Dialog.Root>
+											<Icon
+												class="color-gray-800 size-5"
+												src={Plus}
+												theme="solid"
+											/>
+											<div>Add an issue</div>
+										</Button>
+									</Dialog.Trigger>
+									<Dialog.Content class="sm:max-w-[425px]">
+										<Dialog.Header>
+											<Dialog.Title
+												>Add an issue</Dialog.Title
+											>
+											<Dialog.Description>
+												Add an issue here. Click save
+												when you're done.
+											</Dialog.Description>
+										</Dialog.Header>
+										<div class="grid gap-4 py-4">
+											<div
+												class="grid grid-cols-4 items-center gap-4"
+											>
+												<Label
+													for="title"
+													class="text-right"
+													>Title</Label
+												>
+												<Input
+													id="title"
+													name="title"
+													class="col-span-3"
+													required
+												/>
+											</div>
+											<div
+												class="grid grid-cols-4 items-center gap-4"
+											>
+												<Label
+													for="description"
+													class="text-right"
+													>Description</Label
+												>
+												<Input
+													id="description"
+													name="description"
+													class="col-span-3"
+													required
+												/>
+											</div>
+											<div
+												class="grid grid-cols-4 items-center gap-4"
+											>
+												<Label
+													for="issue-description"
+													class="text-right"
+													>Score</Label
+												>
+												<Select.Root>
+													<Select.Trigger
+														class="w-[100px]"
+													>
+														<Select.Value
+															placeholder="Score"
+														/>
+													</Select.Trigger>
+													<Select.Content>
+														<Select.Group>
+															<ScrollArea
+																class="h-20"
+															>
+																{#each scores as score}
+																	<Select.Item
+																		value={score.value}
+																		label={score.value}
+																		>{score.value}</Select.Item
+																	>
+																{/each}
+															</ScrollArea>
+														</Select.Group>
+													</Select.Content>
+													<Select.Input
+														name="score"
+													/>
+												</Select.Root>
+											</div>
+										</div>
+										<Dialog.Footer>
+											<Button type="submit"
+												>Save changes</Button
+											>
+										</Dialog.Footer>
+									</Dialog.Content>
+								</form></Dialog.Root
+							>
 						</div>
 					</div>
 				</Tabs.Content>
@@ -592,7 +546,7 @@
 								>
 								<Input
 									id="name"
-									bind:value={Game.user.username}
+									bind:value={Game.storage.user.username}
 									type="text"
 								/>
 							</div>
@@ -707,5 +661,75 @@
 				</DropdownMenu.Root>
 			</div>
 		</div>
+		<Dialog.Root bind:open={isModifyOpen}>
+			<Dialog.Content class="sm:max-w-[425px]">
+				<form
+					onsubmit={(e) => {
+						console.log(e);
+						Game.updateStory(selectedIssue!.id, e);
+						isModifyOpen = false;
+					}}
+				>
+					<Dialog.Header>
+						<Dialog.Title>Edit issue</Dialog.Title>
+						<Dialog.Description>
+							Make changes to your issue here. Click save when
+							you're done.
+						</Dialog.Description>
+					</Dialog.Header>
+					<div class="grid gap-4 py-4">
+						<div class="grid grid-cols-4 items-center gap-4">
+							<Label for="title" class="text-right">Title</Label>
+							<Input
+								name="title"
+								id="title"
+								value={selectedIssue!.title}
+								class="col-span-3"
+								required
+							/>
+						</div>
+						<div class="grid grid-cols-4 items-center gap-4">
+							<Label for="description" class="text-right"
+								>Description</Label
+							>
+							<Input
+								id="description"
+								name="description"
+								value={selectedIssue!.description}
+								class="col-span-3"
+								required
+							/>
+						</div>
+						<div class="grid grid-cols-4 items-center gap-4">
+							<Label for="finalEstimate" class="text-right"
+								>Score</Label
+							>
+							<Select.Root>
+								<Select.Trigger class="w-[100px]">
+									<Select.Value placeholder="Score" />
+								</Select.Trigger>
+								<Select.Content>
+									<Select.Group>
+										<ScrollArea class="h-20">
+											{#each scores as score}
+												<Select.Item
+													value={score.value}
+													label={score.value}
+													>{score.value}</Select.Item
+												>
+											{/each}
+										</ScrollArea>
+									</Select.Group>
+								</Select.Content>
+								<Select.Input name="score" />
+							</Select.Root>
+						</div>
+					</div>
+					<Dialog.Footer>
+						<Button type="submit">Save changes</Button>
+					</Dialog.Footer>
+				</form>
+			</Dialog.Content>
+		</Dialog.Root>
 	</div>
 {/if}
