@@ -182,7 +182,7 @@ export namespace Game {
 	}
 
 	export function updatePlayer(user: UserDTO) {
-		Game.gameContainer.players[user.id].setCard(user.card);
+		Game.gameContainer.updatePlayer(user)
 	}
 
 	export function createStory(event) {
@@ -202,7 +202,7 @@ export namespace Game {
 		});
 	}
 
-	export function createStory2(title:string, description:string, score:string) {
+	export function createStory2(title: string, description: string, score: string) {
 		WebSocketManager.sendMessage("StoryCreate", null, null, {
 			id: "",
 			title: title,

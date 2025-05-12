@@ -1,6 +1,5 @@
-package services
+package com.example.services
 
-import RoomService
 import com.example.models.StoryDTO
 import com.example.models.toRoomDTO
 import io.ktor.server.websocket.*

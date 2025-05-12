@@ -1,6 +1,5 @@
-package services
+package com.example.services
 
-import RoomService
 import com.example.models.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*

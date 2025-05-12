@@ -34,7 +34,7 @@ export class GameContainer extends Container {
     delete this.players[playerInfo.id];
   }
 
-  // updateHidden(bool: boolean): void {
-  // 	this.hidden(bool);
-  // }
+  updatePlayer(user: UserDTO): void {
+	this.players[user.id].update(user);
+}
 }
