@@ -5,6 +5,7 @@ import { Application, Assets, Container, Texture } from "pixi.js";
 import "@pixi/layout";
 import { tw } from "@pixi/layout/tailwind";
 import { WebSocketManager } from "./WebsocketManager";
+import { StoryDisplay } from "./StoryDisplay";
 
 class Storage {
   public user: UserDTO = $state({
@@ -31,6 +32,7 @@ export namespace Game {
   export let textures: { [k: string]: Texture } = {};
 
   export let gameContainer: GameContainer;
+  export let storyDisplay: StoryDisplay;
   export let deckContainer: DeckContainer;
 
   let player_cache: UserDTO[] = [];
@@ -45,6 +47,20 @@ export namespace Game {
 
   export function removePlayer(user: UserDTO) {
     gameContainer?.removePlayer(user);
+  }
+
+  export function updateShowStory() {
+	if (storage.room.storySelected !== null){
+		storyDisplay.setStory(storage.room.storySelected)
+		gameContainer.visible = true
+		storyDisplay.visible = true
+		deckContainer.visible = true
+	}
+	else {
+		gameContainer.visible = false
+		storyDisplay.visible = false
+		deckContainer.visible = false
+	}
   }
 
   export async function init(canvas: HTMLCanvasElement) {
@@ -114,6 +130,11 @@ export namespace Game {
     gameContainer.alpha = 0;
     deckContainer.visible = true;
 
+	storyDisplay = new StoryDisplay()
+
+	Game.updateShowStory()
+
+    globalContainer.addChild(storyDisplay);
     globalContainer.addChild(gameContainer);
     globalContainer.addChild(deckContainer);
     app.stage.addChild(globalContainer);
