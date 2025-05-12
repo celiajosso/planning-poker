@@ -54,42 +54,84 @@
 
 }
 
+
+
 function parseAndAddStories(csv: string) {
-    console.log("Import CSV 2");
+	console.log("Import CSV 2");
 
-    const lines = csv.trim().split("\n");
+	const lines = csv.trim().split("\n");
 
-    const separator = lines[0].includes("\t") ? "\t" :
-                     lines[0].includes(",") ? "," :
-                     ";";
+	const separator = lines[0].includes("\t") ? "\t" :
+					 lines[0].includes(",") ? "," :
+					 ";";
 
-    const header = lines[0].split(separator);
-    const summaryIndex = header.findIndex(h => h.toLowerCase().includes("summary"));
-    const pointsIndex = header.findIndex(h => h.toLowerCase().includes("point"));
-    console.log("Import CSV 3");
+	const header = lines[0].split(separator).map(h => h.trim().toLowerCase());
 
-    if (summaryIndex === -1) {
-        alert("Colonne 'Summary' manquante.");
-        return;
-    }
+	// Recherche exacte avec accents
+	const summaryIndex = header.findIndex(h => h === "résumé");
+	const pointsIndex = header.findIndex(h => h === "champs personnalisés (story point estimate)");
 
-    for (let i = 1; i < lines.length; i++) {
-        console.log("Import CSV 4");
+	if (summaryIndex === -1) {
+		alert("Colonne 'Résumé' manquante.");
+		return;
+	}
+	if (pointsIndex === -1) {
+		alert("Colonne 'Champs personnalisés (Story point estimate)' manquante.");
+		return;
+	}
 
-        const cols = lines[i].split(separator);
-        const summary = cols[summaryIndex]?.trim();
-        const points = parseInt(cols[pointsIndex]?.trim()) || 0;
+	for (let i = 1; i < lines.length; i++) {
+		const cols = lines[i].split(separator);
+		const summary = cols[summaryIndex]?.trim();
+		const points = parseFloat(cols[pointsIndex]?.trim().replace(",", ".")) || 0;
 
-        if (summary) {
-            console.log("Import CSV addstory", summary, points);
-
-            game.addStory(summary, points);
-
-            // game.sendStory('story', -1, { summary, points });
-        }
-    }
-    alert("Stories importées !");
+		if (summary) {
+			console.log("Import CSV addStory", summary, points);
+			game.addStory(summary, points);
+		}
+	}
+	alert("Stories importées !");
 }
+
+
+
+
+// function parseAndAddStories(csv: string) {
+//     console.log("Import CSV 2");
+
+//     const lines = csv.trim().split("\n");
+
+//     const separator = lines[0].includes("\t") ? "\t" :
+//                      lines[0].includes(",") ? "," :
+//                      ";";
+
+//     const header = lines[0].split(separator);
+//     const summaryIndex = header.findIndex(h => h.toLowerCase().includes("summary"));
+//     const pointsIndex = header.findIndex(h => h.toLowerCase().includes("point"));
+//     console.log("Import CSV 3");
+
+//     if (summaryIndex === -1) {
+//         alert("Colonne 'Summary' manquante.");
+//         return;
+//     }
+
+//     for (let i = 1; i < lines.length; i++) {
+//         console.log("Import CSV 4");
+
+//         const cols = lines[i].split(separator);
+//         const summary = cols[summaryIndex]?.trim();
+//         const points = parseInt(cols[pointsIndex]?.trim()) || 0;
+
+//         if (summary) {
+//             console.log("Import CSV addstory", summary, points);
+
+//             game.addStory(summary, points);
+
+//             // game.sendStory('story', -1, { summary, points });
+//         }
+//     }
+//     alert("Stories importées !");
+// }
 
 
 
