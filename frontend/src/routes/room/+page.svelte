@@ -3,7 +3,8 @@
   import { goto } from "$app/navigation";
   import { Game } from "$lib/Game.svelte";
   import { WebSocketManager } from "$lib/WebsocketManager";
-
+  import * as Select from "$lib/components/ui/select/index.js";
+  import { importCSV, exportToCSV } from "$lib/CSV.svelte";
   import { Icon } from "@steeze-ui/svelte-icon";
   import {
     ArrowPath,
@@ -33,6 +34,7 @@
   import * as Dialog from "$lib/components/ui/dialog/index.js";
   import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
+  import { toast } from "svelte-sonner";
 
   let checked = false;
   let selectedIssue = null;
@@ -86,9 +88,6 @@
     }
   }
 
-  import * as Select from "$lib/components/ui/select/index.js";
-  import { importCSV, exportToCSV } from "$lib/CSV";
-
   const scores = Array.from({ length: 14 }, (_, i) => ({
     value: i.toString(),
     label: i.toString(),
@@ -99,10 +98,10 @@
   function copyRoomIdClipboard() {
     navigator.clipboard.writeText(Game.storage.room.id).then(
       function () {
-        console.log("Async: Copying to clipboard was successful!");
+        toast("Room id copied!");
       },
       function (err) {
-        console.error("Async: Could not copy text: ", err);
+        toast("Async: Could not copy text: ", err);
       }
     );
   }
@@ -112,10 +111,10 @@
       .writeText(`${window.location.origin}?roomId=${Game.storage.room.id}`)
       .then(
         function () {
-          console.log("Async: Copying to clipboard was successful!");
+          toast("Room link copied!");
         },
         function (err) {
-          console.error("Async: Could not copy text: ", err);
+          toast("Async: Could not copy text: ", err);
         }
       );
   }

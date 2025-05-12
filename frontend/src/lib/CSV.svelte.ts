@@ -1,4 +1,5 @@
 import { Game } from "./Game.svelte";
+import { toast } from "svelte-sonner";
 
 export function importCSV(file: File) {
 	if (!file) return;
@@ -58,11 +59,11 @@ function parseAndAddStories(csv: string) {
 	const descriptionIndex = header.findIndex(h => h === "description");
 
 	if (summaryIndex === -1) {
-		alert("Summary missing");
+		toast("CSV format is invalid")
 		return;
 	}
 	else if (descriptionIndex === -1) {
-		alert("Description missing");
+		toast("CSV format is invalid")
 		return;
 	}
 
@@ -75,5 +76,5 @@ function parseAndAddStories(csv: string) {
 			Game.createStory2(summary, description, "");
 		}
 	}
-	alert("Stories importées !");
+	toast("User stories imported !")
 }
