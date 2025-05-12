@@ -8,244 +8,254 @@ import { WebSocketManager } from "./WebsocketManager";
 import { StoryDisplay } from "./StoryDisplay";
 
 class Storage {
-  public user: UserDTO = $state({
-    id: "",
-    username: "",
-    role: "",
-    roomId: "",
-    card: -1,
-  });
-  public room: RoomDTO = $state({
-    id: "",
-    name: "",
-    stories: [],
-    storySelected: null,
-  });
+	public user: UserDTO = $state({
+		id: "",
+		username: "",
+		role: "",
+		roomId: "",
+		card: -1,
+	});
+	public room: RoomDTO = $state({
+		id: "",
+		name: "",
+		stories: [],
+		storySelected: null,
+	});
 }
 
 export namespace Game {
-  export let app: Application;
-  let hasPlayed = false;
+	export let app: Application;
+	let hasPlayed = false;
 
-  export let storage = new Storage();
+	export let storage = new Storage();
 
-  export let textures: { [k: string]: Texture } = {};
+	export let textures: { [k: string]: Texture } = {};
 
-  export let gameContainer: GameContainer;
-  export let storyDisplay: StoryDisplay;
-  export let deckContainer: DeckContainer;
+	export let gameContainer: GameContainer;
+	export let storyDisplay: StoryDisplay;
+	export let deckContainer: DeckContainer;
 
-  let player_cache: UserDTO[] = [];
+	let player_cache: UserDTO[] = [];
 
-  export function addPlayer(user: UserDTO) {
-    if (gameContainer === undefined) {
-      player_cache.push(user);
-    } else {
-      gameContainer.addPlayer(user);
-    }
-  }
-
-  export function removePlayer(user: UserDTO) {
-    gameContainer?.removePlayer(user);
-  }
-
-  export function updateShowStory() {
-	if (storage.room.storySelected !== null){
-		storyDisplay.setStory(storage.room.storySelected)
-		storyDisplay.alpha = 1
-		gameContainer.alpha = 0
-		deckContainer.visible = true
+	export function addPlayer(user: UserDTO) {
+		if (gameContainer === undefined) {
+			player_cache.push(user);
+		} else {
+			gameContainer.addPlayer(user);
+		}
 	}
-	else {
-		gameContainer.alpha = 0
-		storyDisplay.alpha = 0
-		deckContainer.visible = false
+
+	export function removePlayer(user: UserDTO) {
+		gameContainer?.removePlayer(user);
 	}
-  }
 
-  export async function init(canvas: HTMLCanvasElement) {
-    app = new Application();
+	export function updateShowStory() {
+		if (storage.room.storySelected !== null) {
+			storyDisplay.setStory(storage.room.storySelected)
+			storyDisplay.alpha = 1
+			gameContainer.alpha = 0
+			deckContainer.visible = true
+		}
+		else {
+			gameContainer.alpha = 0
+			storyDisplay.alpha = 0
+			deckContainer.visible = false
+		}
+	}
 
-    // Initialize the application.
-    await app.init({ resizeTo: window, canvas: canvas, background: "#e2e8f0" });
+	export async function init(canvas: HTMLCanvasElement) {
+		app = new Application();
 
-    app.stage.layout = { width: app.screen.width, height: app.screen.height };
+		// Initialize the application.
+		await app.init({ resizeTo: window, canvas: canvas, background: "#e2e8f0" });
 
-    // Load assets
+		app.stage.layout = { width: app.screen.width, height: app.screen.height };
 
-    let manifest = {
-      bundles: [
-        {
-          name: "fonts",
-          assets: [{ alias: "Righteous", src: "/Righteous-Regular.ttf" }],
-        },
-        {
-          name: "textures",
-          assets: [
-            {
-              alias: "Card",
-              src: "/cards/Squircle.png",
-              data: { parseAsGraphicsContext: true },
-            },
-          ],
-        },
-      ],
-    };
+		// Load assets
 
-    Assets.init({ manifest });
+		let manifest = {
+			bundles: [
+				{
+					name: "fonts",
+					assets: [{ alias: "Righteous", src: "/Righteous-Regular.ttf" }],
+				},
+				{
+					name: "textures",
+					assets: [
+						{
+							alias: "Card",
+							src: "/cards/Squircle.png",
+							data: { parseAsGraphicsContext: true },
+						},
+					],
+				},
+			],
+		};
 
-    await Assets.loadBundle("fonts");
-    textures = await Assets.loadBundle("textures");
+		Assets.init({ manifest });
 
-    // GlobalContainer
+		await Assets.loadBundle("fonts");
+		textures = await Assets.loadBundle("textures");
 
-    const globalContainer = new Container({
-      layout: tw`flex flex-col items-center justify-between w-full h-dvh m-8 mb-22`,
-    });
+		// GlobalContainer
 
-    // GameContainer
+		const globalContainer = new Container({
+			layout: tw`flex flex-col items-center justify-between w-full h-dvh m-8 mb-22`,
+		});
 
-    gameContainer = new GameContainer({
-      layout: tw`flex flex-row items-center justify-center w-full gap-4 flex-wrap flex-1`,
-    });
+		// GameContainer
 
-    // initialize the deck
+		gameContainer = new GameContainer({
+			layout: tw`flex flex-row items-center justify-center w-full gap-4 flex-wrap flex-1`,
+		});
 
-    deckContainer = new DeckContainer(
-      {
-        layout: tw`flex flex-row items-center justify-center w-full gap-4 flex-wrap`,
-      },
-      validate,
-    );
+		// initialize the deck
 
-    const resizeObserver = new ResizeObserver(() => {
-      app.stage.layout = {
-        width: app.screen.width,
-        height: app.screen.height,
-      };
-    });
+		deckContainer = new DeckContainer(
+			{
+				layout: tw`flex flex-row items-center justify-center w-full gap-4 flex-wrap`,
+			},
+			validate,
+		);
 
-    resizeObserver.observe(app.canvas);
+		const resizeObserver = new ResizeObserver(() => {
+			app.stage.layout = {
+				width: app.screen.width,
+				height: app.screen.height,
+			};
+		});
 
-    gameContainer.alpha = 0;
+		resizeObserver.observe(app.canvas);
 
-	storyDisplay = new StoryDisplay()
+		gameContainer.alpha = 0;
 
-	updateShowStory()
+		storyDisplay = new StoryDisplay()
 
-    globalContainer.addChild(storyDisplay);
-    globalContainer.addChild(gameContainer);
-    globalContainer.addChild(deckContainer);
-    app.stage.addChild(globalContainer);
+		updateShowStory()
 
-    for (let player of player_cache) {
-      gameContainer.addPlayer(player);
-    }
+		globalContainer.addChild(storyDisplay);
+		globalContainer.addChild(gameContainer);
+		globalContainer.addChild(deckContainer);
+		app.stage.addChild(globalContainer);
 
-    player_cache = [];
-  }
+		for (let player of player_cache) {
+			gameContainer.addPlayer(player);
+		}
 
-  export function restart() {
-	if (storage.room.storySelected === null) return
-    storage.user.card = -1;
-    WebSocketManager.sendMessage("UserUpdate", storage.user, null, null);
-    gameContainer.alpha = 0;
-    deckContainer.visible = true;
-  }
+		player_cache = [];
+	}
 
-  export function createRoom(user: UserDTO, room: RoomDTO) {
-    WebSocketManager.sendMessage("RoomCreate", user, room, null);
-  }
+	export function restart() {
+		if (storage.room.storySelected === null) return
+		storage.user.card = -1;
+		WebSocketManager.sendMessage("UserUpdate", storage.user, null, null);
+		gameContainer.alpha = 0;
+		deckContainer.visible = true;
+	}
 
-  export function joinRoom(user: UserDTO) {
-    WebSocketManager.sendMessage("RoomJoin", user, null, null);
-  }
+	export function createRoom(user: UserDTO, room: RoomDTO) {
+		WebSocketManager.sendMessage("RoomCreate", user, room, null);
+	}
 
-  export function updateRoom(room: RoomDTO) {
-    WebSocketManager.sendMessage("RoomUpdate", null, room, null);
-  }
+	export function joinRoom(user: UserDTO) {
+		WebSocketManager.sendMessage("RoomJoin", user, null, null);
+	}
 
-  export function updateUser(user: UserDTO) {
-    WebSocketManager.sendMessage("UserUpdate", user, null, null);
-  }
+	export function updateRoom(room: RoomDTO) {
+		WebSocketManager.sendMessage("RoomUpdate", null, room, null);
+	}
 
-  export function validate(selected: number) {
-	if (storage.room.storySelected === null) return
-    gameContainer.alpha = 1;
-    deckContainer.visible = false;
-    storage.user.card = selected;
-    WebSocketManager.sendMessage("UserUpdate", storage.user, null, null);
-  }
+	export function updateUser(user: UserDTO) {
+		WebSocketManager.sendMessage("UserUpdate", user, null, null);
+	}
 
-  export function quitRoom() {
-    WebSocketManager.sendMessage("RoomQuit", null, null, null);
-  }
+	export function validate(selected: number) {
+		if (storage.room.storySelected === null) return
+		gameContainer.alpha = 1;
+		deckContainer.visible = false;
+		storage.user.card = selected;
+		WebSocketManager.sendMessage("UserUpdate", storage.user, null, null);
+	}
 
-  export function updatePlayer(user: UserDTO) {
-    Game.gameContainer.updatePlayer(user)
-  }
+	export function quitRoom() {
+		WebSocketManager.sendMessage("RoomQuit", null, null, null);
+	}
 
-  export function createStory(event) {
-    const formData = new FormData(event.target);
-    const data = {};
+	export function updatePlayer(user: UserDTO) {
+		Game.gameContainer.updatePlayer(user)
+	}
 
-    for (const [key, value] of formData.entries()) {
-      data[key] = value;
-    }
+	export function createStory(event) {
+		const formData = new FormData(event.target);
+		const data = {};
 
-    WebSocketManager.sendMessage("StoryCreate", null, null, {
-      id: "",
-      title: data.title,
-      description: data.description,
-      finalEstimate: data.score,
-      roomId: storage.room.id,
-    });
-  }
+		for (const [key, value] of formData.entries()) {
+			data[key] = value;
+		}
 
-  export function updateStory(id, event) {
-    const formData = new FormData(event.target);
-    const data = {};
+		WebSocketManager.sendMessage("StoryCreate", null, null, {
+			id: "",
+			title: data.title,
+			description: data.description,
+			finalEstimate: data.score,
+			roomId: storage.room.id,
+		});
+	}
 
-    for (const [key, value] of formData.entries()) {
-      data[key] = value;
-    }
+	export function createStory2(title: string, description: string, score: string) {
+		WebSocketManager.sendMessage("StoryCreate", null, null, {
+			id: "",
+			title: title,
+			description: description,
+			finalEstimate: score,
+			roomId: storage.room.id,
+		});
+	}
 
-    WebSocketManager.sendMessage("StoryUpdate", null, null, {
-      id,
-      title: data.title,
-      description: data.description,
-      finalEstimate: data.score,
-      roomId: storage.room.id,
-    });
-  }
+	export function updateStory(id, event) {
+		const formData = new FormData(event.target);
+		const data = {};
 
-  export function selectStory(id: string) {
-    WebSocketManager.sendMessage("StorySelect", null, null, {
-      id,
-      title: "",
-      description: "",
-      finalEstimate: "",
-      roomId: storage.room.id,
-    });
-  }
+		for (const [key, value] of formData.entries()) {
+			data[key] = value;
+		}
 
-  export function unselectStory() {
-    WebSocketManager.sendMessage("StorySelect", null, null, {
-      id: "",
-      title: "",
-      description: "",
-      finalEstimate: "",
-      roomId: storage.room.id,
-    });
-  }
+		WebSocketManager.sendMessage("StoryUpdate", null, null, {
+			id,
+			title: data.title,
+			description: data.description,
+			finalEstimate: data.score,
+			roomId: storage.room.id,
+		});
+	}
 
-  export function deleteStory(id: string) {
-    WebSocketManager.sendMessage("StoryDelete", null, null, {
-      id,
-      title: "",
-      description: "",
-      finalEstimate: "",
-      roomId: storage.room.id,
-    });
-  }
+	export function selectStory(id: string) {
+		WebSocketManager.sendMessage("StorySelect", null, null, {
+			id,
+			title: "",
+			description: "",
+			finalEstimate: "",
+			roomId: storage.room.id,
+		});
+	}
+
+	export function unselectStory() {
+		WebSocketManager.sendMessage("StorySelect", null, null, {
+			id: "",
+			title: "",
+			description: "",
+			finalEstimate: "",
+			roomId: storage.room.id,
+		});
+	}
+
+	export function deleteStory(id: string) {
+		WebSocketManager.sendMessage("StoryDelete", null, null, {
+			id,
+			title: "",
+			description: "",
+			finalEstimate: "",
+			roomId: storage.room.id,
+		});
+	}
 }

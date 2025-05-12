@@ -80,42 +80,14 @@
   function handleFileChange(event) {
     const file = event.target.files[0];
     if (file && file.type === "text/csv") {
-      console.log("CSV file selected:", file);
+      importCSV(file);
     } else {
       alert("Please selectt a CSV file.");
     }
   }
 
-  // /!\ A CHANGER SELON LE FORMAT CSV DE JIRA !!!
-  function exportToCSV() {
-    const csvRows = [];
-
-    const headers = ["Title", "Description", "Score"];
-    csvRows.push(headers.join(","));
-
-    for (const issue of issues) {
-      const row = [issue.title, issue.description, issue.score];
-      csvRows.push(
-        row.map((value) => `"${value.replace(/"/g, '""')}"`).join(",")
-      );
-    }
-
-    const csvContent = csvRows.join("\n");
-
-    const blob = new Blob([csvContent], {
-      type: "text/csv;charset=utf-8;",
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", "issues_export.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }
-
   import * as Select from "$lib/components/ui/select/index.js";
+  import { importCSV, exportToCSV } from "$lib/CSV";
 
   const scores = Array.from({ length: 14 }, (_, i) => ({
     value: i.toString(),
@@ -170,17 +142,15 @@
     <Sheet.Content side="right" class="bg-[#f4f4f9] text-gray-900">
       <Tabs.Root value="profile-settings" class="w-full">
         <Tabs.List class=" w-full flex bg-gray-200 mt-5 justify-between gap-1">
-			
-			<Tabs.Trigger
+          <Tabs.Trigger
             class="font-semibold bg-white flex-1"
             value="profile-settings">Profile Settings</Tabs.Trigger
-			>
-			{#if Game.storage.user.role == "Administrator"}
-			  <Tabs.Trigger
-				class="font-semibold  bg-white flex-1"
-				value="issues">Issues</Tabs.Trigger
-			  >
-			{/if}
+          >
+          {#if Game.storage.user.role == "Administrator"}
+            <Tabs.Trigger class="font-semibold  bg-white flex-1" value="issues"
+              >Issues</Tabs.Trigger
+            >
+          {/if}
         </Tabs.List>
         {#if Game.storage.user.role == "Administrator"}
           <Tabs.Content value="issues">
@@ -196,7 +166,7 @@
                       <ButtonIcon onclick={handleButtonClick}>
                         <Icon
                           class="color-gray-800 size-5"
-                          src={ArrowDownTray}
+                          src={ArrowUpTray}
                           theme="solid"
                         />
                       </ButtonIcon>
@@ -217,7 +187,7 @@
                       <ButtonIcon onclick={exportToCSV}>
                         <Icon
                           class="color-gray-800 size-5"
-                          src={ArrowUpTray}
+                          src={ArrowDownTray}
                           theme="solid"
                         />
                       </ButtonIcon>
