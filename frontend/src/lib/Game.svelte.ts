@@ -4,23 +4,20 @@ import { GameContainer } from './GameContainer';
 import { Application, Assets, Container, Texture, Text } from 'pixi.js';
 import '@pixi/layout';
 import { tw } from '@pixi/layout/tailwind';
-import { RoomDTO } from './RoomDTO';
-import { UserDTO } from './UserDTO';
 import { WebSocketManager } from './WebsocketManager';
-import { StoryDTO } from './StoryDTO';
+import type { UserDTO } from './UserDTO';
+import type { RoomDTO } from './RoomDTO';
 
 class Storage {
-	public user: UserDTO = $state(new UserDTO("",""));
-	public room: RoomDTO = $state(new RoomDTO("","",null,[]));
+	public user: UserDTO = $state({ id: "", username: "", role: "", roomId: "", card: -1 });
+	public room: RoomDTO = $state({ id: "", name: "", stories: [], storySelected: null });
 }
-
-
 
 export namespace Game {
 	export let app: Application;
 	let hasPlayed = false;
 
-	export let storage = new Storage() 
+	export let storage = new Storage()
 
 	export let textures: { [k: string]: Texture } = {};
 
@@ -161,8 +158,7 @@ export namespace Game {
 			data[key] = value;
 		}
 
-  		console.log(data);
-		WebSocketManager.sendMessage('StoryCreate', null, null, new StoryDTO("", data.title, data.description, data.score, storage.room.id));
+		WebSocketManager.sendMessage('StoryCreate', null, null, { id: "", title: data.title, description: data.description, finalEstimate: data.score, roomId: storage.room.id });
 	}
 
 	export function updateStory(id, event) {
@@ -173,17 +169,16 @@ export namespace Game {
 			data[key] = value;
 		}
 
-  		console.log(data);
-		WebSocketManager.sendMessage('StoryUpdate', null, null, new StoryDTO(id, data.title, data.description, data.score, storage.room.id));
+		WebSocketManager.sendMessage('StoryUpdate', null, null, { id, title: data.title, description: data.description, finalEstimate: data.score, roomId: storage.room.id });
 	}
 
-	export function selectStory(id:string) {
-		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO(id,"","","",storage.room.id));
+	export function selectStory(id: string) {
+		WebSocketManager.sendMessage('StorySelect', null, null, { id, title: "", description: "", finalEstimate: "", roomId: storage.room.id });
 	}
 	export function unselectStory() {
-		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO("","","","",storage.room.id));
+		WebSocketManager.sendMessage('StorySelect', null, null, { id: "", title: "", description: "", finalEstimate: "", roomId: storage.room.id });
 	}
-	export function deleteStory(id:string) {
-		WebSocketManager.sendMessage('StoryDelete', null, null, new StoryDTO(id,"","","",storage.room.id));
+	export function deleteStory(id: string) {
+		WebSocketManager.sendMessage('StoryDelete', null, null, { id, title: "", description: "", finalEstimate: "", roomId: storage.room.id });
 	}
 }

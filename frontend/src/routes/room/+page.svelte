@@ -246,7 +246,7 @@
 								</Table.Row>
 							</Table.Header>
 							<Table.Body>
-								{#each Game.storage.room.stories as issue, i (i)}
+								{#each Game.storage.room.stories as issue}
 									<Table.Row>
 										<!--<Table.Cell>
 											 <Checkbox
