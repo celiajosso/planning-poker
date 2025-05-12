@@ -80,42 +80,14 @@
 	function handleFileChange(event) {
 		const file = event.target.files[0];
 		if (file && file.type === "text/csv") {
-			console.log("CSV file selected:", file);
+			importCSV(file)
 		} else {
 			alert("Please selectt a CSV file.");
 		}
 	}
 
-	// /!\ A CHANGER SELON LE FORMAT CSV DE JIRA !!!
-	function exportToCSV() {
-		const csvRows = [];
-
-		const headers = ["Title", "Description", "Score"];
-		csvRows.push(headers.join(","));
-
-		for (const issue of issues) {
-			const row = [issue.title, issue.description, issue.score];
-			csvRows.push(
-				row.map((value) => `"${value.replace(/"/g, '""')}"`).join(","),
-			);
-		}
-
-		const csvContent = csvRows.join("\n");
-
-		const blob = new Blob([csvContent], {
-			type: "text/csv;charset=utf-8;",
-		});
-		const url = URL.createObjectURL(blob);
-		const link = document.createElement("a");
-		link.setAttribute("href", url);
-		link.setAttribute("download", "issues_export.csv");
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
-		URL.revokeObjectURL(url);
-	}
-
 	import * as Select from "$lib/components/ui/select/index.js";
+  	import { importCSV,exportToCSV } from "$lib/CSV";
 
 	const scores = Array.from({ length: 14 }, (_, i) => ({
 		value: i.toString(),

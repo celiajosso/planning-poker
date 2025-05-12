@@ -1,32 +1,31 @@
 
-	function exportVotes() {
-		const votes = Game.storage.room.stories.votes;
+function exportVotes() {
+	const votes = Game.storage.room.stories.votes;
 
-		if (!votes || votes.length === 0) {
-			alert("Aucun vote à exporter.");
-			return;
-		}
-
-		const csvHeader = "Summary,Custom field (Story point estimate)\n";
-		const csvRows = votes.map(v => `${v.name},${v.card}`).join("\n");
-		const csvContent = csvHeader + csvRows;
-
-		const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-		const url = URL.createObjectURL(blob);
-
-		const link = document.createElement("a");
-		link.setAttribute("href", url);
-		link.setAttribute("download", "votes.csv");
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
-
-		// createJiraIssues(votes);
-
+	if (!votes || votes.length === 0) {
+		alert("Aucun vote à exporter.");
+		return;
 	}
 
+	const csvHeader = "Summary,Custom field (Story point estimate)\n";
+	const csvRows = votes.map(v => `${v.name},${v.card}`).join("\n");
+	const csvContent = csvHeader + csvRows;
 
-	function importCSV(file: File) {
+	const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+	const url = URL.createObjectURL(blob);
+
+	const link = document.createElement("a");
+	link.setAttribute("href", url);
+	link.setAttribute("download", "votes.csv");
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+
+	// createJiraIssues(votes);
+
+}
+
+export function importCSV(file: File) {
 	if (!file) return;
 
 	const reader = new FileReader();
@@ -41,7 +40,34 @@
 
 }
 
+// /!\ A CHANGER SELON LE FORMAT CSV DE JIRA !!!
+export function exportToCSV() {
+	const csvRows = [];
 
+	const headers = ["Title", "Description", "Score"];
+	csvRows.push(headers.join(","));
+
+	for (const issue of issues) {
+		const row = [issue.title, issue.description, issue.score];
+		csvRows.push(
+			row.map((value) => `"${value.replace(/"/g, '""')}"`).join(","),
+		);
+	}
+
+	const csvContent = csvRows.join("\n");
+
+	const blob = new Blob([csvContent], {
+		type: "text/csv;charset=utf-8;",
+	});
+	const url = URL.createObjectURL(blob);
+	const link = document.createElement("a");
+	link.setAttribute("href", url);
+	link.setAttribute("download", "issues_export.csv");
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+	URL.revokeObjectURL(url);
+}
 
 function parseAndAddStories(csv: string) {
 	console.log("Import CSV 2");
@@ -49,8 +75,8 @@ function parseAndAddStories(csv: string) {
 	const lines = csv.trim().split("\n");
 
 	const separator = lines[0].includes("\t") ? "\t" :
-					 lines[0].includes(",") ? "," :
-					 ";";
+		lines[0].includes(",") ? "," :
+			";";
 
 	const header = lines[0].split(separator).map(h => h.trim().toLowerCase());
 
