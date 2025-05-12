@@ -92,6 +92,7 @@ class RoomService {
                 rooms.remove(roomId)
             }
         }
+
         suspend fun updateRoom(session: DefaultWebSocketServerSession, updatedRoom: RoomDTO) {
             val user = UserService.getBySession(session) ?: return
             val room = rooms[updatedRoom.id] ?: return
