@@ -35,12 +35,12 @@ export namespace WebSocketManager {
 				break;
 			case 'RoomCreated':
 			case 'RoomJoined':
-				Game.user = serverMessage.user!;
-				Game.room = serverMessage.room!;
+				Game.storage.user.update(serverMessage.user!);
+				Game.storage.room.update(serverMessage.room!);
 				Game.addPlayer(serverMessage.user!);
 				break;
 			case 'RoomUpdated':
-				Game.room = serverMessage.room!;
+				Game.storage.room.update(serverMessage.room!);
 				break;
 		}
 	}

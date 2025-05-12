@@ -9,4 +9,12 @@ export class UserDTO {
 		this.username = username;
 		this.roomId = roomId;
 	}
+
+	update(userDTO:UserDTO){
+		this.id = userDTO.id;
+		this.username = userDTO.username;
+		this.role = userDTO.role;
+		this.roomId = userDTO.roomId;
+		this.card = userDTO.card;
+	}
 }

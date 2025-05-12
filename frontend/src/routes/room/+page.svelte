@@ -72,7 +72,7 @@
 		},
 	];
 
-	let fileInput;
+	let fileInput : HTMLInputElement;
 
 	function handleButtonClick() {
 		fileInput.click();
@@ -126,7 +126,7 @@
 	let value = $state("");
 
 	function copyRoomIdClipboard() {
-		navigator.clipboard.writeText(Game.room.id).then(
+		navigator.clipboard.writeText(Game.storage.room.id).then(
 			function () {
 				console.log("Async: Copying to clipboard was successful!");
 			},
@@ -608,7 +608,7 @@
 								>
 								<Input
 									id="name"
-									bind:value={Game.user.username}
+									bind:value={Game.storage.user.username}
 									type="text"
 								/>
 							</div>

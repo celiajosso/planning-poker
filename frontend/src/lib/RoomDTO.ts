@@ -7,4 +7,11 @@ export class RoomDTO {
 		public storySelected: StoryDTO|null = null,
 		public stories: StoryDTO[] = []
 	) {}
+
+	update(roomDTO:RoomDTO){
+		this.id = roomDTO.id;
+		this.name = roomDTO.name;
+		this.storySelected = roomDTO.storySelected;
+		this.stories = roomDTO.stories;
+	}
 }

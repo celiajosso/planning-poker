@@ -5,18 +5,25 @@ import { Application, Assets, Container, Texture, Text } from 'pixi.js';
 import '@pixi/layout';
 import { tw } from '@pixi/layout/tailwind';
 import { RoomDTO } from './RoomDTO';
-import type { UserDTO } from './UserDTO';
+import { UserDTO } from './UserDTO';
 import { WebSocketManager } from './WebsocketManager';
 import { StoryDTO } from './StoryDTO';
+
+class Storage {
+	public user: UserDTO = $state(new UserDTO("",""));
+	public room: RoomDTO = $state(new RoomDTO("","",null,[]));
+}
+
+
 
 export namespace Game {
 	export let app: Application;
 	let hasPlayed = false;
 
+	export let storage = new Storage() 
+
 	export let textures: { [k: string]: Texture } = {};
 
-	export let user: UserDTO;
-	export let room: RoomDTO;
 	export let gameContainer: GameContainer;
 	export let deckContainer: DeckContainer;
 
@@ -95,7 +102,7 @@ export namespace Game {
 
 		gameContainer.alpha = 0
 		deckContainer.visible = true
-		
+
 		globalContainer.addChild(gameContainer);
 		globalContainer.addChild(deckContainer);
 		app.stage.addChild(globalContainer);
@@ -108,8 +115,8 @@ export namespace Game {
 	}
 
 	export function restart() {
-		user.card = -1;
-		WebSocketManager.sendMessage('UserUpdate', user, null, null);
+		storage.user.card = -1;
+		WebSocketManager.sendMessage('UserUpdate', storage.user, null, null);
 		gameContainer.alpha = 0
 		deckContainer.visible = true
 	}
@@ -133,8 +140,8 @@ export namespace Game {
 	export function validate(selected: number) {
 		gameContainer.alpha = 1
 		deckContainer.visible = false
-		user.card = selected;
-		WebSocketManager.sendMessage('UserUpdate', user, null, null);
+		storage.user.card = selected;
+		WebSocketManager.sendMessage('UserUpdate', storage.user, null, null);
 	}
 
 	export function quitRoom() {
@@ -147,18 +154,18 @@ export namespace Game {
 
 
 	export function createStory() {
-		WebSocketManager.sendMessage('StoryCreate', null, null, new StoryDTO("","title","description","finalEstimate",room.id));
+		WebSocketManager.sendMessage('StoryCreate', null, null, new StoryDTO("", "title", "description", "finalEstimate", storage.room.id));
 	}
 	export function updateStory() {
-		WebSocketManager.sendMessage('StoryUpdate', null, null, new StoryDTO("","title","description","finalEstimate",room.id));
+		WebSocketManager.sendMessage('StoryUpdate', null, null, new StoryDTO("", "title", "description", "finalEstimate", storage.room.id));
 	}
 	export function selectStory(id:string) {
-		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO(id,"","","",room.id));
+		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO(id,"","","",storage.room.id));
 	}
 	export function unselectStory() {
-		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO("","","","",room.id));
+		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO("","","","",storage.room.id));
 	}
 	export function deleteStory(id:string) {
-		WebSocketManager.sendMessage('StoryDelete', null, null, new StoryDTO(id,"","","",room.id));
+		WebSocketManager.sendMessage('StoryDelete', null, null, new StoryDTO(id,"","","",storage.room.id));
 	}
 }
