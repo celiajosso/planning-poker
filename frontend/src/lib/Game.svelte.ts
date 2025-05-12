@@ -153,12 +153,30 @@ export namespace Game {
 	}
 
 
-	export function createStory() {
-		WebSocketManager.sendMessage('StoryCreate', null, null, new StoryDTO("", "title", "description", "finalEstimate", storage.room.id));
+	export function createStory(event) {
+		const formData = new FormData(event.target);
+		const data = {};
+
+		for (const [key, value] of formData.entries()) {
+			data[key] = value;
+		}
+
+  		console.log(data);
+		WebSocketManager.sendMessage('StoryCreate', null, null, new StoryDTO("", data.title, data.description, data.score, storage.room.id));
 	}
-	export function updateStory() {
-		WebSocketManager.sendMessage('StoryUpdate', null, null, new StoryDTO("", "title", "description", "finalEstimate", storage.room.id));
+
+	export function updateStory(event) {
+		const formData = new FormData(event.target);
+		const data = {};
+
+		for (const [key, value] of formData.entries()) {
+			data[key] = value;
+		}
+
+  		console.log(data);
+		WebSocketManager.sendMessage('StoryUpdate', null, null, new StoryDTO("", data.title, data.description, data.score, storage.room.id));
 	}
+	
 	export function selectStory(id:string) {
 		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO(id,"","","",storage.room.id));
 	}
