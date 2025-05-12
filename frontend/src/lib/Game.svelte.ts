@@ -165,7 +165,7 @@ export namespace Game {
 		WebSocketManager.sendMessage('StoryCreate', null, null, new StoryDTO("", data.title, data.description, data.score, storage.room.id));
 	}
 
-	export function updateStory(event) {
+	export function updateStory(id, event) {
 		const formData = new FormData(event.target);
 		const data = {};
 
@@ -174,7 +174,7 @@ export namespace Game {
 		}
 
   		console.log(data);
-		WebSocketManager.sendMessage('StoryUpdate', null, null, new StoryDTO("", data.title, data.description, data.score, storage.room.id));
+		WebSocketManager.sendMessage('StoryUpdate', null, null, new StoryDTO(id, data.title, data.description, data.score, storage.room.id));
 	}
 
 	export function selectStory(id:string) {

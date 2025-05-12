@@ -354,113 +354,132 @@
 													</AlertDialog.Content>
 												</AlertDialog.Root>
 												<Dialog.Root>
-													<Dialog.Trigger>
-														<Tooltip.Root>
-															<Tooltip.Trigger>
-																<ButtonIcon>
-																	<Icon
-																		class="color-gray-800 size-5"
-																		src={PencilSquare}
-																		theme="outline"
-																	/>
-																</ButtonIcon>
-															</Tooltip.Trigger>
-															<Tooltip.Content>
-																<p>Modify</p>
-															</Tooltip.Content>
-														</Tooltip.Root>
-													</Dialog.Trigger>
-													<Dialog.Content
-														class="sm:max-w-[425px]"
+													<form
+														onsubmit={(e) =>
+															Game.updateStory(
+																issue.id,
+																e,
+															)}
 													>
-														<Dialog.Header>
-															<Dialog.Title
-																>Edit issue</Dialog.Title
-															>
-															<Dialog.Description>
-																Make changes to
-																your issue here.
-																Click save when
-																you're done.
-															</Dialog.Description>
-														</Dialog.Header>
-														<div
-															class="grid gap-4 py-4"
-														>
-															<div
-																class="grid grid-cols-4 items-center gap-4"
-															>
-																<Label
-																	for="name"
-																	class="text-right"
-																	>Title</Label
+														<Dialog.Trigger>
+															<Tooltip.Root>
+																<Tooltip.Trigger
 																>
-																<Input
-																	id="name"
-																	value={issue.title}
-																	class="col-span-3"
-																/>
-															</div>
-															<div
-																class="grid grid-cols-4 items-center gap-4"
-															>
-																<Label
-																	for="issue-title"
-																	class="text-right"
-																	>Description</Label
-																>
-																<Input
-																	id="username"
-																	value={issue.description}
-																	class="col-span-3"
-																/>
-															</div>
-															<div
-																class="grid grid-cols-4 items-center gap-4"
-															>
-																<Label
-																	for="issue-description"
-																	class="text-right"
-																	>Score</Label
-																>
-																<Select.Root>
-																	<Select.Trigger
-																		class="w-[100px]"
-																	>
-																		<Select.Value
-																			placeholder="Score"
+																	<ButtonIcon>
+																		<Icon
+																			class="color-gray-800 size-5"
+																			src={PencilSquare}
+																			theme="outline"
 																		/>
-																	</Select.Trigger>
-																	<Select.Content
-																	>
-																		<Select.Group
-																		>
-																			<ScrollArea
-																				class="h-20"
-																			>
-																				{#each scores as score}
-																					<Select.Item
-																						value={score.value}
-																						label={score.value}
-																						>{score.value}</Select.Item
-																					>
-																				{/each}
-																			</ScrollArea>
-																		</Select.Group>
-																	</Select.Content>
-																	<Select.Input
-																		name="score"
-																	/>
-																</Select.Root>
-															</div>
-														</div>
-														<Dialog.Footer>
-															<Button
-																type="submit"
-																>Save changes</Button
+																	</ButtonIcon>
+																</Tooltip.Trigger>
+																<Tooltip.Content
+																>
+																	<p>
+																		Modify
+																	</p>
+																</Tooltip.Content>
+															</Tooltip.Root>
+														</Dialog.Trigger>
+														<Dialog.Content
+															class="sm:max-w-[425px]"
+														>
+															<Dialog.Header>
+																<Dialog.Title
+																	>Edit issue</Dialog.Title
+																>
+																<Dialog.Description
+																>
+																	Make changes
+																	to your
+																	issue here.
+																	Click save
+																	when you're
+																	done.
+																</Dialog.Description>
+															</Dialog.Header>
+															<div
+																class="grid gap-4 py-4"
 															>
-														</Dialog.Footer>
-													</Dialog.Content>
+																<div
+																	class="grid grid-cols-4 items-center gap-4"
+																>
+																	<Label
+																		for="title"
+																		class="text-right"
+																		>Title</Label
+																	>
+																	<Input
+																		name="title"
+																		id="title"
+																		value={issue.title}
+																		class="col-span-3"
+																	/>
+																</div>
+																<div
+																	class="grid grid-cols-4 items-center gap-4"
+																>
+																	<Label
+																		for="description"
+																		class="text-right"
+																		>Description</Label
+																	>
+																	<Input
+																		id="description"
+																		name="description"
+																		value={issue.description}
+																		class="col-span-3"
+																	/>
+																</div>
+																<div
+																	class="grid grid-cols-4 items-center gap-4"
+																>
+																	<Label
+																		for="finalEstimate"
+																		class="text-right"
+																		>Score</Label
+																	>
+																	<Select.Root
+																	>
+																		<Select.Trigger
+																			class="w-[100px]"
+																		>
+																			<Select.Value
+																				placeholder="Score"
+																			/>
+																		</Select.Trigger>
+																		<Select.Content
+																		>
+																			<Select.Group
+																			>
+																				<ScrollArea
+																					class="h-20"
+																				>
+																					{#each scores as score}
+																						<Select.Item
+																							value={score.value}
+																							label={score.value}
+																							>{score.value}</Select.Item
+																						>
+																					{/each}
+																				</ScrollArea>
+																			</Select.Group>
+																		</Select.Content>
+																		<Select.Input
+																			name="score"
+																		/>
+																	</Select.Root>
+																</div>
+															</div>
+															<Dialog.Footer>
+																<Button
+																	type="submit"
+																	>Save
+																	changes</Button
+																>
+															</Dialog.Footer>
+														</Dialog.Content>
+													</form>
 												</Dialog.Root>
 
 												<Tooltip.Root>
