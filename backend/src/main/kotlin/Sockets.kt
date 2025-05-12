@@ -1,15 +1,15 @@
 package com.example
 
-import RoomService
 import com.example.models.SocketMessage
+import com.example.services.RoomService
+import com.example.services.StoryService
+import com.example.services.UserService
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.serialization.json.Json
-import services.StoryService
-import services.UserService
 import kotlin.time.Duration.Companion.seconds
 
 fun Application.configureSockets() {
