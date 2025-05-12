@@ -250,7 +250,7 @@
 								</Table.Row>
 							</Table.Header>
 							<Table.Body>
-								{#each issues as issue, i (i)}
+								{#each Game.storage.room.stories as issue, i (i)}
 									<Table.Row>
 										<!--<Table.Cell>
 											 <Checkbox
@@ -266,7 +266,7 @@
 											</p></Table.Cell
 										>
 										<Table.Cell>
-											<Select.Root>
+											<Select.Root >
 												<Select.Trigger
 													class="w-[100px]"
 												>
