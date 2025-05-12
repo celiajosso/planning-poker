@@ -182,7 +182,7 @@ export namespace Game {
   }
 
   export function updatePlayer(user: UserDTO) {
-    Game.gameContainer.players[user.id].setCard(user.card);
+    Game.gameContainer.updatePlayer(user)
   }
 
   export function createStory(event) {
