@@ -168,67 +168,71 @@
       </ButtonIcon>
     </Sheet.Trigger>
     <Sheet.Content side="right" class="bg-[#f4f4f9] text-gray-900">
-      <Tabs.Root value="issues" class="w-full">
-        <Tabs.List class=" w-full flex bg-gray-200 mt-5 justify-between">
-          <Tabs.Trigger
-            class="font-semibold  bg-white mr-1 flex-1"
-            value="issues">Issues</Tabs.Trigger
-          >
-          <Tabs.Trigger
+      <Tabs.Root value="profile-settings" class="w-full">
+        <Tabs.List class=" w-full flex bg-gray-200 mt-5 justify-between gap-1">
+			
+			<Tabs.Trigger
             class="font-semibold bg-white flex-1"
             value="profile-settings">Profile Settings</Tabs.Trigger
-          >
+			>
+			{#if Game.storage.user.role == "Administrator"}
+			  <Tabs.Trigger
+				class="font-semibold  bg-white flex-1"
+				value="issues">Issues</Tabs.Trigger
+			  >
+			{/if}
         </Tabs.List>
-        <Tabs.Content value="issues">
-          <div class="grid gap-2 p-5 my-5 border border-gray-300 rounded-lg">
-            <div class="flex flex-row justify-between items-center">
-              <div>
-                <p class="font-bold text-xl">Issues</p>
-                <p class="text-sm">Make changes to your User Stories.</p>
+        {#if Game.storage.user.role == "Administrator"}
+          <Tabs.Content value="issues">
+            <div class="grid gap-2 p-5 my-5 border border-gray-300 rounded-lg">
+              <div class="flex flex-row justify-between items-center">
+                <div>
+                  <p class="font-bold text-xl">Issues</p>
+                  <p class="text-sm">Make changes to your User Stories.</p>
+                </div>
+                <div class="flex flex-row items-center h-full gap-2">
+                  <Tooltip.Root>
+                    <Tooltip.Trigger>
+                      <ButtonIcon onclick={handleButtonClick}>
+                        <Icon
+                          class="color-gray-800 size-5"
+                          src={ArrowDownTray}
+                          theme="solid"
+                        />
+                      </ButtonIcon>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      <p>Import CSV file</p>
+                    </Tooltip.Content>
+                  </Tooltip.Root>
+                  <input
+                    bind:this={fileInput}
+                    type="file"
+                    accept=".csv"
+                    onchange={handleFileChange}
+                    style="display: none;"
+                  />
+                  <Tooltip.Root>
+                    <Tooltip.Trigger>
+                      <ButtonIcon onclick={exportToCSV}>
+                        <Icon
+                          class="color-gray-800 size-5"
+                          src={ArrowUpTray}
+                          theme="solid"
+                        />
+                      </ButtonIcon>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      <p>Export CSV file</p>
+                    </Tooltip.Content>
+                  </Tooltip.Root>
+                </div>
               </div>
-              <div class="flex flex-row items-center h-full gap-2">
-                <Tooltip.Root>
-                  <Tooltip.Trigger>
-                    <ButtonIcon onclick={handleButtonClick}>
-                      <Icon
-                        class="color-gray-800 size-5"
-                        src={ArrowDownTray}
-                        theme="solid"
-                      />
-                    </ButtonIcon>
-                  </Tooltip.Trigger>
-                  <Tooltip.Content>
-                    <p>Import CSV file</p>
-                  </Tooltip.Content>
-                </Tooltip.Root>
-                <input
-                  bind:this={fileInput}
-                  type="file"
-                  accept=".csv"
-                  onchange={handleFileChange}
-                  style="display: none;"
-                />
-                <Tooltip.Root>
-                  <Tooltip.Trigger>
-                    <ButtonIcon onclick={exportToCSV}>
-                      <Icon
-                        class="color-gray-800 size-5"
-                        src={ArrowUpTray}
-                        theme="solid"
-                      />
-                    </ButtonIcon>
-                  </Tooltip.Trigger>
-                  <Tooltip.Content>
-                    <p>Export CSV file</p>
-                  </Tooltip.Content>
-                </Tooltip.Root>
-              </div>
-            </div>
-            {#if Game.storage.room.stories && Game.storage.room.stories.length != 0}
-              <Table.Root>
-                <Table.Header>
-                  <Table.Row>
-                    <!-- <Table.Head class="text-center">
+              {#if Game.storage.room.stories && Game.storage.room.stories.length != 0}
+                <Table.Root>
+                  <Table.Header>
+                    <Table.Row>
+                      <!-- <Table.Head class="text-center">
 										<Checkbox
 											id="terms"
 											bind:checked
@@ -236,31 +240,31 @@
 											class="mx-auto"
 										/>
 									</Table.Head> -->
-                    <Table.Head>Title</Table.Head>
-                    <Table.Head>Description</Table.Head>
-                    <Table.Head>Score</Table.Head>
-                    <Table.Head></Table.Head>
-                  </Table.Row>
-                </Table.Header>
+                      <Table.Head>Title</Table.Head>
+                      <Table.Head>Description</Table.Head>
+                      <Table.Head>Score</Table.Head>
+                      <Table.Head></Table.Head>
+                    </Table.Row>
+                  </Table.Header>
 
-                <Table.Body>
-                  {#each Game.storage.room.stories as issue}
-                    <Table.Row>
-                      <!--<Table.Cell>
+                  <Table.Body>
+                    {#each Game.storage.room.stories as issue}
+                      <Table.Row>
+                        <!--<Table.Cell>
 											 <Checkbox
 												id="terms"
 												bind:checked
 												aria-labelledby="terms-label"
 											/> 
 										</Table.Cell>-->
-                      <Table.Cell>{issue.title}</Table.Cell>
-                      <Table.Cell>
-                        <p class="truncate max-w-96">
-                          {issue.description}
-                        </p></Table.Cell
-                      >
-                      <Table.Cell>
-                        <!-- <Select.Root>
+                        <Table.Cell>{issue.title}</Table.Cell>
+                        <Table.Cell>
+                          <p class="truncate max-w-96">
+                            {issue.description}
+                          </p></Table.Cell
+                        >
+                        <Table.Cell>
+                          <!-- <Select.Root>
                         <Select.Trigger class="w-[100px]">
                           <Select.Value placeholder="Score" />
                         </Select.Trigger>
@@ -278,181 +282,183 @@
                         </Select.Content>
                         <Select.Input name="score" />
                       </Select.Root> -->
-                        {issue.finalEstimate}
-                      </Table.Cell>
-                      <Table.Cell>
-                        <div class="flex flex-row items-center h-full gap-2">
-                          <AlertDialog.Root>
-                            <AlertDialog.Trigger
-                              ><Tooltip.Root>
-                                <AlertDialog.Trigger asChild>
-                                  <Tooltip.Root>
-                                    <Tooltip.Trigger>
-                                      <ButtonIcon>
-                                        <Icon
-                                          class="color-gray-800 size-5"
-                                          src={Trash}
-                                          theme="outline"
-                                        />
-                                      </ButtonIcon>
-                                    </Tooltip.Trigger>
-                                    <Tooltip.Content>
-                                      <p>Delete</p>
-                                    </Tooltip.Content>
-                                  </Tooltip.Root>
-                                </AlertDialog.Trigger>
+                          {issue.finalEstimate}
+                        </Table.Cell>
+                        <Table.Cell>
+                          <div class="flex flex-row items-center h-full gap-2">
+                            <AlertDialog.Root>
+                              <AlertDialog.Trigger
+                                ><Tooltip.Root>
+                                  <AlertDialog.Trigger asChild>
+                                    <Tooltip.Root>
+                                      <Tooltip.Trigger>
+                                        <ButtonIcon>
+                                          <Icon
+                                            class="color-gray-800 size-5"
+                                            src={Trash}
+                                            theme="outline"
+                                          />
+                                        </ButtonIcon>
+                                      </Tooltip.Trigger>
+                                      <Tooltip.Content>
+                                        <p>Delete</p>
+                                      </Tooltip.Content>
+                                    </Tooltip.Root>
+                                  </AlertDialog.Trigger>
 
-                                <Tooltip.Content>
-                                  <p>Delete</p>
-                                </Tooltip.Content>
-                              </Tooltip.Root></AlertDialog.Trigger
-                            >
-                            <AlertDialog.Content>
-                              <AlertDialog.Header>
-                                <AlertDialog.Title
-                                  >Are you sure?</AlertDialog.Title
-                                >
-                                <AlertDialog.Description>
-                                  This action cannot be undone. This will
-                                  permanently delete your issue.
-                                </AlertDialog.Description>
-                              </AlertDialog.Header>
-                              <AlertDialog.Footer>
-                                <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-                                <AlertDialog.Action
-                                  onclick={() => Game.deleteStory(issue.id)}
-                                  >Continue</AlertDialog.Action
-                                >
-                              </AlertDialog.Footer>
-                            </AlertDialog.Content>
-                          </AlertDialog.Root>
-                          <Tooltip.Root>
-                            <Tooltip.Trigger>
-                              <ButtonIcon
-                                onclick={() => {
-                                  selectedIssue = issue;
-                                  isModifyOpen = true;
-                                }}
+                                  <Tooltip.Content>
+                                    <p>Delete</p>
+                                  </Tooltip.Content>
+                                </Tooltip.Root></AlertDialog.Trigger
                               >
-                                <Icon
-                                  class="color-gray-800 size-5"
-                                  src={PencilSquare}
-                                  theme="outline"
-                                />
-                              </ButtonIcon>
-                            </Tooltip.Trigger>
-                            <Tooltip.Content>
-                              <p>Modify</p>
-                            </Tooltip.Content>
-                          </Tooltip.Root>
-                          <Tooltip.Root>
-                            <Tooltip.Trigger>
-                              <ButtonIcon
-                                onclick={() => Game.selectStory(issue.id)}
-                              >
-                                <Icon
-                                  class="color-gray-800 size-5"
-                                  src={PaperAirplane}
-                                  theme="outline"
-                                />
-                              </ButtonIcon>
-                            </Tooltip.Trigger>
-                            <Tooltip.Content>
-                              <p>Vote</p>
-                            </Tooltip.Content>
-                          </Tooltip.Root>
-                        </div>
-                      </Table.Cell>
-                    </Table.Row>
-                  {/each}
-                </Table.Body>
-              </Table.Root>
-            {:else}
-              <p class="text-center w-full text-gray-500">No issue</p>
-            {/if}
-            <div class="flex justify-center w-full">
-              <Dialog.Root bind:open={isAddOpen}>
-                <form
-                  onsubmit={(e) => {
-                    Game.createStory(e);
-                    isAddOpen = false;
-                  }}
-                >
-                  <Dialog.Trigger>
-                    <Button
-                      onclick={() => (isAddOpen = true)}
-                      class="outline flex flex-row gap-1 p-4 mx-auto m-2"
-                    >
-                      <Icon
-                        class="color-gray-800 size-5"
-                        src={Plus}
-                        theme="solid"
-                      />
-                      <div>Add an issue</div>
-                    </Button>
-                  </Dialog.Trigger>
-                  <Dialog.Content class="sm:max-w-[425px]">
-                    <Dialog.Header>
-                      <Dialog.Title>Add an issue</Dialog.Title>
-                      <Dialog.Description>
-                        Add an issue here. Click save when you're done.
-                      </Dialog.Description>
-                    </Dialog.Header>
-                    <div class="grid gap-4 py-4">
-                      <div class="grid grid-cols-4 items-center gap-4">
-                        <Label for="title" class="text-right">Title</Label>
-                        <Input
-                          id="title"
-                          name="title"
-                          class="col-span-3"
-                          required
-                        />
-                      </div>
-                      <div class="grid grid-cols-4 items-center gap-4">
-                        <Label for="description" class="text-right"
-                          >Description</Label
-                        >
-                        <Input
-                          id="description"
-                          name="description"
-                          class="col-span-3"
-                          required
-                        />
-                      </div>
-                      <div class="grid grid-cols-4 items-center gap-4">
-                        <Label for="issue-description" class="text-right"
-                          >Score</Label
-                        >
-                        <Select.Root>
-                          <Select.Trigger class="w-[100px]">
-                            <Select.Value placeholder="Score" />
-                          </Select.Trigger>
-                          <Select.Content>
-                            <Select.Group>
-                              <ScrollArea class="h-20">
-                                {#each scores as score}
-                                  <Select.Item
-                                    value={score.value}
-                                    label={score.value}
-                                    >{score.value}</Select.Item
+                              <AlertDialog.Content>
+                                <AlertDialog.Header>
+                                  <AlertDialog.Title
+                                    >Are you sure?</AlertDialog.Title
                                   >
-                                {/each}
-                              </ScrollArea>
-                            </Select.Group>
-                          </Select.Content>
-                          <Select.Input name="score" />
-                        </Select.Root>
+                                  <AlertDialog.Description>
+                                    This action cannot be undone. This will
+                                    permanently delete your issue.
+                                  </AlertDialog.Description>
+                                </AlertDialog.Header>
+                                <AlertDialog.Footer>
+                                  <AlertDialog.Cancel>Cancel</AlertDialog.Cancel
+                                  >
+                                  <AlertDialog.Action
+                                    onclick={() => Game.deleteStory(issue.id)}
+                                    >Continue</AlertDialog.Action
+                                  >
+                                </AlertDialog.Footer>
+                              </AlertDialog.Content>
+                            </AlertDialog.Root>
+                            <Tooltip.Root>
+                              <Tooltip.Trigger>
+                                <ButtonIcon
+                                  onclick={() => {
+                                    selectedIssue = issue;
+                                    isModifyOpen = true;
+                                  }}
+                                >
+                                  <Icon
+                                    class="color-gray-800 size-5"
+                                    src={PencilSquare}
+                                    theme="outline"
+                                  />
+                                </ButtonIcon>
+                              </Tooltip.Trigger>
+                              <Tooltip.Content>
+                                <p>Modify</p>
+                              </Tooltip.Content>
+                            </Tooltip.Root>
+                            <Tooltip.Root>
+                              <Tooltip.Trigger>
+                                <ButtonIcon
+                                  onclick={() => Game.selectStory(issue.id)}
+                                >
+                                  <Icon
+                                    class="color-gray-800 size-5"
+                                    src={PaperAirplane}
+                                    theme="outline"
+                                  />
+                                </ButtonIcon>
+                              </Tooltip.Trigger>
+                              <Tooltip.Content>
+                                <p>Vote</p>
+                              </Tooltip.Content>
+                            </Tooltip.Root>
+                          </div>
+                        </Table.Cell>
+                      </Table.Row>
+                    {/each}
+                  </Table.Body>
+                </Table.Root>
+              {:else}
+                <p class="text-center w-full text-gray-500">No issue</p>
+              {/if}
+              <div class="flex justify-center w-full">
+                <Dialog.Root bind:open={isAddOpen}>
+                  <form
+                    onsubmit={(e) => {
+                      Game.createStory(e);
+                      isAddOpen = false;
+                    }}
+                  >
+                    <Dialog.Trigger>
+                      <Button
+                        onclick={() => (isAddOpen = true)}
+                        class="outline flex flex-row gap-1 p-4 mx-auto m-2"
+                      >
+                        <Icon
+                          class="color-gray-800 size-5"
+                          src={Plus}
+                          theme="solid"
+                        />
+                        <div>Add an issue</div>
+                      </Button>
+                    </Dialog.Trigger>
+                    <Dialog.Content class="sm:max-w-[425px]">
+                      <Dialog.Header>
+                        <Dialog.Title>Add an issue</Dialog.Title>
+                        <Dialog.Description>
+                          Add an issue here. Click save when you're done.
+                        </Dialog.Description>
+                      </Dialog.Header>
+                      <div class="grid gap-4 py-4">
+                        <div class="grid grid-cols-4 items-center gap-4">
+                          <Label for="title" class="text-right">Title</Label>
+                          <Input
+                            id="title"
+                            name="title"
+                            class="col-span-3"
+                            required
+                          />
+                        </div>
+                        <div class="grid grid-cols-4 items-center gap-4">
+                          <Label for="description" class="text-right"
+                            >Description</Label
+                          >
+                          <Input
+                            id="description"
+                            name="description"
+                            class="col-span-3"
+                            required
+                          />
+                        </div>
+                        <div class="grid grid-cols-4 items-center gap-4">
+                          <Label for="issue-description" class="text-right"
+                            >Score</Label
+                          >
+                          <Select.Root>
+                            <Select.Trigger class="w-[100px]">
+                              <Select.Value placeholder="Score" />
+                            </Select.Trigger>
+                            <Select.Content>
+                              <Select.Group>
+                                <ScrollArea class="h-20">
+                                  {#each scores as score}
+                                    <Select.Item
+                                      value={score.value}
+                                      label={score.value}
+                                      >{score.value}</Select.Item
+                                    >
+                                  {/each}
+                                </ScrollArea>
+                              </Select.Group>
+                            </Select.Content>
+                            <Select.Input name="score" />
+                          </Select.Root>
+                        </div>
                       </div>
-                    </div>
-                    <Dialog.Footer>
-                      <Button type="submit">Save changes</Button>
-                    </Dialog.Footer>
-                  </Dialog.Content>
-                </form></Dialog.Root
-              >
+                      <Dialog.Footer>
+                        <Button type="submit">Save changes</Button>
+                      </Dialog.Footer>
+                    </Dialog.Content>
+                  </form></Dialog.Root
+                >
+              </div>
             </div>
-          </div>
-        </Tabs.Content>
+          </Tabs.Content>
+        {/if}
 
         <Tabs.Content value="profile-settings"
           ><div class="grid gap-2 p-5 my-5 border border-gray-300 rounded-lg">
@@ -479,7 +485,7 @@
               <Button
                 builders={[]}
                 class="outline flex flex-row gap-1 p-4 mx-auto m-2"
-				onclick={() => Game.updateUser(Game.storage.user)}
+                onclick={() => Game.updateUser(Game.storage.user)}
               >
                 <Icon class="color-gray-800 size-5" src={Check} theme="solid" />
                 <div>Save</div>
