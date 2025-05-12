@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import { Game } from "$lib/Game.svelte";
   import randomName from "@scaleway/random-name";
@@ -10,6 +11,11 @@
   let roomName = $state("");
   let roomId = $state("");
   let userName = $state(randomName(""));
+
+  onMount(()=>{
+    const urlParams = new URLSearchParams(window.location.search);
+    roomId = urlParams.get('roomId') ?? '';
+  })
 
   async function create(e: SubmitEvent) {
     e.preventDefault();
