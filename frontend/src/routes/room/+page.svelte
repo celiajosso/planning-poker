@@ -3,6 +3,11 @@
 	import { goto } from "$app/navigation";
 	import { Game } from "$lib/Game.svelte";
 	import { WebSocketManager } from "$lib/WebsocketManager";
+	import { writable } from 'svelte/store';
+	import { get } from 'svelte/store';
+	
+	
+
 
 	import { Icon } from "@steeze-ui/svelte-icon";
 	import {
@@ -22,6 +27,7 @@
 
 	import * as Sheet from "$lib/components/ui/sheet/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
+
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
 	import * as Table from "$lib/components/ui/table/index.js";
@@ -49,23 +55,34 @@
 		}
 	});
 
-	const issues = [
-		{
-			title: "SCRUM-1",
-			description: "The User story ...",
-			score: "1",
-		},
-		{
-			title: "SCRUM-2",
-			description: "The User story ...",
-			score: "7",
-		},
-		{
-			title: "SCRUM-3",
-			description: "The User story ...",
-			score: "11",
-		},
-	];
+	
+	interface Issue {
+    title: string;
+    description: string;
+    score: string;
+}
+
+
+const issues = writable<Issue[]>([
+    {
+        title: "SCRUM-1",
+        description: "The User story ...",
+        score: "1",
+    },
+    {
+        title: "SCRUM-2",
+        description: "The User story ...",
+        score: "7",
+    },
+    {
+        title: "SCRUM-3",
+        description: "The User story ...",
+        score: "11",
+    },
+]);
+
+	let selectedIssueIndex: Issue | null = null;
+
 
 	let fileInput;
 
@@ -74,42 +91,150 @@
 	}
 
 	function handleFileChange(event) {
-		const file = event.target.files[0];
-		if (file && file.type === "text/csv") {
-			console.log("CSV file selected:", file);
-		} else {
-			alert("Please selectt a CSV file.");
-		}
+	const file = event.target.files[0];
+	if (!file || file.type !== "text/csv") {
+		alert("Veuillez sélectionner un fichier CSV valide.");
+		return;
 	}
+
+	const reader = new FileReader();
+	reader.onload = (e) => {
+		const text = e.target.result;
+		const lines = text.trim().split("\n");
+
+		// Choix du séparateur automatique : tabulation, point-virgule ou virgule
+		const separator = lines[0].includes("\t") ? "\t" :
+		lines[0].includes(";") ? ";" : ",";
+
+		const headers = lines[0].split(separator).map(h => h.trim().toLowerCase());
+
+		const titleIndex = headers.findIndex(h => h.includes("clé de ticket"));
+		const descriptionIndex = headers.findIndex(h => h.includes("description du projet"));
+		const scoreIndex = headers.findIndex(h => h.includes("story point estimate"));
+
+		if (titleIndex === -1 || descriptionIndex === -1 || scoreIndex === -1) {
+			alert("Le fichier doit contenir les colonnes : 'Clé de ticket', 'Description du projet' et 'Story point estimate'.");
+			return;
+		}
+
+		for (let i = 1; i < lines.length; i++) {
+			const cols = lines[i].split(separator);
+			if (cols.length < Math.max(titleIndex, descriptionIndex, scoreIndex) + 1) continue;
+
+			const title = cols[titleIndex]?.trim();
+			const description = cols[descriptionIndex]?.trim() || "The User story ...";
+			let rawScore = cols[scoreIndex]?.trim();
+
+			// Récupérer uniquement la partie entière avant le point
+			const score = rawScore?.split(".")[0];
+
+			if (title && description) {
+				issues.update((currentIssues: Issue[]) => {
+					currentIssues.push({ title, description, score });
+					return currentIssues;
+				});
+			}
+		}
+
+		alert("Importation terminée !");
+	};
+	reader.readAsText(file);
+}
+
+
+let title = "";
+  let description = "";
+//   let rawScore = "";
+let rawScore = "5";  // Test avec une valeur fixe
+console.log("Initial rawScore:", rawScore);
+
+
+
+  const addIssue = () => {
+	console.log("rawscor", rawScore);
+    const trimmedTitle = title.trim();
+    const trimmedDescription = description.trim() || "The User story ...";
+    const score = rawScore && rawScore.includes(".")
+  ? rawScore.split(".")[0]
+  : rawScore?.trim() || undefined;
+
+console.log("rawScore", rawScore);
+console.log("score", score);
+
+    if (trimmedTitle && trimmedDescription) {
+      issues.update((currentIssues) => {
+        currentIssues.push({ title: trimmedTitle, description: trimmedDescription, score: score });
+        return currentIssues;
+      });
+    }
+  };
+
+  const scoreOptions = Array.from({ length: 11 }, (_, i) => ({ value: i.toString() }));
+
+
+  function handleScoreChange(e: CustomEvent<string>) {
+	console.log("Valeur changée :", e.detail);
+
+    rawScore = e.detail;
+	
+  }
+
+
+  function editIssue(i: number) {
+    // const issue = $issues[i];
+    // title = issue.title;
+    // description = issue.description;
+    // rawScore = issue.score;
+	console.log("valeur",title,description,rawScore)
+	issues.update((currentIssues) => {
+	  currentIssues[i] = { title, description, score: rawScore };
+	  return currentIssues;
+	});
+  }
+
+  
+
+
+  function deleteIssue(index: number) {
+	issues.update(current => {
+		current.splice(index, 1);
+		return [...current];
+	});
+}
+
+
+
 
 	// /!\ A CHANGER SELON LE FORMAT CSV DE JIRA !!!
 	function exportToCSV() {
-		const csvRows = [];
+	const currentIssues = get(issues); // On récupère les données de la store
 
-		const headers = ["Title", "Description", "Score"];
-		csvRows.push(headers.join(","));
+	const csvRows = [];
 
-		for (const issue of issues) {
-			const row = [issue.title, issue.description, issue.score];
-			csvRows.push(
-				row.map((value) => `"${value.replace(/"/g, '""')}"`).join(","),
-			);
-		}
+	const headers = ["Title", "Description", "Score"];
+	csvRows.push(headers.join(","));
 
-		const csvContent = csvRows.join("\n");
-
-		const blob = new Blob([csvContent], {
-			type: "text/csv;charset=utf-8;",
-		});
-		const url = URL.createObjectURL(blob);
-		const link = document.createElement("a");
-		link.setAttribute("href", url);
-		link.setAttribute("download", "issues_export.csv");
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
-		URL.revokeObjectURL(url);
+	for (const issue of currentIssues) {
+		const row = [issue.title, issue.description, issue.score];
+		csvRows.push(
+			row.map((value) => `"${value.replace(/"/g, '""')}"`).join(",")
+		);
 	}
+
+	const csvContent = csvRows.join("\n");
+
+	const blob = new Blob([csvContent], {
+		type: "text/csv;charset=utf-8;",
+	});
+	const url = URL.createObjectURL(blob);
+	const link = document.createElement("a");
+	link.setAttribute("href", url);
+	link.setAttribute("download", "issues_export.csv");
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+	URL.revokeObjectURL(url);
+}
 
 	import * as Select from "$lib/components/ui/select/index.js";
 
@@ -224,14 +349,6 @@
 						<Table.Root>
 							<Table.Header>
 								<Table.Row>
-									<!-- <Table.Head class="text-center">
-										<Checkbox
-											id="terms"
-											bind:checked
-											aria-labelledby="terms-label"
-											class="mx-auto"
-										/>
-									</Table.Head> -->
 									<Table.Head>Title</Table.Head>
 									<Table.Head>Description</Table.Head>
 									<Table.Head>Score</Table.Head>
@@ -239,41 +356,26 @@
 								</Table.Row>
 							</Table.Header>
 							<Table.Body>
-								{#each issues as issue, i (i)}
+								{#each $issues as issue, i (i)}
 									<Table.Row>
-										<!--<Table.Cell>
-											 <Checkbox
-												id="terms"
-												bind:checked
-												aria-labelledby="terms-label"
-											/> 
-										</Table.Cell>-->
 										<Table.Cell>{issue.title}</Table.Cell>
 										<Table.Cell>
 											<p class="truncate max-w-96">
 												{issue.description}
-											</p></Table.Cell
-										>
+											</p>
+										</Table.Cell>
 										<Table.Cell>
 											<Select.Root>
-												<Select.Trigger
-													class="w-[100px]"
-												>
-													<Select.Value
-														placeholder="Score"
-													/>
+												<Select.Trigger class="w-[100px]">
+													<Select.Value placeholder={issue.score} />
 												</Select.Trigger>
 												<Select.Content>
 													<Select.Group>
-														<ScrollArea
-															class="h-20"
-														>
+														<ScrollArea class="h-20">
 															{#each scores as score}
-																<Select.Item
-																	value={score.value}
-																	label={score.value}
-																	>{score.value}</Select.Item
-																>
+																<Select.Item value={score.value} label={score.value}>
+																	{score.value}
+																</Select.Item>
 															{/each}
 														</ScrollArea>
 													</Select.Group>
@@ -282,66 +384,41 @@
 											</Select.Root>
 										</Table.Cell>
 										<Table.Cell>
-											<div
-												class="flex flex-row items-center h-full gap-2"
-											>
+											<div class="flex flex-row items-center h-full gap-2">
 												<AlertDialog.Root>
-													<AlertDialog.Trigger
-														><Tooltip.Root>
-															<AlertDialog.Trigger
-																asChild
-															>
-																<Tooltip.Root>
-																	<Tooltip.Trigger
-																	>
-																		<ButtonIcon
-																		>
-																			<Icon
-																				class="color-gray-800 size-5"
-																				src={Trash}
-																				theme="outline"
-																			/>
-																		</ButtonIcon>
-																	</Tooltip.Trigger>
-																	<Tooltip.Content
-																	>
-																		<p>
-																			Delete
-																		</p>
-																	</Tooltip.Content>
-																</Tooltip.Root>
-															</AlertDialog.Trigger>
-
+													<AlertDialog.Trigger>
+														<Tooltip.Root>
+															<Tooltip.Trigger asChild>
+																<ButtonIcon>
+																	<Icon
+																		class="color-gray-800 size-5"
+																		src={Trash}
+																		theme="outline"
+																	/>
+																</ButtonIcon>
+															</Tooltip.Trigger>
 															<Tooltip.Content>
 																<p>Delete</p>
 															</Tooltip.Content>
-														</Tooltip.Root></AlertDialog.Trigger
-													>
+														</Tooltip.Root>
+													</AlertDialog.Trigger>
 													<AlertDialog.Content>
 														<AlertDialog.Header>
-															<AlertDialog.Title
-																>Are you sure?</AlertDialog.Title
-															>
-															<AlertDialog.Description
-															>
-																This action
-																cannot be
-																undone. This
-																will permanently
-																delete your
-																issue.
+															<AlertDialog.Title>Are you sure?</AlertDialog.Title>
+															<AlertDialog.Description>
+																This action cannot be undone. This will permanently delete your issue.
 															</AlertDialog.Description>
 														</AlertDialog.Header>
 														<AlertDialog.Footer>
-															<AlertDialog.Cancel
-																>Cancel</AlertDialog.Cancel
-															>
-															<AlertDialog.Action
-																>Continue</AlertDialog.Action
-															>
+															<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+															<AlertDialog.Action asChild>
+																<Button onclick={() => deleteIssue(i)}>Continue</Button>
+															</AlertDialog.Action>
 														</AlertDialog.Footer>
 													</AlertDialog.Content>
 												</AlertDialog.Root>
+												
+						
 												<Dialog.Root>
 													<Dialog.Trigger>
 														<Tooltip.Root>
@@ -359,99 +436,49 @@
 															</Tooltip.Content>
 														</Tooltip.Root>
 													</Dialog.Trigger>
-													<Dialog.Content
-														class="sm:max-w-[425px]"
-													>
+													<Dialog.Content class="sm:max-w-[425px] ">
 														<Dialog.Header>
-															<Dialog.Title
-																>Edit issue</Dialog.Title
-															>
+															<Dialog.Title>Edit issue</Dialog.Title>
 															<Dialog.Description>
-																Make changes to
-																your issue here.
-																Click save when
-																you're done.
+																Make changes to your issue here. Click save when you're done.
 															</Dialog.Description>
 														</Dialog.Header>
-														<div
-															class="grid gap-4 py-4"
-														>
-															<div
-																class="grid grid-cols-4 items-center gap-4"
-															>
-																<Label
-																	for="name"
-																	class="text-right"
-																	>Title</Label
-																>
-																<Input
-																	id="name"
-																	value={issue.title}
-																	class="col-span-3"
-																/>
+														<div class="grid gap-4 py-4 ">
+															<div class="grid grid-cols-4 items-center gap-4">
+																<Label for="name" class="text-right">Title</Label>
+																<Input id="name" bind:value={title} class="col-span-3" />
 															</div>
-															<div
-																class="grid grid-cols-4 items-center gap-4"
-															>
-																<Label
-																	for="issue-title"
-																	class="text-right"
-																	>Description</Label
-																>
-																<Input
-																	id="username"
-																	value={issue.description}
-																	class="col-span-3"
-																/>
+															<div class="grid grid-cols-4 items-center gap-4">
+																<Label for="issue-title" class="text-right">Description</Label>
+																<Input id="username" bind:value={description} class="col-span-3" />
 															</div>
-															<div
-																class="grid grid-cols-4 items-center gap-4"
-															>
-																<Label
-																	for="issue-description"
-																	class="text-right"
-																	>Score</Label
-																>
+															<div class="grid grid-cols-4 items-center gap-4">
+																<Label for="issue-description" class="text-right">Score</Label>
 																<Select.Root>
-																	<Select.Trigger
-																		class="w-[100px]"
-																	>
-																		<Select.Value
-																			placeholder="Score"
-																		/>
+																	<Select.Trigger class="w-[100px]">
+																		<Select.Value placeholder="Score" />
 																	</Select.Trigger>
-																	<Select.Content
-																	>
-																		<Select.Group
-																		>
-																			<ScrollArea
-																				class="h-20"
-																			>
-																				{#each scores as score}
-																					<Select.Item
-																						value={score.value}
-																						label={score.value}
-																						>{score.value}</Select.Item
-																					>
-																				{/each}
+																	<Select.Content>
+																		<Select.Group>
+																			<ScrollArea class="h-20">
+																				<select bind:value={rawScore} >
+																					{#each scoreOptions as score}
+																					  <option value={score.value}>{score.value}</option>
+																					{/each}
+																				</select>
 																			</ScrollArea>
 																		</Select.Group>
 																	</Select.Content>
-																	<Select.Input
-																		name="score"
-																	/>
+																	<Select.Input name="score" />
 																</Select.Root>
 															</div>
 														</div>
 														<Dialog.Footer>
-															<Button
-																type="submit"
-																>Save changes</Button
-															>
+															<Button onclick={() => editIssue(i)}>Save changes</Button>
 														</Dialog.Footer>
 													</Dialog.Content>
 												</Dialog.Root>
-
+						
 												<Tooltip.Root>
 													<Tooltip.Trigger>
 														<ButtonIcon>
@@ -472,97 +499,58 @@
 								{/each}
 							</Table.Body>
 						</Table.Root>
+						
 						<div class="flex justify-center w-full">
 							<Dialog.Root>
-								<Dialog.Trigger>
-									<Button
-										builders={[]}
-										class="outline flex flex-row gap-1 p-4 mx-auto m-2"
-									>
-										<Icon
-											class="color-gray-800 size-5"
-											src={Plus}
-											theme="solid"
-										/>
-										<div>Add an issue</div>
-									</Button>
-								</Dialog.Trigger>
-								<Dialog.Content class="sm:max-w-[425px]">
-									<Dialog.Header>
-										<Dialog.Title>Add an issue</Dialog.Title
-										>
-										<Dialog.Description>
-											Add an issue here. Click save when
-											you're done.
-										</Dialog.Description>
-									</Dialog.Header>
-									<div class="grid gap-4 py-4">
-										<div
-											class="grid grid-cols-4 items-center gap-4"
-										>
-											<Label for="name" class="text-right"
-												>Title</Label
-											>
-											<Input
-												id="name"
-												class="col-span-3"
-											/>
-										</div>
-										<div
-											class="grid grid-cols-4 items-center gap-4"
-										>
-											<Label
-												for="issue-title"
-												class="text-right"
-												>Description</Label
-											>
-											<Input
-												id="username"
-												class="col-span-3"
-											/>
-										</div>
-										<div
-											class="grid grid-cols-4 items-center gap-4"
-										>
-											<Label
-												for="issue-description"
-												class="text-right">Score</Label
-											>
-											<Select.Root>
-												<Select.Trigger
-													class="w-[100px]"
-												>
-													<Select.Value
-														placeholder="Score"
-													/>
-												</Select.Trigger>
-												<Select.Content>
-													<Select.Group>
-														<ScrollArea
-															class="h-20"
-														>
-															{#each scores as score}
-																<Select.Item
-																	value={score.value}
-																	label={score.value}
-																	>{score.value}</Select.Item
-																>
-															{/each}
-														</ScrollArea>
-													</Select.Group>
-												</Select.Content>
-												<Select.Input name="score" />
-											</Select.Root>
-										</div>
-									</div>
-									<Dialog.Footer>
-										<Button type="submit"
-											>Save changes</Button
-										>
-									</Dialog.Footer>
-								</Dialog.Content>
+							  <Dialog.Trigger>
+								<Button class="outline flex flex-row gap-1 p-4 mx-auto m-2">
+								  <Icon class="color-gray-800 size-5" src={Plus} theme="solid" />
+								  <div>Add an issue</div>
+								</Button>
+							  </Dialog.Trigger>
+							  <Dialog.Content class="sm:max-w-[425px]">
+								<Dialog.Header>
+								  <Dialog.Title>Add an issue</Dialog.Title>
+								  <Dialog.Description>
+									Add an issue here. Click save when you're done.
+								  </Dialog.Description>
+								</Dialog.Header>
+								<div class="grid gap-4 py-4">
+								  <div class="grid grid-cols-4 items-center gap-4">
+									<Label for="title" class="text-right">Title</Label>
+									<Input id="title" class="col-span-3" bind:value={title} />
+								  </div>
+								  <div class="grid grid-cols-4 items-center gap-4">
+									<Label for="description" class="text-right">Description</Label>
+									<Input id="description" class="col-span-3" bind:value={description} />
+								  </div>
+								  <div class="grid grid-cols-4 items-center gap-4">
+									<Label for="score" class="text-right">Score</Label>
+									<Select.Root value={rawScore} on:valueChange={handleScoreChange}>
+										<Select.Trigger class="w-[100px]">
+										  <Select.Value placeholder="Score" />
+										</Select.Trigger>
+										<Select.Content>
+										  <Select.Group >
+											<ScrollArea class="h-20">
+												<select bind:value={rawScore} >
+													{#each scoreOptions as score}
+													  <option value={score.value}>{score.value}</option>
+													{/each}
+												</select>
+											</ScrollArea>
+										  </Select.Group>
+										</Select.Content>
+										<Select.Input name="score" />
+									  </Select.Root>
+								  </div>
+								</div>
+								<Dialog.Footer>
+								  <Button on:click={addIssue}>Save changes</Button>
+								</Dialog.Footer>
+							  </Dialog.Content>
 							</Dialog.Root>
-						</div>
+						  </div>
 					</div>
 				</Tabs.Content>
 
