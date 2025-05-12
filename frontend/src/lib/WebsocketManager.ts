@@ -40,6 +40,8 @@ export namespace WebSocketManager {
         break;
       case "RoomUpdated":
         Game.storage.room = serverMessage.room!;
+		Game.updateShowStory()
+
         break;
     }
   }
