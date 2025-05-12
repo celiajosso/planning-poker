@@ -2,41 +2,10 @@
   import { goto } from "$app/navigation";
   import { Game } from "$lib/Game.svelte";
   import randomName from "@scaleway/random-name";
-  import type { RoomDTO } from "$lib/RoomDTO";
-  import type { UserDTO } from "$lib/UserDTO";
   import { WebSocketManager } from "$lib/WebsocketManager";
-
   import { Input } from "$lib/components/ui/input/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
-
-  import { onMount } from "svelte";
-
-  import { Icon } from "@steeze-ui/svelte-icon";
-  import {
-    ArrowPath,
-    ArrowRightEndOnRectangle,
-    ChevronDoubleLeft,
-    ArrowDownTray,
-    ArrowUpTray,
-    Plus,
-    Trash,
-    PaperAirplane,
-    PencilSquare,
-    Check,
-    Share,
-    Square2Stack,
-  } from "@steeze-ui/heroicons";
-
-  import { Label } from "$lib/components/ui/label/index.js";
-  import * as Table from "$lib/components/ui/table/index.js";
-  import { Checkbox } from "$lib/components/ui/checkbox/index.js";
-  import * as Tooltip from "$lib/components/ui/tooltip/index.js";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
-  import ButtonIcon from "$lib/ButtonIcon.svelte";
-  import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
-  import * as Dialog from "$lib/components/ui/dialog/index.js";
-  import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
-  import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 
   let roomName = $state("");
   let roomId = $state("");
@@ -49,7 +18,7 @@
       { id: "", username: userName, role: "Player", card: -1, roomId: "" },
       { id: "", name: roomName, stories: [], storySelected: null }
     );
-    goto("/room");
+    await goto("/room");
   }
 
   async function join(e: SubmitEvent) {
@@ -62,7 +31,7 @@
       card: -1,
       roomId: roomId,
     });
-    goto("/room");
+    await goto("/room");
   }
 </script>
 

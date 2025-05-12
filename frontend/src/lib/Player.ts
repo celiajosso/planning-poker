@@ -1,42 +1,41 @@
-import { Container, Text } from 'pixi.js';
-import '@pixi/layout';
-import { Card } from './Card';
-import { tw } from '@pixi/layout/tailwind';
+import { Container, Text } from "pixi.js";
+import "@pixi/layout";
+import { Card } from "./Card";
+import { tw } from "@pixi/layout/tailwind";
 
 export class Player extends Container {
-	playerName: string;
-	readonly card: Card;
+  playerName: string;
+  readonly card: Card;
 
-	constructor(name: string, card: number) {
-		super();
-		this.layout = tw`flex flex-col items-center gap-4`;
-		this.playerName = name;
+  constructor(name: string, card: number) {
+    super();
+    this.layout = tw`flex flex-col items-center gap-4`;
+    this.playerName = name;
 
-		const text = new Text({
-			text: name,
-			style: {
-				fill: 'gray',
-				fontFamily: 'Righteous Regular',
-				fontSize: 16,
-				align: 'center'
-			},
-			layout: {
-				width: 'intrinsic',
-				height: 'intrinsic'
-			}
-		});
+    const text = new Text({
+      text: name,
+      style: {
+        fill: "gray",
+        fontFamily: "Righteous Regular",
+        fontSize: 16,
+        align: "center",
+      },
+      layout: {
+        width: "intrinsic",
+        height: "intrinsic",
+      },
+    });
 
-		this.card = new Card(card == -1 ? '' : card.toString() );
-		this.addChild(this.card);
-		this.addChild(text);
-	}
+    this.card = new Card(card == -1 ? "" : card.toString());
+    this.addChild(this.card);
+    this.addChild(text);
+  }
 
-	setCard(card: number) {
-		if (card == -1){
-			this.card.select('');
-		}
-		else {
-			this.card.select(card.toString());
-		}
-	}
+  setCard(card: number) {
+    if (card == -1) {
+      this.card.select("");
+    } else {
+      this.card.select(card.toString());
+    }
+  }
 }
