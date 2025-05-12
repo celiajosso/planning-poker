@@ -52,13 +52,13 @@ export namespace Game {
   export function updateShowStory() {
 	if (storage.room.storySelected !== null){
 		storyDisplay.setStory(storage.room.storySelected)
-		gameContainer.visible = true
-		storyDisplay.visible = true
+		storyDisplay.alpha = 1
+		gameContainer.alpha = 0
 		deckContainer.visible = true
 	}
 	else {
-		gameContainer.visible = false
-		storyDisplay.visible = false
+		gameContainer.alpha = 0
+		storyDisplay.alpha = 0
 		deckContainer.visible = false
 	}
   }
@@ -106,7 +106,7 @@ export namespace Game {
     // GameContainer
 
     gameContainer = new GameContainer({
-      layout: tw`flex flex-row items-center justify-center w-full gap-4 flex-wrap`,
+      layout: tw`flex flex-row items-center justify-center w-full gap-4 flex-wrap flex-1`,
     });
 
     // initialize the deck
@@ -128,11 +128,10 @@ export namespace Game {
     resizeObserver.observe(app.canvas);
 
     gameContainer.alpha = 0;
-    deckContainer.visible = true;
 
 	storyDisplay = new StoryDisplay()
 
-	Game.updateShowStory()
+	updateShowStory()
 
     globalContainer.addChild(storyDisplay);
     globalContainer.addChild(gameContainer);
@@ -147,6 +146,7 @@ export namespace Game {
   }
 
   export function restart() {
+	if (storage.room.storySelected === null) return
     storage.user.card = -1;
     WebSocketManager.sendMessage("UserUpdate", storage.user, null, null);
     gameContainer.alpha = 0;
@@ -170,6 +170,7 @@ export namespace Game {
   }
 
   export function validate(selected: number) {
+	if (storage.room.storySelected === null) return
     gameContainer.alpha = 1;
     deckContainer.visible = false;
     storage.user.card = selected;

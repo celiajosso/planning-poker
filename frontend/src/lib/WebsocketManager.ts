@@ -5,6 +5,8 @@ export namespace WebSocketManager {
   export let socket: WebSocket;
 
   export function createSocket() {
+    if (socket) socket.close()
+
     const currentHost = window.location.host;
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     socket = new WebSocket(
@@ -41,7 +43,6 @@ export namespace WebSocketManager {
       case "RoomUpdated":
         Game.storage.room = serverMessage.room!;
 		Game.updateShowStory()
-
         break;
     }
   }
