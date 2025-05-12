@@ -7,12 +7,12 @@ export class StoryDisplay extends Container {
     private titleText: Text;
     private descriptionText: Text;
 
-    constructor() {
+    constructor(title: string, description: string) {
         super();
         this.layout = tw`flex flex-col items-center gap-2`;
 
         this.titleText = new Text({
-            text: 'No story selected',
+            text: title,
             style: {
                 fill: 'black',
                 fontFamily: 'Righteous Regular',
@@ -26,7 +26,7 @@ export class StoryDisplay extends Container {
         });
 
         this.descriptionText = new Text({
-            text: '',
+            text: description,
             style: {
                 fill: 'gray',
                 fontFamily: 'Righteous Regular',

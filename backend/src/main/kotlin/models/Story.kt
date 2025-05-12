@@ -21,11 +21,11 @@ data class Vote(
 
 @Serializable
 data class StoryDTO(
-    var id: String = "",
-    var title: String = "",
-    var description: String = "",
-    var finalEstimate: String = "",
-    val roomId: String = "",
+    var id: String,
+    var title: String,
+    var description: String,
+    var finalEstimate: String,
+    val roomId: String,
 )
 
 fun Story.toStoryDTO(): StoryDTO {

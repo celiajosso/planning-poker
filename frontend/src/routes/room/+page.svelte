@@ -38,7 +38,7 @@
 	let selectedIssue = null;
 
 	function selectIssue(issue) {
-		Game.selectStory(issue.id);
+		Game.selectStory(issue.title, issue.description);
 	}
 
 	let canvas: HTMLCanvasElement;

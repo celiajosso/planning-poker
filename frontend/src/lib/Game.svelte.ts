@@ -86,10 +86,6 @@ export namespace Game {
 			validate
 		);
 
-		// Story display
-		storyDisplay = new StoryDisplay();
-		globalContainer.addChild(storyDisplay);
-
 		const resizeObserver = new ResizeObserver(() => {
 			app.stage.layout = {
 				width: app.screen.width,
@@ -160,7 +156,7 @@ export namespace Game {
 	}
 
 export function selectStory(id: string) {
-    WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO(id, "", "", "", room.id));
+    WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO(id, "testT", "testD", "testF", room.id));
     const selected = room.stories.find((s) => s.id === id);
     storyDisplay.setStory(selected || null);
 }

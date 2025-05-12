@@ -2,6 +2,8 @@ import { Container, type ContainerChild, type ContainerOptions } from 'pixi.js';
 import '@pixi/layout';
 import { Player } from './Player';
 import type { UserDTO } from './UserDTO';
+import { StoryDisplay } from './StoryDisplay';
+import { StoryDTO } from './StoryDTO';
 
 export class GameContainer extends Container {
 	players: { [id: string]: Player } = {};
@@ -23,6 +25,10 @@ export class GameContainer extends Container {
 		const p = new Player(playerInfo.username, playerInfo.card);
 		this.players[playerInfo.id] = p;
 		this.addChild(p);
+	}
+
+	selectStory(storyInfo: StoryDTO): void {
+		const s = new StoryDisplay(storyInfo.title, storyInfo.description);
 	}
 
 	removePlayer(playerInfo: UserDTO): void {
