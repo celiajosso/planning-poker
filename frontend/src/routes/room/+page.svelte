@@ -35,6 +35,11 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 
 	let checked = false;
+	let selectedIssue = null;
+
+	function selectIssue(issue) {
+		Game.selectStory(issue.id);
+	}
 
 	let canvas: HTMLCanvasElement;
 
@@ -61,7 +66,7 @@
 			score: "7",
 		},
 		{
-			title: "SCRUM-3",
+			title: "SCCRUM-3",
 			description: "The User story ...",
 			score: "11",
 		},
@@ -145,6 +150,12 @@
 
 <canvas bind:this={canvas} class="h-dvh w-dvw"></canvas>
 {#if loaded}
+	<!-- {#if selectedIssue}
+		<div class="p-4 border rounded my-4 bg-gray-100">
+			<h2 class="text-xl font-bold">{selectedIssue.title}</h2>
+			<p>{selectedIssue.description}</p>
+		</div>
+	{/if} -->
 	<Sheet.Root>
 		<Sheet.Trigger class="absolute top-5 right-5 color-gray-700">
 			<ButtonIcon>
@@ -454,7 +465,12 @@
 
 												<Tooltip.Root>
 													<Tooltip.Trigger>
-														<ButtonIcon>
+														<ButtonIcon
+															onclick={() =>
+																selectIssue(
+																	issue,
+																)}
+														>
 															<Icon
 																class="color-gray-800 size-5"
 																src={PaperAirplane}

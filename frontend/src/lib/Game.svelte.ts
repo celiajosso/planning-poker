@@ -8,6 +8,7 @@ import { RoomDTO } from './RoomDTO';
 import type { UserDTO } from './UserDTO';
 import { WebSocketManager } from './WebsocketManager';
 import { StoryDTO } from './StoryDTO';
+import { StoryDisplay } from './StoryDisplay';
 
 export namespace Game {
 	export let app: Application;
@@ -19,6 +20,7 @@ export namespace Game {
 	export let room: RoomDTO;
 	export let gameContainer: GameContainer;
 	export let deckContainer: DeckContainer;
+	export let storyDisplay: StoryDisplay;
 
 	let player_cache: UserDTO[] = [];
 
@@ -83,6 +85,10 @@ export namespace Game {
 			},
 			validate
 		);
+
+		// Story display
+		storyDisplay = new StoryDisplay();
+		globalContainer.addChild(storyDisplay);
 
 		const resizeObserver = new ResizeObserver(() => {
 			app.stage.layout = {
@@ -152,12 +158,18 @@ export namespace Game {
 	export function updateStory() {
 		WebSocketManager.sendMessage('StoryUpdate', null, null, new StoryDTO("","title","description","finalEstimate",room.id));
 	}
-	export function selectStory(id:string) {
-		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO(id,"","","",room.id));
-	}
+
+export function selectStory(id: string) {
+    WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO(id, "", "", "", room.id));
+    const selected = room.stories.find((s) => s.id === id);
+    storyDisplay.setStory(selected || null);
+}
+
 	export function unselectStory() {
-		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO("","","","",room.id));
+		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO("", "", "", "", room.id));
+		storyDisplay.setStory(null);
 	}
+
 	export function deleteStory(id:string) {
 		WebSocketManager.sendMessage('StoryDelete', null, null, new StoryDTO(id,"","","",room.id));
 	}
