@@ -14,4 +14,5 @@ export class RoomDTO {
 		this.storySelected = roomDTO.storySelected;
 		this.stories = roomDTO.stories;
 	}
+
 }

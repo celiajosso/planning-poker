@@ -17,4 +17,5 @@ export class UserDTO {
 		this.roomId = userDTO.roomId;
 		this.card = userDTO.card;
 	}
+
 }

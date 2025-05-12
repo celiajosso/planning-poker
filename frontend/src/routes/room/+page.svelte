@@ -37,10 +37,6 @@
 	let checked = false;
 	let selectedIssue = null;
 
-	function selectIssue(issue) {
-		Game.selectStory(issue.title, issue.description);
-	}
-
 	let canvas: HTMLCanvasElement;
 
 	let loaded = $state(false);
@@ -348,6 +344,10 @@
 																>Cancel</AlertDialog.Cancel
 															>
 															<AlertDialog.Action
+																onclick={() =>
+																	Game.deleteStory(
+																		issue.id,
+																	)}
 																>Continue</AlertDialog.Action
 															>
 														</AlertDialog.Footer>
@@ -467,7 +467,7 @@
 													<Tooltip.Trigger>
 														<ButtonIcon
 															onclick={() =>
-																selectIssue(
+																Game.selectStory(
 																	issue.id,
 																)}
 														>

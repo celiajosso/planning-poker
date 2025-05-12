@@ -176,7 +176,7 @@ export namespace Game {
   		console.log(data);
 		WebSocketManager.sendMessage('StoryUpdate', null, null, new StoryDTO("", data.title, data.description, data.score, storage.room.id));
 	}
-	
+
 	export function selectStory(id:string) {
 		WebSocketManager.sendMessage('StorySelect', null, null, new StoryDTO(id,"","","",storage.room.id));
 	}
