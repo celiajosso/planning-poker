@@ -7,15 +7,18 @@
   import { Input } from "$lib/components/ui/input/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
+  import { InformationCircle } from "@steeze-ui/heroicons";
+  import { Icon } from "@steeze-ui/svelte-icon";
+  import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 
   let roomName = $state("");
   let roomId = $state("");
   let userName = $state(randomName(""));
 
-  onMount(()=>{
+  onMount(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    roomId = urlParams.get('roomId') ?? '';
-  })
+    roomId = urlParams.get("roomId") ?? "";
+  });
 
   async function create(e: SubmitEvent) {
     e.preventDefault();
@@ -99,3 +102,12 @@
   </Tabs.Root>
   <a href="/about" class="text-sm">Learn More</a>
 </div>
+
+<Tooltip.Root>
+  <Tooltip.Trigger class="absolute right-2 bottom-2">
+    <Icon class="color-gray-800 size-5" src={InformationCircle} theme="solid" />
+  </Tooltip.Trigger>
+  <Tooltip.Content>
+    Build : {import.meta.env.VITE_BUILD_DATE}
+  </Tooltip.Content>
+</Tooltip.Root>

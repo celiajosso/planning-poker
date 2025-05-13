@@ -4,12 +4,15 @@ import { defineConfig } from 'vite';
 import path from 'path';
 
 export default defineConfig({
+	define: {
+		'import.meta.env.VITE_BUILD_DATE': JSON.stringify(new Date().toISOString())
+	},
 	resolve: {
 		alias: {
-		$lib: path.resolve("./src/lib"),
+			$lib: path.resolve("./src/lib"),
 		},
-  	},
-	plugins: [ sveltekit()],
+	},
+	plugins: [sveltekit()],
 	test: {
 		workspace: [
 			{
