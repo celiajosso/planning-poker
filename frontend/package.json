@@ -57,6 +57,7 @@
 		"@steeze-ui/svelte-icon": "^1.6.2",
 		"pixi.js": "^8.9.0",
 		"runed": "^0.26.0",
+		"svelte-qrcode": "^1.0.1",
 		"svelte-sonner": "^1.0.0"
 	},
 	"browserslist": [
