@@ -4,7 +4,7 @@
   import { Game } from "$lib/Game.svelte";
   import { WebSocketManager } from "$lib/WebsocketManager";
   import * as Select from "$lib/components/ui/select/index.js";
-  import { importCSV, } from "$lib/CSV.svelte";
+  import { importCSV,exportToCSV } from "$lib/CSV.svelte";
   import { Icon } from "@steeze-ui/svelte-icon";
   import {
     ArrowPath,
@@ -204,7 +204,7 @@ const issues = writable<Issue[]>([
 
 
 
-// 	// /!\ A CHANGER SELON LE FORMAT CSV DE JIRA !!!
+	// /!\ A CHANGER SELON LE FORMAT CSV DE JIRA !!!
 // 	function exportToCSV() {
 // 	const currentIssues = get(issues); // On récupère les données de la store
 
@@ -234,6 +234,8 @@ const issues = writable<Issue[]>([
 // 	document.body.removeChild(link);
 // 	URL.revokeObjectURL(url);
 // }
+
+
 
   const scores = Array.from({ length: 14 }, (_, i) => ({
     value: i.toString(),
