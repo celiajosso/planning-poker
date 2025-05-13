@@ -7,10 +7,10 @@ name: DockerPublish
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches: ["main"]
-  #   # Publish semver tags as releases.
-  #   tags: ["v*.*.*"]
+  push:
+    branches: ["main"]
+    # Publish server tags as releases.
+    tags: ["v*.*.*"]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -53,3 +53,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+
+      - name: deploy on easypane
+        run: curl {{ env.EASYPANEL }}
