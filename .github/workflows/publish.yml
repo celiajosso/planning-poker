@@ -60,4 +60,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
 
       - name: deploy on easypane
-        run: curl {{ env.EASYPANEL }}
+        run: curl ${{ env.EASYPANEL }}
