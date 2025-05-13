@@ -50,17 +50,9 @@ export namespace Game {
 	}
 
 	export function updateShowStory() {
-		if (storage.room.storySelected !== null) {
-			storyDisplay.setStory(storage.room.storySelected)
-			storyDisplay.alpha = 1
-			gameContainer.alpha = 0
-			deckContainer.visible = true
-		}
-		else {
-			gameContainer.alpha = 0
-			storyDisplay.alpha = 0
-			deckContainer.visible = false
-		}
+		gameContainer.alpha = 0
+		storyDisplay.setStory(storage.room.storySelected)
+		deckContainer.visible = storage.room.storySelected !== null
 	}
 
 	export async function init(canvas: HTMLCanvasElement) {
@@ -126,8 +118,6 @@ export namespace Game {
 		});
 
 		resizeObserver.observe(app.canvas);
-
-		gameContainer.alpha = 0;
 
 		storyDisplay = new StoryDisplay()
 
