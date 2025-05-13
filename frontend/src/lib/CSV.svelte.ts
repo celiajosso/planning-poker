@@ -25,7 +25,7 @@ export function exportToCSV() {
 	for (const issue of Game.storage.room.stories) {
 		const row = [issue.title, issue.description, issue.finalEstimate];
 		csvRows.push(
-			row.map((value) => `"${value.replace(/"/g, '""')}"`).join(","),
+			row.map((value) => `${value.replace(/"/g, '""')}`).join(","),
 		);
 	}
 

@@ -81,7 +81,11 @@
 
   function handleFileChange(event) {
     const file = event.target.files[0];
-    if (file && file.type === "text/csv") {
+    console.log(event.target.files);
+    if (
+      file &&
+      (file.type === "text/csv" || file.type === "application/vnd.ms-excel")
+    ) {
       importCSV(file);
     } else {
       alert("Please selectt a CSV file.");
@@ -102,7 +106,7 @@
       },
       function (err) {
         toast("Async: Could not copy text: ", err);
-      }
+      },
     );
   }
 
@@ -115,7 +119,7 @@
         },
         function (err) {
           toast("Async: Could not copy text: ", err);
-        }
+        },
       );
   }
 </script>
