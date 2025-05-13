@@ -4,7 +4,7 @@
   import { Game } from "$lib/Game.svelte";
   import { WebSocketManager } from "$lib/WebsocketManager";
   import * as Select from "$lib/components/ui/select/index.js";
-  import { importCSV, exportToCSV } from "$lib/CSV.svelte";
+  import { importCSV, } from "$lib/CSV.svelte";
   import { Icon } from "@steeze-ui/svelte-icon";
   import {
     ArrowPath,
@@ -35,6 +35,9 @@
   import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   import { toast } from "svelte-sonner";
+  import { writable } from 'svelte/store';
+	import { get } from 'svelte/store';
+	
 
   let checked = false;
   let selectedIssue = null;
@@ -55,23 +58,31 @@
     }
   });
 
-  const issues = [
+  
+	interface Issue {
+    title: string;
+    description: string;
+    score: string;
+}
+
+
+const issues = writable<Issue[]>([
     {
-      title: "SCRUM-1",
-      description: "The User story ...",
-      score: "1",
+        title: "SCRUM-1",
+        description: "The User story ...",
+        score: "1",
     },
     {
-      title: "SCRUM-2",
-      description: "The User story ...",
-      score: "7",
+        title: "SCRUM-2",
+        description: "The User story ...",
+        score: "7",
     },
     {
-      title: "SCCRUM-3",
-      description: "The User story ...",
-      score: "11",
+        title: "SCRUM-3",
+        description: "The User story ...",
+        score: "11",
     },
-  ];
+]);
 
   let fileInput: HTMLInputElement;
 
@@ -79,14 +90,149 @@
     fileInput.click();
   }
 
-  function handleFileChange(event) {
-    const file = event.target.files[0];
-    if (file && file.type === "text/csv") {
-      importCSV(file);
-    } else {
-      alert("Please selectt a CSV file.");
+  
+	function handleFileChange(event) {
+	const file = event.target.files[0];
+	if (!file || file.type !== "text/csv") {
+		alert("Veuillez sélectionner un fichier CSV valide.");
+		return;
+	}
+
+	const reader = new FileReader();
+	reader.onload = (e) => {
+		const text = e.target.result;
+		const lines = text.trim().split("\n");
+
+		// Choix du séparateur automatique : tabulation, point-virgule ou virgule
+		const separator = lines[0].includes("\t") ? "\t" :
+		lines[0].includes(";") ? ";" : ",";
+
+		const headers = lines[0].split(separator).map(h => h.trim().toLowerCase());
+
+		const titleIndex = headers.findIndex(h => h.includes("clé de ticket"));
+		const descriptionIndex = headers.findIndex(h => h.includes("description du projet"));
+		const scoreIndex = headers.findIndex(h => h.includes("story point estimate"));
+
+		if (titleIndex === -1 || descriptionIndex === -1 || scoreIndex === -1) {
+			alert("Le fichier doit contenir les colonnes : 'Clé de ticket', 'Description du projet' et 'Story point estimate'.");
+			return;
+		}
+
+		for (let i = 1; i < lines.length; i++) {
+			const cols = lines[i].split(separator);
+			if (cols.length < Math.max(titleIndex, descriptionIndex, scoreIndex) + 1) continue;
+
+			const title = cols[titleIndex]?.trim();
+			const description = cols[descriptionIndex]?.trim() || "The User story ...";
+			let rawScore = cols[scoreIndex]?.trim();
+
+			// Récupérer uniquement la partie entière avant le point
+			const score = rawScore?.split(".")[0];
+
+			if (title && description) {
+        Game.createStory2(title, description, "");
+			}
+		}
+
+		alert("Importation terminée !");
+	};
+	reader.readAsText(file);
+}
+
+
+let title = "";
+  let description = "";
+//   let rawScore = "";
+let rawScore = "5";  // Test avec une valeur fixe
+console.log("Initial rawScore:", rawScore);
+
+
+
+  const addIssue = () => {
+	console.log("rawscor", rawScore);
+    const trimmedTitle = title.trim();
+    const trimmedDescription = description.trim() || "The User story ...";
+    const score = rawScore && rawScore.includes(".")
+  ? rawScore.split(".")[0]
+  : rawScore?.trim() || undefined;
+
+console.log("rawScore", rawScore);
+console.log("score", score);
+
+    if (trimmedTitle && trimmedDescription) {
+      issues.update((currentIssues) => {
+        currentIssues.push({ title: trimmedTitle, description: trimmedDescription, score: score });
+        return currentIssues;
+      });
     }
+  };
+
+  const scoreOptions = Array.from({ length: 11 }, (_, i) => ({ value: i.toString() }));
+
+
+  function handleScoreChange(e: CustomEvent<string>) {
+	console.log("Valeur changée :", e.detail);
+
+    rawScore = e.detail;
+	
   }
+
+
+  function editIssue(i: number) {
+    // const issue = $issues[i];
+    // title = issue.title;
+    // description = issue.description;
+    // rawScore = issue.score;
+	console.log("valeur",title,description,rawScore)
+	issues.update((currentIssues) => {
+	  currentIssues[i] = { title, description, score: rawScore };
+	  return currentIssues;
+	});
+  }
+
+  
+
+
+  function deleteIssue(index: number) {
+	issues.update(current => {
+		current.splice(index, 1);
+		return [...current];
+	});
+}
+
+
+
+
+	// /!\ A CHANGER SELON LE FORMAT CSV DE JIRA !!!
+	function exportToCSV() {
+	const currentIssues = get(issues); // On récupère les données de la store
+
+	const csvRows = [];
+
+	const headers = ["Title", "Description", "Score"];
+	csvRows.push(headers.join(","));
+
+	for (const issue of currentIssues) {
+		const row = [issue.title, issue.description, issue.score];
+		csvRows.push(
+			row.map((value) => `"${value.replace(/"/g, '""')}"`).join(",")
+		);
+	}
+
+	const csvContent = csvRows.join("\n");
+
+	const blob = new Blob([csvContent], {
+		type: "text/csv;charset=utf-8;",
+	});
+	const url = URL.createObjectURL(blob);
+	const link = document.createElement("a");
+	link.setAttribute("href", url);
+	link.setAttribute("download", "issues_export.csv");
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+	URL.revokeObjectURL(url);
+}
 
   const scores = Array.from({ length: 14 }, (_, i) => ({
     value: i.toString(),
