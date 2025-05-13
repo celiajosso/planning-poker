@@ -1,20 +1,22 @@
 import { Game } from "./Game.svelte";
 import { toast } from "svelte-sonner";
 
-export function importCSV(file: File) {
-	if (!file) return;
+// export function importCSV(file: File) {
+// 	if (!file) return;
 
-	const reader = new FileReader();
-	reader.onload = (event) => {
-		const text = event.target?.result as string;
-		parseAndAddStories(text);
-		console.log("Import CSV 1");
+// 	const reader = new FileReader();
+// 	reader.onload = (event) => {
+// 		const text = event.target?.result as string;
+// 		parseAndAddStories(text);
+// 		console.log("Import CSV 1");
 
-	};
-	reader.readAsText(file);
-	console.log("Import du fichier :", file.name);
+// 	};
+// 	reader.readAsText(file);
+// 	console.log("Import du fichier :", file.name);
 
-}
+// }
+
+
 
 export function exportToCSV() {
 	const csvRows: string[] = [];
@@ -44,37 +46,39 @@ export function exportToCSV() {
 	URL.revokeObjectURL(url);
 }
 
-function parseAndAddStories(csv: string) {
-	console.log("Import CSV 2");
 
-	const lines = csv.trim().split("\n");
 
-	const separator = lines[0].includes("\t") ? "\t" :
-		lines[0].includes(",") ? "," :
-			";";
+// function parseAndAddStories(csv: string) {
+// 	console.log("Import CSV 2");
 
-	const header = lines[0].split(separator).map(h => h.trim().toLowerCase());
+// 	const lines = csv.trim().split("\n");
 
-	const summaryIndex = header.findIndex(h => h === "summary");
-	const descriptionIndex = header.findIndex(h => h === "description");
+// 	const separator = lines[0].includes("\t") ? "\t" :
+// 		lines[0].includes(",") ? "," :
+// 			";";
 
-	if (summaryIndex === -1) {
-		toast("CSV format is invalid")
-		return;
-	}
-	else if (descriptionIndex === -1) {
-		toast("CSV format is invalid")
-		return;
-	}
+// 	const header = lines[0].split(separator).map(h => h.trim().toLowerCase());
 
-	for (let i = 1; i < lines.length; i++) {
-		const cols = lines[i].split(separator);
-		const summary = cols[summaryIndex]?.trim();
-		const description = cols[descriptionIndex]?.trim()
+// 	const summaryIndex = header.findIndex(h => h === "summary");
+// 	const descriptionIndex = header.findIndex(h => h === "description");
 
-		if (summary) {
-			Game.createStory2(summary, description, "");
-		}
-	}
-	toast("User stories imported !")
-}
+// 	if (summaryIndex === -1) {
+// 		toast("CSV format is invalid")
+// 		return;
+// 	}
+// 	else if (descriptionIndex === -1) {
+// 		toast("CSV format is invalid")
+// 		return;
+// 	}
+
+// 	for (let i = 1; i < lines.length; i++) {
+// 		const cols = lines[i].split(separator);
+// 		const summary = cols[summaryIndex]?.trim();
+// 		const description = cols[descriptionIndex]?.trim()
+
+// 		if (summary) {
+// 			Game.createStory2(summary, description, "");
+// 		}
+// 	}
+// 	toast("User stories imported !")
+// }
