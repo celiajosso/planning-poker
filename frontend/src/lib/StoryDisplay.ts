@@ -47,8 +47,8 @@ export class StoryDisplay extends Container {
       this.titleText.text = story.title || "Untitled story";
       this.descriptionText.text = story.description || "";
     } else {
-      this.titleText.text = "No story selected";
-      this.descriptionText.text = "";
+      this.titleText.text = "No User Story selected";
+      this.descriptionText.text = "If you are an admin, please select a User Story in the Issue section";
     }
-  }
+  }		
 }
