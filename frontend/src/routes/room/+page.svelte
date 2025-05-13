@@ -1,4 +1,5 @@
 <script lang="ts">
+  import QrCode from "svelte-qrcode"
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import { Game } from "$lib/Game.svelte";
@@ -529,6 +530,9 @@
             <DropdownMenu.Label>Share Room</DropdownMenu.Label>
             <DropdownMenu.Separator />
             <DropdownMenu.Group>
+              <DropdownMenu.Item>
+                <QrCode value={`${window.location.origin}?roomId=${Game.storage.room.id}`}/>
+              </DropdownMenu.Item>
               <DropdownMenu.Item onclick={() => copyRoomIdClipboard()}>
                 Share Id
                 <DropdownMenu.Shortcut
