@@ -81,7 +81,6 @@
 
   function handleFileChange(event) {
     const file = event.target.files[0];
-    console.log(event.target.files);
     if (
       file &&
       (file.type === "text/csv" || file.type === "application/vnd.ms-excel")
