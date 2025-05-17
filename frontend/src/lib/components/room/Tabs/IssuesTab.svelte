@@ -25,6 +25,9 @@
   import ButtonIcon from "$lib/ButtonIcon.svelte";
 
   import { scores } from "../../../../routes/room/script";
+  import ImportButton from "./Issues/ImportButton.svelte";
+  import ExportButton from "./Issues/ExportButton.svelte";
+  import AddIssue from "./Issues/AddIssue.svelte";
 
   let { isModifyOpen, selectedIssue, isAddOpen } = $props();
 
@@ -39,39 +42,8 @@
         <p class="text-sm">Make changes to your User Stories.</p>
       </div>
       <div class="flex flex-row items-center h-full gap-2">
-        <Tooltip.Root>
-          <Tooltip.Trigger>
-            <ButtonIcon
-              onclick={() => fileInput.click()}
-              icon={ArrowUpTray}
-              size="size-5"
-              theme="solid"
-            ></ButtonIcon>
-          </Tooltip.Trigger>
-          <Tooltip.Content>
-            <p>Import CSV file</p>
-          </Tooltip.Content>
-        </Tooltip.Root>
-        <input
-          bind:this={fileInput}
-          type="file"
-          accept=".csv"
-          onchange={handleFileChange}
-          style="display: none;"
-        />
-        <Tooltip.Root>
-          <Tooltip.Trigger>
-            <ButtonIcon
-              onclick={exportToCSV}
-              icon={ArrowDownTray}
-              size="size-5"
-              theme="solid"
-            ></ButtonIcon>
-          </Tooltip.Trigger>
-          <Tooltip.Content>
-            <p>Export CSV file</p>
-          </Tooltip.Content>
-        </Tooltip.Root>
+        <ImportButton />
+        <ExportButton />
       </div>
     </div>
     {#if Game.storage.room.stories && Game.storage.room.stories.length != 0}
@@ -196,70 +168,7 @@
       <p class="text-center w-full text-gray-500">No issue</p>
     {/if}
     <div class="flex justify-center w-full">
-      <Dialog.Root bind:open={isAddOpen}>
-        <form
-          onsubmit={(e) => {
-            Game.createStory(e);
-            isAddOpen = false;
-          }}
-        >
-          <Dialog.Trigger>
-            <Button
-              onclick={() => (isAddOpen = true)}
-              class="outline flex flex-row gap-1 p-4 mx-auto m-2"
-            >
-              <Icon class="color-gray-800 size-5" src={Plus} theme="solid" />
-              <div>Add an issue</div>
-            </Button>
-          </Dialog.Trigger>
-          <Dialog.Content class="sm:max-w-[425px]">
-            <Dialog.Header>
-              <Dialog.Title>Add an issue</Dialog.Title>
-              <Dialog.Description>
-                Add an issue here. Click save when you're done.
-              </Dialog.Description>
-            </Dialog.Header>
-            <div class="grid gap-4 py-4">
-              <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="title" class="text-right">Title</Label>
-                <Input id="title" name="title" class="col-span-3" required />
-              </div>
-              <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="description" class="text-right">Description</Label>
-                <Input
-                  id="description"
-                  name="description"
-                  class="col-span-3"
-                  required
-                />
-              </div>
-              <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="issue-description" class="text-right">Score</Label>
-                <Select.Root>
-                  <Select.Trigger class="w-[100px]">
-                    <Select.Value placeholder="Score" />
-                  </Select.Trigger>
-                  <Select.Content>
-                    <Select.Group>
-                      <ScrollArea class="h-20">
-                        {#each scores as score}
-                          <Select.Item value={score.value} label={score.value}
-                            >{score.value}</Select.Item
-                          >
-                        {/each}
-                      </ScrollArea>
-                    </Select.Group>
-                  </Select.Content>
-                  <Select.Input name="score" />
-                </Select.Root>
-              </div>
-            </div>
-            <Dialog.Footer>
-              <Button type="submit">Save changes</Button>
-            </Dialog.Footer>
-          </Dialog.Content>
-        </form></Dialog.Root
-      >
+      <AddIssue {isAddOpen} />
       <Dialog.Root bind:open={isModifyOpen}>
         <Dialog.Content class="sm:max-w-[425px]">
           <form
