@@ -21,7 +21,7 @@
   import { Label } from "$lib/components/ui/label/index.js";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
   import ButtonIcon from "$lib/ButtonIcon.svelte";
-  import { copyRoomIdClipboard, copyRoomLinkClipboard, scores } from "./+page";
+  import { copyRoomIdClipboard, copyRoomLinkClipboard, scores } from "./script";
   import Sheet from "./Sheet.svelte";
 
   let selectedIssue = null;
