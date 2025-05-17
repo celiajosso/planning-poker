@@ -36,7 +36,7 @@
 
 <Sheet.Root>
 	<Sheet.Trigger class="absolute top-5 right-5 color-gray-700">
-		<ButtonIcon icon={ChevronDoubleLeft} size="6" theme="solid"
+		<ButtonIcon icon={ChevronDoubleLeft} size="size-6" theme="solid"
 		></ButtonIcon>
 	</Sheet.Trigger>
 	<Sheet.Content side="right" class="bg-[#f4f4f9] text-gray-900">
@@ -75,7 +75,7 @@
 										<ButtonIcon
 											onclick={() => fileInput.click() /*do not change*/ }
 											icon={ArrowUpTray}
-											size="5"
+											size="size-5"
 											theme="solid"
 										></ButtonIcon>
 									</Tooltip.Trigger>
@@ -95,7 +95,7 @@
 										<ButtonIcon
 											onclick={exportToCSV}
 											icon={ArrowDownTray}
-											size="5"
+											size="size-5"
 											theme="solid"
 										></ButtonIcon>
 									</Tooltip.Trigger>
@@ -179,7 +179,7 @@
 																		>
 																			<ButtonIcon
 																				icon={Trash}
-																				size="5"
+																				size="size-5"
 																				theme="outline"
 
 																			></ButtonIcon>
@@ -241,7 +241,7 @@
 																	isModifyOpen = true;
 																}}
 																icon={PencilSquare}
-																size="5"
+																size="size-5"
 																theme="outline"
 															></ButtonIcon>
 														</Tooltip.Trigger>
@@ -257,7 +257,7 @@
 																		issue.id
 																	)}
 																icon={PaperAirplane}
-																size="5"
+																size="size-5"
 																theme="outline"
 															></ButtonIcon>
 														</Tooltip.Trigger>
