@@ -1,13 +1,5 @@
 <script lang="ts">
-  import { exportToCSV } from "$lib/CSV.svelte";
-  import {
-    ArrowDownTray,
-    ArrowUpTray,
-    Plus,
-    Trash,
-    PaperAirplane,
-    PencilSquare,
-  } from "@steeze-ui/heroicons";
+  import { Trash, PaperAirplane, PencilSquare } from "@steeze-ui/heroicons";
 
   import * as Table from "$lib/components/ui/table/index.js";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
@@ -15,23 +7,20 @@
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
   import * as Select from "$lib/components/ui/select/index.js";
-  import { handleFileChange } from "../../../../routes/room/script";
   import { Game } from "$lib/Game.svelte";
   import { Button } from "$lib/components/ui/button/index.js";
-  import { Icon } from "@steeze-ui/svelte-icon";
   import { Label } from "$lib/components/ui/label";
   import { Input } from "$lib/components/ui/input";
   import { ScrollArea } from "$lib/components/ui/scroll-area";
   import ButtonIcon from "$lib/ButtonIcon.svelte";
 
-  import { scores } from "../../../../routes/room/script";
   import ImportButton from "./Issues/ImportButton.svelte";
   import ExportButton from "./Issues/ExportButton.svelte";
   import AddIssue from "./Issues/AddIssue.svelte";
 
-  let { isModifyOpen, selectedIssue, isAddOpen } = $props();
+  import { scores } from "../../../../routes/room/script";
 
-  let fileInput: HTMLInputElement;
+  let { isModifyOpen, selectedIssue, isAddOpen } = $props();
 </script>
 
 <Tabs.Content value="issues">
