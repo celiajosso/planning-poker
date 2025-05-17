@@ -1,13 +1,12 @@
 <script lang="ts">
-  import { Trash, PaperAirplane, PencilSquare } from "@steeze-ui/heroicons";
+  import { Game } from "$lib/Game.svelte";
+  import { PencilSquare } from "@steeze-ui/heroicons";
 
   import * as Table from "$lib/components/ui/table/index.js";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
-  import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
   import * as Select from "$lib/components/ui/select/index.js";
-  import { Game } from "$lib/Game.svelte";
   import { Button } from "$lib/components/ui/button/index.js";
   import { Label } from "$lib/components/ui/label";
   import { Input } from "$lib/components/ui/input";
@@ -17,6 +16,8 @@
   import ImportButton from "./Issues/ImportButton.svelte";
   import ExportButton from "./Issues/ExportButton.svelte";
   import AddIssue from "./Issues/AddIssue.svelte";
+  import DeleteIssue from "./Issues/DeleteIssue.svelte";
+  import VoteIssue from "./Issues/VoteIssue.svelte";
 
   import { scores } from "../../../../routes/room/script";
 
@@ -78,46 +79,7 @@
               </Table.Cell>
               <Table.Cell>
                 <div class="flex flex-row items-center h-full gap-2">
-                  <AlertDialog.Root>
-                    <AlertDialog.Trigger
-                      ><Tooltip.Root>
-                        <AlertDialog.Trigger asChild>
-                          <Tooltip.Root>
-                            <Tooltip.Trigger>
-                              <ButtonIcon
-                                icon={Trash}
-                                size="size-5"
-                                theme="outline"
-                              ></ButtonIcon>
-                            </Tooltip.Trigger>
-                            <Tooltip.Content>
-                              <p>Delete</p>
-                            </Tooltip.Content>
-                          </Tooltip.Root>
-                        </AlertDialog.Trigger>
-
-                        <Tooltip.Content>
-                          <p>Delete</p>
-                        </Tooltip.Content>
-                      </Tooltip.Root></AlertDialog.Trigger
-                    >
-                    <AlertDialog.Content>
-                      <AlertDialog.Header>
-                        <AlertDialog.Title>Are you sure?</AlertDialog.Title>
-                        <AlertDialog.Description>
-                          This action cannot be undone. This will permanently
-                          delete your issue.
-                        </AlertDialog.Description>
-                      </AlertDialog.Header>
-                      <AlertDialog.Footer>
-                        <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-                        <AlertDialog.Action
-                          onclick={() => Game.deleteStory(issue.id)}
-                          >Continue</AlertDialog.Action
-                        >
-                      </AlertDialog.Footer>
-                    </AlertDialog.Content>
-                  </AlertDialog.Root>
+                  <DeleteIssue {issue} />
                   <Tooltip.Root>
                     <Tooltip.Trigger>
                       <ButtonIcon
@@ -134,19 +96,7 @@
                       <p>Modify</p>
                     </Tooltip.Content>
                   </Tooltip.Root>
-                  <Tooltip.Root>
-                    <Tooltip.Trigger>
-                      <ButtonIcon
-                        onclick={() => Game.selectStory(issue.id)}
-                        icon={PaperAirplane}
-                        size="size-5"
-                        theme="outline"
-                      ></ButtonIcon>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>
-                      <p>Vote</p>
-                    </Tooltip.Content>
-                  </Tooltip.Root>
+                  <VoteIssue {issue} />
                 </div>
               </Table.Cell>
             </Table.Row>
