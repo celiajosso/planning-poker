@@ -57,7 +57,7 @@
             <ButtonIcon
               onclick={Game.restart}
               icon={ArrowPath}
-              size="6"
+              size="size-6"
               theme="solid"
             ></ButtonIcon>
           </Tooltip.Trigger>
@@ -74,7 +74,7 @@
                 goto("/");
               }}
               icon={ArrowRightEndOnRectangle}
-              size="6"
+              size="size-6"
               theme="solid"
             ></ButtonIcon>
           </Tooltip.Trigger>
@@ -87,7 +87,7 @@
           <DropdownMenu.Trigger>
             <Tooltip.Root>
               <Tooltip.Trigger>
-                <ButtonIcon icon={Share} size="6" theme="outline"></ButtonIcon>
+                <ButtonIcon icon={Share} size="size-6" theme="outline"></ButtonIcon>
               </Tooltip.Trigger>
               <Tooltip.Content>
                 <p>Share Room</p>
