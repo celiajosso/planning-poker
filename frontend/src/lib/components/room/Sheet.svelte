@@ -1,16 +1,16 @@
 <script lang="ts">
-  import * as Sheet from "$lib/components/ui/sheet/index.js";
-  import { ChevronDoubleLeft } from "@steeze-ui/heroicons";
-  import * as Tabs from "$lib/components/ui/tabs/index.js";
-
-  import ButtonIcon from "$lib/ButtonIcon.svelte";
   import { Game } from "$lib/Game.svelte";
+  import { ChevronDoubleLeft } from "@steeze-ui/heroicons";
 
-  let { isModifyOpen, selectedIssue, isAddOpen } = $props();
+  import * as Sheet from "$lib/components/ui/sheet/index.js";
+  import * as Tabs from "$lib/components/ui/tabs/index.js";
+  import ButtonIcon from "$lib/ButtonIcon.svelte";
 
   import IssuesTab from "$lib/components/room/Tabs/IssuesTab.svelte";
   import ProfileTab from "$lib/components/room/Tabs/ProfileTab.svelte";
   import TabsList from "./Tabs/Issues/TabsList.svelte";
+
+  let { isModifyOpen, selectedIssue, isAddOpen } = $props();
 </script>
 
 <Sheet.Root>

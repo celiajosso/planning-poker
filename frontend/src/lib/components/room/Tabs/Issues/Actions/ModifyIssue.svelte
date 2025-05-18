@@ -4,14 +4,8 @@
 
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
-  import * as Select from "$lib/components/ui/select/index.js";
-  import { Button } from "$lib/components/ui/button/index.js";
-  import { Label } from "$lib/components/ui/label";
-  import { Input } from "$lib/components/ui/input";
-  import { ScrollArea } from "$lib/components/ui/scroll-area";
   import ButtonIcon from "$lib/ButtonIcon.svelte";
 
-  import { scores } from "../../../../../../routes/room/script";
   import FormRow from "../Form/FormRow.svelte";
   import FormRowScore from "../Form/FormRowScore.svelte";
   import SubmitButton from "../Form/SubmitButton.svelte";
