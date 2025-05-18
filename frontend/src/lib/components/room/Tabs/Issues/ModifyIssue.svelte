@@ -12,6 +12,7 @@
   import ButtonIcon from "$lib/ButtonIcon.svelte";
 
   import { scores } from "../../../../../routes/room/script";
+  import FormRow from "./FormRow.svelte";
 
   let { isModifyOpen, selectedIssue, issue } = $props();
 </script>

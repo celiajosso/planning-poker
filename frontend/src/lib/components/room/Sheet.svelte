@@ -19,11 +19,9 @@
   <Sheet.Content side="right" class="bg-[#f4f4f9] text-gray-900">
     <Tabs.Root value="profile-settings" class="w-full">
       <TabsList />
-
       <Tabs.Content value="profile-settings">
         <ProfileTab />
       </Tabs.Content>
-
       {#if Game.storage.user.role == "Administrator"}
         <Tabs.Content value="issues">
           <IssuesTab {isModifyOpen} {selectedIssue} {isAddOpen} />
