@@ -4,6 +4,9 @@
   import * as Table from "$lib/components/ui/table/index.js";
   import TableActions from "$lib/components/room/Tabs/Issues/Table/TableActions.svelte";
   import TableHeader from "$lib/components/room/Tabs/Issues/Table/TableHeader.svelte";
+  import DeleteIssue from "./Actions/Row/Issue/DeleteIssue.svelte";
+  import ModifyIssue from "./Actions/Row/Issue/ModifyIssue.svelte";
+  import VoteIssue from "./Actions/Row/Issue/VoteIssue.svelte";
 
   let { isModifyOpen, selectedIssue } = $props();
 </script>

@@ -11,6 +11,7 @@
   import VoteIssue from "$lib/components/room/Tabs/Issues/VoteIssue.svelte";
   import ModifyIssue from "$lib/components/room/Tabs/Issues/ModifyIssue.svelte";
   import IssuesTable from "./Issues/IssuesTable.svelte";
+  import TableActions from "./Issues/Table/TableActions.svelte";
 
   let { isModifyOpen, selectedIssue, isAddOpen } = $props();
 </script>
@@ -48,24 +49,7 @@
                 </p></Table.Cell
               >
               <Table.Cell>
-                <!-- <Select.Root>
-                        <Select.Trigger class="w-[100px]">
-                          <Select.Value placeholder="Score" />
-                        </Select.Trigger>
-                        <Select.Content>
-                          <Select.Group>
-                            <ScrollArea class="h-20">
-                              {#each scores as score}
-                                <Select.Item
-                                  value={score.value}
-                                  label={score.value}>{score.value}</Select.Item
-                                >
-                              {/each}
-                            </ScrollArea>
-                          </Select.Group>
-                        </Select.Content>
-                        <Select.Input name="score" />
-                      </Select.Root> -->
+                <!-- <ScoreSelection /> -->
                 {issue.finalEstimate}
               </Table.Cell>
               <Table.Cell>

@@ -1,11 +1,13 @@
 <script lang="ts">
-  import DeleteIssue from "$lib/components/room/Tabs/Issues/Actions/Row/Issue/DeleteIssue.svelte";
-  import VoteIssue from "$lib/components/room/Tabs/Issues/Actions/Row/Issue/VoteIssue.svelte";
-  import ModifyIssue from "$lib/components/room/Tabs/Issues/Actions/Row/Issue/ModifyIssue.svelte";
+  import DeleteIssue from "../Actions/Row/Issue/DeleteIssue.svelte";
+  import ModifyIssue from "../Actions/Row/Issue/ModifyIssue.svelte";
+  import VoteIssue from "../Actions/Row/Issue/VoteIssue.svelte";
 
   let { isModifyOpen, selectedIssue, issue } = $props();
 </script>
 
-<DeleteIssue {issue} />
-<ModifyIssue {isModifyOpen} {selectedIssue} {issue} />
-<VoteIssue {issue} />
+<div class="flex flex-row items-center h-full gap-2">
+  <DeleteIssue {issue} />
+  <ModifyIssue {isModifyOpen} {selectedIssue} {issue} />
+  <VoteIssue {issue} />
+</div>
