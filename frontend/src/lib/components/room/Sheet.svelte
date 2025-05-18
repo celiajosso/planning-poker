@@ -10,27 +10,15 @@
 
   import IssuesTab from "$lib/components/room/Tabs/IssuesTab.svelte";
   import ProfileTab from "$lib/components/room/Tabs/ProfileTab.svelte";
+  import TabsList from "./Tabs/TabsList.svelte";
+  import SheetTrigger from "./SheetTrigger.svelte";
 </script>
 
 <Sheet.Root>
-  <Sheet.Trigger class="absolute top-5 right-5 color-gray-700">
-    <ButtonIcon icon={ChevronDoubleLeft} size="size-6" theme="solid"
-    ></ButtonIcon>
-  </Sheet.Trigger>
+  <SheetTrigger />
   <Sheet.Content side="right" class="bg-[#f4f4f9] text-gray-900">
     <Tabs.Root value="profile-settings" class="w-full">
-      <Tabs.List class="w-full flex bg-gray-200 mt-5 justify-between gap-1">
-        <Tabs.Trigger
-          class="font-semibold bg-white flex-1"
-          value="profile-settings">Profile Settings</Tabs.Trigger
-        >
-
-        {#if Game.storage.user.role == "Administrator"}
-          <Tabs.Trigger class="font-semibold bg-white flex-1" value="issues"
-            >Issues</Tabs.Trigger
-          >
-        {/if}
-      </Tabs.List>
+      <TabsList />
 
       <Tabs.Content value="profile-settings">
         <ProfileTab />
