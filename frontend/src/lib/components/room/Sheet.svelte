@@ -19,21 +19,28 @@
   </Sheet.Trigger>
   <Sheet.Content side="right" class="bg-[#f4f4f9] text-gray-900">
     <Tabs.Root value="profile-settings" class="w-full">
-      <Tabs.List class=" w-full flex bg-gray-200 mt-5 justify-between gap-1">
+      <Tabs.List class="w-full flex bg-gray-200 mt-5 justify-between gap-1">
         <Tabs.Trigger
           class="font-semibold bg-white flex-1"
           value="profile-settings">Profile Settings</Tabs.Trigger
         >
+
         {#if Game.storage.user.role == "Administrator"}
-          <Tabs.Trigger class="font-semibold  bg-white flex-1" value="issues"
+          <Tabs.Trigger class="font-semibold bg-white flex-1" value="issues"
             >Issues</Tabs.Trigger
           >
         {/if}
       </Tabs.List>
+
+      <Tabs.Content value="profile-settings">
+        <ProfileTab />
+      </Tabs.Content>
+
       {#if Game.storage.user.role == "Administrator"}
-        <IssuesTab {isModifyOpen} {selectedIssue} {isAddOpen} />
+        <Tabs.Content value="issues">
+          <IssuesTab {isModifyOpen} {selectedIssue} {isAddOpen} />
+        </Tabs.Content>
       {/if}
-      <ProfileTab />
     </Tabs.Root>
   </Sheet.Content>
 </Sheet.Root>

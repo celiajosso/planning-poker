@@ -21,7 +21,7 @@
           </p></Table.Cell
         >
         <Table.Cell>
-          <!-- <SelectedScore> -->
+          <!-- <ScoreSelection /> -->
           {issue.finalEstimate}
         </Table.Cell>
         <Table.Cell>
