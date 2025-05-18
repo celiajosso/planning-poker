@@ -3,13 +3,9 @@
 
   import * as Table from "$lib/components/ui/table/index.js";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
-
   import ImportButton from "$lib/components/room/Tabs/Issues/ImportButton.svelte";
   import ExportButton from "$lib/components/room/Tabs/Issues/ExportButton.svelte";
   import AddIssue from "$lib/components/room/Tabs/Issues/AddIssue.svelte";
-  import DeleteIssue from "$lib/components/room/Tabs/Issues/DeleteIssue.svelte";
-  import VoteIssue from "$lib/components/room/Tabs/Issues/VoteIssue.svelte";
-  import ModifyIssue from "$lib/components/room/Tabs/Issues/ModifyIssue.svelte";
   import TableHeader from "./TableHeader.svelte";
   import TableRow from "./TableRow.svelte";
 
