@@ -6,8 +6,8 @@
   import ImportButton from "$lib/components/room/Tabs/Issues/ImportButton.svelte";
   import ExportButton from "$lib/components/room/Tabs/Issues/ExportButton.svelte";
   import AddIssue from "$lib/components/room/Tabs/Issues/AddIssue.svelte";
-  import TableHeader from "./Issues/TableHeader.svelte";
-  import TableRow from "./Issues/TableRow.svelte";
+  import TableHeader from "./Issues/Table/TableHeader.svelte";
+  import TableRow from "./Issues/Table/TableRow.svelte";
 
   let { isModifyOpen, selectedIssue, isAddOpen } = $props();
 </script>

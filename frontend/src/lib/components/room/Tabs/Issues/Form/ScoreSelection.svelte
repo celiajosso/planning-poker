@@ -2,7 +2,7 @@
   import * as Select from "$lib/components/ui/select/index.js";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
 
-  import { scores } from "../../../../../routes/room/script";
+  import { scores } from "../../../../../../routes/room/script";
 </script>
 
 <Select.Root>
