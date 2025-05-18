@@ -3,9 +3,9 @@
 
   import * as Table from "$lib/components/ui/table/index.js";
   import * as Tabs from "$lib/components/ui/tabs/index.js";
-  import ImportButton from "$lib/components/room/Tabs/Issues/ImportButton.svelte";
-  import ExportButton from "$lib/components/room/Tabs/Issues/ExportButton.svelte";
-  import AddIssue from "$lib/components/room/Tabs/Issues/AddIssue.svelte";
+  import ImportButton from "$lib/components/room/Tabs/Issues/Actions/ImportButton.svelte";
+  import ExportButton from "$lib/components/room/Tabs/Issues/Actions/ExportButton.svelte";
+  import AddIssue from "$lib/components/room/Tabs/Issues/Actions/AddIssue.svelte";
   import TableHeader from "./Issues/Table/TableHeader.svelte";
   import TableRow from "./Issues/Table/TableRow.svelte";
 
@@ -36,8 +36,6 @@
     {:else}
       <p class="text-center w-full text-gray-500">No issue</p>
     {/if}
-    <div class="flex justify-center w-full">
-      <AddIssue {isAddOpen} />
-    </div>
+    <AddIssue {isAddOpen} />
   </div>
 </Tabs.Content>

@@ -1,59 +1,75 @@
 <script lang="ts">
   import { Game } from "$lib/Game.svelte";
-  import { Icon } from "@steeze-ui/svelte-icon";
-  import { Plus } from "@steeze-ui/heroicons";
+  import { PencilSquare } from "@steeze-ui/heroicons";
 
+  import * as Tooltip from "$lib/components/ui/tooltip/index.js";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
   import * as Select from "$lib/components/ui/select/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
   import { Label } from "$lib/components/ui/label";
   import { Input } from "$lib/components/ui/input";
   import { ScrollArea } from "$lib/components/ui/scroll-area";
+  import ButtonIcon from "$lib/ButtonIcon.svelte";
 
-  import { scores } from "../../../../../routes/room/script";
+  import { scores } from "../../../../../../routes/room/script";
 
-  let { isAddOpen } = $props();
+  let { isModifyOpen, selectedIssue, issue } = $props();
 </script>
 
-<Dialog.Root bind:open={isAddOpen}>
-  <form
-    onsubmit={(e) => {
-      Game.createStory(e);
-      isAddOpen = false;
-    }}
-  >
-    <Dialog.Trigger>
-      <Button
-        onclick={() => (isAddOpen = true)}
-        class="outline flex flex-row gap-1 p-4 mx-auto m-2"
-      >
-        <Icon class="color-gray-800 size-5" src={Plus} theme="solid" />
-        <div>Add an issue</div>
-      </Button>
-    </Dialog.Trigger>
-    <Dialog.Content class="sm:max-w-[425px]">
+<Tooltip.Root>
+  <Tooltip.Trigger>
+    <ButtonIcon
+      onclick={() => {
+        selectedIssue = issue;
+        isModifyOpen = true;
+      }}
+      icon={PencilSquare}
+      size="size-5"
+      theme="outline"
+    ></ButtonIcon>
+  </Tooltip.Trigger>
+  <Tooltip.Content>
+    <p>Modify</p>
+  </Tooltip.Content>
+</Tooltip.Root>
+<Dialog.Root bind:open={isModifyOpen}>
+  <Dialog.Content class="sm:max-w-[425px]">
+    <form
+      onsubmit={(e) => {
+        console.log(e);
+        Game.updateStory(selectedIssue!.id, e);
+        isModifyOpen = false;
+      }}
+    >
       <Dialog.Header>
-        <Dialog.Title>Add an issue</Dialog.Title>
+        <Dialog.Title>Edit issue</Dialog.Title>
         <Dialog.Description>
-          Add an issue here. Click save when you're done.
+          Make changes to your issue here. Click save when you're done.
         </Dialog.Description>
       </Dialog.Header>
       <div class="grid gap-4 py-4">
         <div class="grid grid-cols-4 items-center gap-4">
           <Label for="title" class="text-right">Title</Label>
-          <Input id="title" name="title" class="col-span-3" required />
+          <Input
+            name="title"
+            id="title"
+            value={selectedIssue!.title}
+            class="col-span-3"
+            required
+          />
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
           <Label for="description" class="text-right">Description</Label>
           <Input
             id="description"
             name="description"
+            value={selectedIssue!.description}
             class="col-span-3"
             required
           />
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
-          <Label for="issue-description" class="text-right">Score</Label>
+          <Label for="finalEstimate" class="text-right">Score</Label>
           <Select.Root>
             <Select.Trigger class="w-[100px]">
               <Select.Value placeholder="Score" />
@@ -76,6 +92,6 @@
       <Dialog.Footer>
         <Button type="submit">Save changes</Button>
       </Dialog.Footer>
-    </Dialog.Content>
-  </form></Dialog.Root
->
+    </form>
+  </Dialog.Content>
+</Dialog.Root>

@@ -4,7 +4,7 @@
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
   import ButtonIcon from "$lib/ButtonIcon.svelte";
 
-  import { handleFileChange } from "../../../../../routes/room/script";
+  import { handleFileChange } from "../../../../../../routes/room/script";
 
   let fileInput: HTMLInputElement;
 </script>
