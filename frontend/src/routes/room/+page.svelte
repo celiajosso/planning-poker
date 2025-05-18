@@ -28,11 +28,5 @@
 <canvas bind:this={canvas} class="h-dvh w-dvw" />
 {#if loaded}
   <Sheet {isModifyOpen} {selectedIssue} {isAddOpen} />
-  <div class="absolute left-0 bottom-4 flex justify-center items-center w-full">
-    <div
-      class="bg-white rounded-xl flex px-4 py-2 gap-4 flex-col border-2 border-gray-300"
-    >
-      <RoomActions />
-    </div>
-  </div>
+  <RoomActions />
 {/if}

@@ -4,7 +4,9 @@
   import RoomReset from "$lib/components/room/RoomActions/RoomReset.svelte";
 </script>
 
-<div class="flex items-center gap-4 justify-center text-gray-700 mt-1">
+<div
+  class="absolute bottom-4 left-1/2 -translate-x-1/2 flex justify-center items-center text-gray-700 bg-white rounded-xl px-4 py-2 gap-2 border-2 border-gray-300"
+>
   <RoomReset />
   <RoomQuit />
   <RoomShare />
