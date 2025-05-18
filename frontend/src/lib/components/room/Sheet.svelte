@@ -10,8 +10,8 @@
 
   import IssuesTab from "$lib/components/room/Tabs/IssuesTab.svelte";
   import ProfileTab from "$lib/components/room/Tabs/ProfileTab.svelte";
-  import TabsList from "./Tabs/TabsList.svelte";
   import SheetTrigger from "./SheetTrigger.svelte";
+  import TabsList from "./Tabs/Issues/TabsList.svelte";
 </script>
 
 <Sheet.Root>
