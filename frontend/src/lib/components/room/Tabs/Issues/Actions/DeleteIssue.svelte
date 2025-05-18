@@ -22,7 +22,6 @@
           </Tooltip.Content>
         </Tooltip.Root>
       </AlertDialog.Trigger>
-
       <Tooltip.Content>
         <p>Delete</p>
       </Tooltip.Content>

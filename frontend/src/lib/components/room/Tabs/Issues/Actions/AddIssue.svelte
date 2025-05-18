@@ -13,6 +13,7 @@
   import { scores } from "../../../../../../routes/room/script";
   import FormRow from "../Form/FormRow.svelte";
   import FormRowScore from "../Form/FormRowScore.svelte";
+  import SubmitButton from "../Form/SubmitButton.svelte";
 
   let { isAddOpen } = $props();
 </script>
@@ -46,9 +47,7 @@
           <FormRow field="description" />
           <FormRowScore />
         </div>
-        <Dialog.Footer>
-          <Button type="submit">Save changes</Button>
-        </Dialog.Footer>
+        <SubmitButton />
       </Dialog.Content>
     </form></Dialog.Root
   >

@@ -14,6 +14,7 @@
   import { scores } from "../../../../../../routes/room/script";
   import FormRow from "../Form/FormRow.svelte";
   import FormRowScore from "../Form/FormRowScore.svelte";
+  import SubmitButton from "../Form/SubmitButton.svelte";
 
   let { isModifyOpen, selectedIssue, issue } = $props();
 </script>
@@ -54,9 +55,7 @@
         <FormRow field="description" value={selectedIssue!.description} />
         <FormRowScore />
       </div>
-      <Dialog.Footer>
-        <Button type="submit">Save changes</Button>
-      </Dialog.Footer>
+      <SubmitButton />
     </form>
   </Dialog.Content>
 </Dialog.Root>

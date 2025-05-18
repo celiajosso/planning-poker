@@ -10,12 +10,14 @@
 
   import IssuesTab from "$lib/components/room/Tabs/IssuesTab.svelte";
   import ProfileTab from "$lib/components/room/Tabs/ProfileTab.svelte";
-  import SheetTrigger from "./SheetTrigger.svelte";
   import TabsList from "./Tabs/Issues/TabsList.svelte";
 </script>
 
 <Sheet.Root>
-  <SheetTrigger />
+  <Sheet.Trigger class="absolute top-5 right-5 color-gray-700">
+    <ButtonIcon icon={ChevronDoubleLeft} size="size-6" theme="solid"
+    ></ButtonIcon>
+  </Sheet.Trigger>
   <Sheet.Content side="right" class="bg-[#f4f4f9] text-gray-900">
     <Tabs.Root value="profile-settings" class="w-full">
       <TabsList />
