@@ -4,11 +4,13 @@
 
   export let field: string;
   export let value: string = "";
-  export let required: boolean = false;
+  export let required: boolean = true;
 </script>
 
 <div class="grid grid-cols-4 items-center gap-4">
-  <Label for={field} class="text-right">{field}</Label>
+  <Label for={field} class="text-right"
+    >{field.charAt(0).toUpperCase() + field.slice(1)}</Label
+  >
   <Input
     id={field}
     name={field}

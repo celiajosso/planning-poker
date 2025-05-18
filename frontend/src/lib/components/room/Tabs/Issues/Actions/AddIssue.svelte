@@ -11,6 +11,8 @@
   import { ScrollArea } from "$lib/components/ui/scroll-area";
 
   import { scores } from "../../../../../../routes/room/script";
+  import FormRow from "../Form/FormRow.svelte";
+  import FormRowScore from "../Form/FormRowScore.svelte";
 
   let { isAddOpen } = $props();
 </script>
@@ -40,39 +42,9 @@
           </Dialog.Description>
         </Dialog.Header>
         <div class="grid gap-4 py-4">
-          <div class="grid grid-cols-4 items-center gap-4">
-            <Label for="title" class="text-right">Title</Label>
-            <Input id="title" name="title" class="col-span-3" required />
-          </div>
-          <div class="grid grid-cols-4 items-center gap-4">
-            <Label for="description" class="text-right">Description</Label>
-            <Input
-              id="description"
-              name="description"
-              class="col-span-3"
-              required
-            />
-          </div>
-          <div class="grid grid-cols-4 items-center gap-4">
-            <Label for="issue-description" class="text-right">Score</Label>
-            <Select.Root>
-              <Select.Trigger class="w-[100px]">
-                <Select.Value placeholder="Score" />
-              </Select.Trigger>
-              <Select.Content>
-                <Select.Group>
-                  <ScrollArea class="h-20">
-                    {#each scores as score}
-                      <Select.Item value={score.value} label={score.value}
-                        >{score.value}</Select.Item
-                      >
-                    {/each}
-                  </ScrollArea>
-                </Select.Group>
-              </Select.Content>
-              <Select.Input name="score" />
-            </Select.Root>
-          </div>
+          <FormRow field="title" />
+          <FormRow field="description" />
+          <FormRowScore />
         </div>
         <Dialog.Footer>
           <Button type="submit">Save changes</Button>
