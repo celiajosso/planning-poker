@@ -10,7 +10,7 @@
   import ButtonIcon from "$lib/ButtonIcon.svelte";
 
   import ScoreSelection from "$lib/components/room/Tabs/Issues/ScoreSelection.svelte";
-  import FormRow from "./Row/Form/FormRow.svelte";
+  import FormRow from "./../Form/FormRow.svelte";
 
   let { isModifyOpen, selectedIssue, issue } = $props();
 </script>
