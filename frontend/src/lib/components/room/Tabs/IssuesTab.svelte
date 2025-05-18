@@ -11,6 +11,7 @@
   import VoteIssue from "$lib/components/room/Tabs/Issues/VoteIssue.svelte";
   import ModifyIssue from "$lib/components/room/Tabs/Issues/ModifyIssue.svelte";
   import TableHeader from "./TableHeader.svelte";
+  import TableRow from "./TableRow.svelte";
 
   let { isModifyOpen, selectedIssue, isAddOpen } = $props();
 </script>
@@ -32,21 +33,7 @@
         <TableHeader />
         <Table.Body>
           {#each Game.storage.room.stories as issue}
-            <Table.Row>
-              <Table.Cell>{issue.title}</Table.Cell>
-              <Table.Cell class="truncate max-w-96">
-                {issue.description}
-              </Table.Cell>
-              <Table.Cell>
-                <!-- <ScoreSelection /> -->
-                {issue.finalEstimate}
-              </Table.Cell>
-              <Table.Cell class="flex flex-row items-center h-full gap-2">
-                <DeleteIssue {issue} />
-                <ModifyIssue {isModifyOpen} {selectedIssue} {issue} />
-                <VoteIssue {issue} />
-              </Table.Cell>
-            </Table.Row>
+            <TableRow {isModifyOpen} {selectedIssue} {isAddOpen} {issue} />
           {/each}
         </Table.Body>
       </Table.Root>
