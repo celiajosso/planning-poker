@@ -1,12 +1,11 @@
 <script lang="ts">
+  import FormRowScore from "./../Form/FormRowScore.svelte";
   import { Game } from "$lib/Game.svelte";
   import { PencilSquare } from "@steeze-ui/heroicons";
 
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
-  import { Label } from "$lib/components/ui/label";
-  import { Input } from "$lib/components/ui/input";
   import ButtonIcon from "$lib/ButtonIcon.svelte";
 
   import ScoreSelection from "$lib/components/room/Tabs/Issues/ScoreSelection.svelte";
@@ -49,10 +48,7 @@
       <div class="grid gap-4 py-4">
         <FormRow field="Title" value={selectedIssue!.title} required />
         <FormRow field="Description" value={selectedIssue!.title} required />
-        <div class="grid grid-cols-4 items-center gap-4">
-          <Label for="finalEstimate" class="text-right">Score</Label>
-          <ScoreSelection />
-        </div>
+        <FormRowScore />
       </div>
       <Dialog.Footer>
         <Button type="submit">Save changes</Button>

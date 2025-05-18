@@ -33,7 +33,6 @@
       {#if Game.storage.user.role == "Administrator"}
         <IssuesTab {isModifyOpen} {selectedIssue} {isAddOpen} />
       {/if}
-
       <ProfileTab />
     </Tabs.Root>
   </Sheet.Content>

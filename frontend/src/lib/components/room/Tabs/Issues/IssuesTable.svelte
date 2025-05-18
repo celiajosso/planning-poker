@@ -15,14 +15,16 @@
     {#each Game.storage.room.stories as issue}
       <Table.Row>
         <Table.Cell>{issue.title}</Table.Cell>
-        <Table.Cell class="truncate max-w-96">
-          {issue.description}
-        </Table.Cell>
         <Table.Cell>
-          <!-- <ScoreSelection /> -->
+          <p class="truncate max-w-96">
+            {issue.description}
+          </p></Table.Cell
+        >
+        <Table.Cell>
+          <!-- <SelectedScore> -->
           {issue.finalEstimate}
         </Table.Cell>
-        <Table.Cell class="flex items-center h-full gap-2">
+        <Table.Cell>
           <TableActions {isModifyOpen} {selectedIssue} {issue} />
         </Table.Cell>
       </Table.Row>
