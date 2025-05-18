@@ -10,8 +10,6 @@
   import DeleteIssue from "$lib/components/room/Tabs/Issues/DeleteIssue.svelte";
   import VoteIssue from "$lib/components/room/Tabs/Issues/VoteIssue.svelte";
   import ModifyIssue from "$lib/components/room/Tabs/Issues/ModifyIssue.svelte";
-  import IssuesTable from "./Issues/IssuesTable.svelte";
-  import TableActions from "./Issues/Table/TableActions.svelte";
 
   let { isModifyOpen, selectedIssue, isAddOpen } = $props();
 </script>
