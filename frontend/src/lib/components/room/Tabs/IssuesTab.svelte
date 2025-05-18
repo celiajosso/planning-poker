@@ -50,12 +50,10 @@
                 <!-- <ScoreSelection /> -->
                 {issue.finalEstimate}
               </Table.Cell>
-              <Table.Cell>
-                <div class="flex flex-row items-center h-full gap-2">
-                  <DeleteIssue {issue} />
-                  <ModifyIssue {isModifyOpen} {selectedIssue} {issue} />
-                  <VoteIssue {issue} />
-                </div>
+              <Table.Cell class="flex flex-row items-center h-full gap-2">
+                <DeleteIssue {issue} />
+                <ModifyIssue {isModifyOpen} {selectedIssue} {issue} />
+                <VoteIssue {issue} />
               </Table.Cell>
             </Table.Row>
           {/each}
