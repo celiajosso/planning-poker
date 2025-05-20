@@ -7,17 +7,19 @@
   import ButtonIcon from "$lib/ButtonIcon.svelte";
 </script>
 
-<Tooltip.Root>
-  <Tooltip.Trigger>
-    <ButtonIcon
-      onclick={() => {
-        Game.quitRoom();
-        goto("/");
-      }}
-      icon={ArrowRightEndOnRectangle}
-      size="size-6"
-      theme="solid"
-    />
-  </Tooltip.Trigger>
-  <Tooltip.Content><p>Exit Room</p></Tooltip.Content>
-</Tooltip.Root>
+<Tooltip.Provider>
+  <Tooltip.Root>
+    <Tooltip.Trigger>
+      <ButtonIcon
+        onclick={() => {
+          Game.quitRoom();
+          goto("/");
+        }}
+        icon={ArrowRightEndOnRectangle}
+        size="size-6"
+        theme="solid"
+      />
+    </Tooltip.Trigger>
+    <Tooltip.Content><p>Exit Room</p></Tooltip.Content>
+  </Tooltip.Root>
+</Tooltip.Provider>

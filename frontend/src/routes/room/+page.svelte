@@ -7,11 +7,7 @@
   import Sheet from "../../lib/components/room/Sheet.svelte";
   import RoomActions from "$lib/components/room/RoomActions.svelte";
 
-  let isModifyOpen = $state(false);
-  let isAddOpen = $state(false);
   let loaded = $state(false);
-
-  let selectedIssue = null;
 
   let canvas: HTMLCanvasElement;
 
@@ -25,8 +21,8 @@
   });
 </script>
 
-<canvas bind:this={canvas} class="h-dvh w-dvw" />
+<canvas bind:this={canvas} class="h-dvh w-dvw"></canvas>
 {#if loaded}
-  <Sheet {isModifyOpen} {selectedIssue} {isAddOpen} />
+  <Sheet />
   <RoomActions />
 {/if}
