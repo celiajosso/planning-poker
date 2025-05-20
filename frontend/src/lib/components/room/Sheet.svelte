@@ -9,8 +9,6 @@
   import IssuesTab from "$lib/components/room/Tabs/IssuesTab.svelte";
   import ProfileTab from "$lib/components/room/Tabs/ProfileTab.svelte";
   import TabsList from "./Tabs/Issues/TabsList.svelte";
-
-  let { isModifyOpen, selectedIssue, isAddOpen } = $props();
 </script>
 
 <Sheet.Root>
@@ -18,7 +16,10 @@
     <ButtonIcon icon={ChevronDoubleLeft} size="size-6" theme="solid"
     ></ButtonIcon>
   </Sheet.Trigger>
-  <Sheet.Content side="right" class="bg-[#f4f4f9] text-gray-900">
+  <Sheet.Content
+    side="right"
+    class="bg-[#f4f4f9] text-gray-900 p-6 sm:max-w-2xl max-w-full w-full "
+  >
     <Tabs.Root value="profile-settings" class="w-full">
       <TabsList />
       <Tabs.Content value="profile-settings">
@@ -26,7 +27,7 @@
       </Tabs.Content>
       {#if Game.storage.user.role == "Administrator"}
         <Tabs.Content value="issues">
-          <IssuesTab {isModifyOpen} {selectedIssue} {isAddOpen} />
+          <IssuesTab />
         </Tabs.Content>
       {/if}
     </Tabs.Root>

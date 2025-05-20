@@ -25,7 +25,7 @@
     await WebSocketManager.createSocket();
     Game.createRoom(
       { id: "", username: userName, role: "Player", card: -1, roomId: "" },
-      { id: "", name: roomName, stories: [], storySelected: null }
+      { id: "", name: roomName, stories: [], storySelected: null },
     );
     await goto("/room");
   }
@@ -103,11 +103,17 @@
   <a href="/about" class="text-sm">Learn More</a>
 </div>
 
-<Tooltip.Root>
-  <Tooltip.Trigger class="absolute right-2 bottom-2">
-    <Icon class="color-gray-800 size-5" src={InformationCircle} theme="solid" />
-  </Tooltip.Trigger>
-  <Tooltip.Content>
-    Build : {import.meta.env.VITE_BUILD_DATE}
-  </Tooltip.Content>
-</Tooltip.Root>
+<Tooltip.Provider>
+  <Tooltip.Root>
+    <Tooltip.Trigger class="absolute right-2 bottom-2">
+      <Icon
+        class="color-gray-800 size-5"
+        src={InformationCircle}
+        theme="solid"
+      />
+    </Tooltip.Trigger>
+    <Tooltip.Content>
+      Build : {import.meta.env.VITE_BUILD_DATE}
+    </Tooltip.Content>
+  </Tooltip.Root>
+</Tooltip.Provider>

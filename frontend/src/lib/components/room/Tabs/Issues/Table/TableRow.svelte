@@ -1,11 +1,15 @@
 <script lang="ts">
-  import * as Table from "$lib/components/ui/table/index.js";
-
   import DeleteIssue from "$lib/components/room/Tabs/Issues/Actions/DeleteIssue.svelte";
   import VoteIssue from "$lib/components/room/Tabs/Issues/Actions/VoteIssue.svelte";
   import ModifyIssue from "$lib/components/room/Tabs/Issues/Actions/ModifyIssue.svelte";
+  import * as Table from "$lib/components/ui/table/index.js";
 
-  let { isModifyOpen, selectedIssue, isAddOpen, issue } = $props();
+  let {
+    isModifyOpen = $bindable(),
+    isDeleteOpen = $bindable(),
+    selectedIssue = $bindable(),
+    issue,
+  } = $props();
 </script>
 
 <Table.Row>
@@ -18,8 +22,8 @@
     {issue.finalEstimate}
   </Table.Cell>
   <Table.Cell class="flex flex-row items-center h-full gap-2">
-    <DeleteIssue {issue} />
-    <ModifyIssue {isModifyOpen} {selectedIssue} {issue} />
+    <DeleteIssue  bind:isDeleteOpen {issue} bind:selectedIssue />
+    <ModifyIssue bind:isModifyOpen {issue} bind:selectedIssue />
     <VoteIssue {issue} />
   </Table.Cell>
 </Table.Row>
