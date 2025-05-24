@@ -18,6 +18,8 @@
     ArrowTopRightOnSquare,
   } from "@steeze-ui/heroicons";
 
+  import GdprInput from "$lib/components/home/GdprInput.svelte";
+
   let roomName = $state("");
   let roomId = $state("");
   let userName = $state(randomName(""));
@@ -89,33 +91,7 @@
           required
           class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
         />
-        <div class="flex items-center justify-center space-x-2 mb-4">
-          <Checkbox
-            id="terms"
-            bind:checked={checkedJoin}
-            aria-labelledby="terms-label"
-          />
-          <Label
-            id="terms-label"
-            for="terms"
-            class="text-sm gap-1 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            I accept the
-            <a
-              href="/policies/CELEX_32016R0679_EN_TXT.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="underline hover:text-gray-500 hover:underline transition duration-150"
-            >
-              personal data policy
-              <Icon
-                class="inline align-middle ml-1 size-3 text-gray-800"
-                src={ArrowTopRightOnSquare}
-                theme="solid"
-              />
-            </a>
-          </Label>
-        </div>
+        <GdprInput id="join-room-gdpr" bind:checked={checkedJoin} />
         <Button type="submit" disabled={!checkedJoin}>Join</Button>
       </form></Tabs.Content
     >
@@ -131,33 +107,8 @@
             required
             class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
           />
-          <div class="flex items-center justify-center space-x-2 mb-4">
-            <Checkbox
-              id="terms"
-              bind:checked={checkedCreate}
-              aria-labelledby="terms-label"
-            />
-            <Label
-              id="terms-label"
-              for="terms"
-              class="text-sm gap-1 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              I accept the
-              <a
-                href="/policies/CELEX_32016R0679_EN_TXT.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="underline hover:text-gray-500 hover:underline transition duration-150"
-              >
-                personal data policy
-                <Icon
-                  class="inline align-middle ml-1 size-3 text-gray-800"
-                  src={ArrowTopRightOnSquare}
-                  theme="solid"
-                />
-              </a>
-            </Label>
-          </div>
+          <GdprInput id="create-room-gdpr" bind:checked={checkedCreate} />
+
           <Button type="submit" disabled={!checkedCreate}>Create</Button>
         </div>
       </form></Tabs.Content
