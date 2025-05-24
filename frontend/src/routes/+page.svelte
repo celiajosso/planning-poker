@@ -1,19 +1,28 @@
 <script lang="ts">
+  import { Game } from "$lib/Game.svelte";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
-  import { Game } from "$lib/Game.svelte";
-  import randomName from "@scaleway/random-name";
-  import { WebSocketManager } from "$lib/WebsocketManager";
-  import { Input } from "$lib/components/ui/input/index.js";
-  import { Button } from "$lib/components/ui/button/index.js";
-  import * as Tabs from "$lib/components/ui/tabs/index.js";
-  import { InformationCircle } from "@steeze-ui/heroicons";
   import { Icon } from "@steeze-ui/svelte-icon";
+  import { WebSocketManager } from "$lib/WebsocketManager";
+  import randomName from "@scaleway/random-name";
+
+  import * as Tabs from "$lib/components/ui/tabs/index.js";
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
+  import { Button } from "$lib/components/ui/button/index.js";
+  import { Input } from "$lib/components/ui/input/index.js";
+  import { Checkbox } from "$lib/components/ui/checkbox/index.js";
+  import Label from "$lib/components/ui/label/label.svelte";
+
+  import {
+    InformationCircle,
+    ArrowTopRightOnSquare,
+  } from "@steeze-ui/heroicons";
 
   let roomName = $state("");
   let roomId = $state("");
   let userName = $state(randomName(""));
+  let checkedCreate = $state(false);
+  let checkedJoin = $state(false);
 
   onMount(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -63,7 +72,7 @@
     </Tabs.List>
     <Tabs.Content value="join-room"
       ><form
-        class="flex-1 h-[250px] m-4 border border-gray-300 p-2 rounded-xl"
+        class="flex-1 h-[265px] m-4 border border-gray-300 p-2 rounded-xl"
         onsubmit={join}
       >
         <h2 class="text-center text-xl mb-8 font-semibold">Join a room</h2>
@@ -80,7 +89,34 @@
           required
           class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
         />
-        <Button type="submit">Join</Button>
+        <div class="flex items-center justify-center space-x-2 mb-4">
+          <Checkbox
+            id="terms"
+            bind:checked={checkedJoin}
+            aria-labelledby="terms-label"
+          />
+          <Label
+            id="terms-label"
+            for="terms"
+            class="text-sm gap-1 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            I accept the
+            <a
+              href="/policies/CELEX_32016R0679_EN_TXT.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="underline hover:text-gray-500 hover:underline transition duration-150"
+            >
+              personal data policy
+              <Icon
+                class="inline align-middle ml-1 size-3 text-gray-800"
+                src={ArrowTopRightOnSquare}
+                theme="solid"
+              />
+            </a>
+          </Label>
+        </div>
+        <Button type="submit" disabled={!checkedJoin}>Join</Button>
       </form></Tabs.Content
     >
 
@@ -95,7 +131,34 @@
             required
             class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
           />
-          <Button type="submit">Create</Button>
+          <div class="flex items-center justify-center space-x-2 mb-4">
+            <Checkbox
+              id="terms"
+              bind:checked={checkedCreate}
+              aria-labelledby="terms-label"
+            />
+            <Label
+              id="terms-label"
+              for="terms"
+              class="text-sm gap-1 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              I accept the
+              <a
+                href="/policies/CELEX_32016R0679_EN_TXT.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="underline hover:text-gray-500 hover:underline transition duration-150"
+              >
+                personal data policy
+                <Icon
+                  class="inline align-middle ml-1 size-3 text-gray-800"
+                  src={ArrowTopRightOnSquare}
+                  theme="solid"
+                />
+              </a>
+            </Label>
+          </div>
+          <Button type="submit" disabled={!checkedCreate}>Create</Button>
         </div>
       </form></Tabs.Content
     >
