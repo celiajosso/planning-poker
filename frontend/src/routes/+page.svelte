@@ -1,19 +1,30 @@
 <script lang="ts">
+  import { Game } from "$lib/Game.svelte";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
-  import { Game } from "$lib/Game.svelte";
-  import randomName from "@scaleway/random-name";
-  import { WebSocketManager } from "$lib/WebsocketManager";
-  import { Input } from "$lib/components/ui/input/index.js";
-  import { Button } from "$lib/components/ui/button/index.js";
-  import * as Tabs from "$lib/components/ui/tabs/index.js";
-  import { InformationCircle } from "@steeze-ui/heroicons";
   import { Icon } from "@steeze-ui/svelte-icon";
+  import { WebSocketManager } from "$lib/WebsocketManager";
+  import randomName from "@scaleway/random-name";
+
+  import * as Tabs from "$lib/components/ui/tabs/index.js";
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
+  import { Button } from "$lib/components/ui/button/index.js";
+  import { Input } from "$lib/components/ui/input/index.js";
+  import { Checkbox } from "$lib/components/ui/checkbox/index.js";
+  import Label from "$lib/components/ui/label/label.svelte";
+
+  import {
+    InformationCircle,
+    ArrowTopRightOnSquare,
+  } from "@steeze-ui/heroicons";
+
+  import GdprInput from "$lib/components/home/GdprInput.svelte";
 
   let roomName = $state("");
   let roomId = $state("");
   let userName = $state(randomName(""));
+  let checkedCreate = $state(false);
+  let checkedJoin = $state(false);
 
   onMount(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -63,7 +74,7 @@
     </Tabs.List>
     <Tabs.Content value="join-room"
       ><form
-        class="flex-1 h-[250px] m-4 border border-gray-300 p-2 rounded-xl"
+        class="flex-1 h-[265px] m-4 border border-gray-300 p-2 rounded-xl"
         onsubmit={join}
       >
         <h2 class="text-center text-xl mb-8 font-semibold">Join a room</h2>
@@ -80,7 +91,8 @@
           required
           class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
         />
-        <Button type="submit">Join</Button>
+        <GdprInput id="join-room-gdpr" bind:checked={checkedJoin} />
+        <Button type="submit" disabled={!checkedJoin}>Join</Button>
       </form></Tabs.Content
     >
 
@@ -95,7 +107,9 @@
             required
             class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
           />
-          <Button type="submit">Create</Button>
+          <GdprInput id="create-room-gdpr" bind:checked={checkedCreate} />
+
+          <Button type="submit" disabled={!checkedCreate}>Create</Button>
         </div>
       </form></Tabs.Content
     >
