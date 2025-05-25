@@ -1,10 +1,11 @@
 <script>
-  import { Button } from "$lib/components/ui/button";
+  import BackToHome from "$lib/backToHome.svelte";
 </script>
 
 <div
   class="w-dvw p-2 text-[#333] flex flex-col h-dvh items-center justify-center bg-[#f4f4f9]"
 >
+  <BackToHome />
   <h1 class="text-4xl font-bold">About Planning Poker</h1>
   <p class="my-4 text-justify max-w-lg">
     Planning Poker is a collaborative tool designed to help agile teams estimate
@@ -19,5 +20,4 @@
       <div>Célia JOSSO</div>
     </div>
   </div>
-  <Button href="/">Back to Home</Button>
 </div>
