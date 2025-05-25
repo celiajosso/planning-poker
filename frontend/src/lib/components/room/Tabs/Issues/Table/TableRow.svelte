@@ -3,6 +3,7 @@
   import VoteIssue from "$lib/components/room/Tabs/Issues/Actions/VoteIssue.svelte";
   import ModifyIssue from "$lib/components/room/Tabs/Issues/Actions/ModifyIssue.svelte";
   import * as Table from "$lib/components/ui/table/index.js";
+  import CompleteUncompleteIssue from "../Actions/CompleteUncompleteIssue.svelte";
 
   let {
     isModifyOpen = $bindable(),
@@ -22,8 +23,9 @@
     {issue.finalEstimate}
   </Table.Cell>
   <Table.Cell class="flex flex-row items-center h-full gap-2">
-    <DeleteIssue  bind:isDeleteOpen {issue} bind:selectedIssue />
+    <DeleteIssue bind:isDeleteOpen {issue} bind:selectedIssue />
     <ModifyIssue bind:isModifyOpen {issue} bind:selectedIssue />
     <VoteIssue {issue} />
+    <CompleteUncompleteIssue {issue} bind:selectedIssue />
   </Table.Cell>
 </Table.Row>

@@ -10,21 +10,23 @@
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
-  import { Checkbox } from "$lib/components/ui/checkbox/index.js";
-  import Label from "$lib/components/ui/label/label.svelte";
 
   import {
     InformationCircle,
-    ArrowTopRightOnSquare,
+    LockClosed,
+    CheckCircle,
+    ArchiveBox,
   } from "@steeze-ui/heroicons";
+  import ButtonIcon from "$lib/ButtonIcon.svelte";
 
-  import GdprInput from "$lib/components/home/GdprInput.svelte";
-
+  let userName = $state(""); // change later when we will have the user entity
+  let login = $state(false);
   let roomName = $state("");
   let roomId = $state("");
-  let userName = $state(randomName(""));
-  let checkedCreate = $state(false);
-  let checkedJoin = $state(false);
+
+  if (!login) {
+    let userName = randomName("");
+  }
 
   onMount(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -58,10 +60,44 @@
 <div
   class="w-dvw p-2 text-center text-[#333] flex flex-col h-dvh items-center justify-center bg-[#f4f4f9]"
 >
+  {#if login}
+    <div class="absolute top-4 right-4">
+      <ButtonIcon
+        onclick={() => {
+          goto("/history");
+        }}
+        icon={ArchiveBox}
+        size="size-8"
+        theme="outline"
+      />
+    </div>
+  {/if}
+
   <h1 class="text-4xl font-bold">Welcome to Planning Poker</h1>
   <p class="text-lg my-4">
     Collaborate and estimate tasks efficiently with your team.
   </p>
+
+  {#if login}
+    <div
+      class="bg-green-100 border border-green-300 text-green-800 px-4 py-2 rounded-md mb-4 w-full max-w-lg"
+    >
+      <div class="flex items-center justify-center gap-2 text-sm">
+        <Icon class="size-5" src={CheckCircle} theme="outline" />
+        <p>You are logged in as <strong>username</strong></p>
+      </div>
+    </div>
+  {:else}
+    <div
+      class="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-2 rounded-md mb-4 w-full max-w-lg"
+    >
+      <div class="flex items-center justify-center gap-1 text-sm">
+        <Icon class="size-5" src={LockClosed} theme="outline" />
+        Please <a href="/login" class="underline font-medium">log in</a> to save
+        your estimations and access your history
+      </div>
+    </div>
+  {/if}
 
   <Tabs.Root value="join-room" class="w-3/4 max-w-lg mt-6">
     <Tabs.List class="w-full flex bg-gray-200  justify-between">
@@ -72,32 +108,34 @@
         >Create a room</Tabs.Trigger
       >
     </Tabs.List>
-    <Tabs.Content value="join-room"
-      ><form
-        class="flex-1 h-[265px] m-4 border border-gray-300 p-2 rounded-xl"
+    <Tabs.Content value="join-room">
+      <form
+        class="flex-1 m-4 border border-gray-300 p-2 rounded-xl"
         onsubmit={join}
+        class:h-[235px]={!login}
       >
         <h2 class="text-center text-xl mb-8 font-semibold">Join a room</h2>
-        <Input
-          placeholder="Pseudonym"
-          required
-          bind:value={userName}
-          name="pseudonym"
-          class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
-        />
+        {#if !login}
+          <Input
+            placeholder="Pseudonym"
+            required
+            bind:value={userName}
+            name="pseudonym"
+            class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
+          />
+        {/if}
         <Input
           placeholder="RoomId"
           bind:value={roomId}
           required
           class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
         />
-        <GdprInput id="join-room-gdpr" bind:checked={checkedJoin} />
-        <Button type="submit" disabled={!checkedJoin}>Join</Button>
+        <Button type="submit">Join</Button>
       </form></Tabs.Content
     >
 
     <Tabs.Content value="create-room"
-      ><form class="flex-1 h-[250px] m-4" onsubmit={create}>
+      ><form class="flex-1 m-4" onsubmit={create}>
         <div class="border border-gray-300 p-2 rounded-xl">
           <h2 class="text-center text-xl mb-8 font-semibold">Create a room</h2>
           <Input
@@ -107,9 +145,8 @@
             required
             class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
           />
-          <GdprInput id="create-room-gdpr" bind:checked={checkedCreate} />
 
-          <Button type="submit" disabled={!checkedCreate}>Create</Button>
+          <Button type="submit">Create</Button>
         </div>
       </form></Tabs.Content
     >
