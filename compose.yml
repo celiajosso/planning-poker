@@ -2,6 +2,11 @@ services:
   db:
     image: mongo
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     env_file:
       - .env
     environment:

@@ -1,118 +1,71 @@
 package com.example
 
+import com.example.models.DB_User
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
+import com.mongodb.client.model.Filters
+import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import jdk.internal.classfile.impl.AbstractPoolEntry.hashString
+import org.bson.Document
+import java.security.MessageDigest
+
+@OptIn(ExperimentalStdlibApi::class)
+fun String.sha512(): String {
+    val md = MessageDigest.getInstance("SHA-512")
+    val digest = md.digest(this.toByteArray())
+    return digest.toHexString()
+}
 
 fun Application.configureDatabases() {
-    /*val mongoDatabase = connectToMongoDB()
-    val roomService = RoomService(mongoDatabase)
-    val storyService = StoryService(mongoDatabase)
-    val userService = UserService(mongoDatabase)
+    val database = connectToMongoDB()
+    database.createCollection("users")
+    database.createCollection("games")
 
     routing {
-        route("/rooms") {
-            get {
-                call.respond(roomService.getAll())
-            }
-            get("{id}") {
-                val id = call.parameters["id"]
-                val room = id?.let { roomService.getById(it) }
-                if (room != null) call.respond(room)
-                else call.respond(HttpStatusCode.NotFound)
-            }
+        route("/login") {
             post {
-                val room = call.receive<Room>()
-                val id = roomService.create(room)
-                call.respond(HttpStatusCode.Created, mapOf("id" to id))
-            }
-            put("{id}") {
-                val id = call.parameters["id"]
-                val updatedRoom = call.receive<Room>()
-                if (id != null && roomService.update(id, updatedRoom)) {
-                    call.respond(HttpStatusCode.OK)
-                } else {
-                    call.respond(HttpStatusCode.NotFound)
-                }
-            }
-            delete("{id}") {
-                val id = call.parameters["id"]
-                if (id != null && roomService.delete(id)) {
-                    call.respond(HttpStatusCode.NoContent)
-                } else {
-                    call.respond(HttpStatusCode.NotFound)
-                }
-            }
-        }
+                val user = call.receive<DB_User>()
 
-        route("/stories") {
-            get {
-                call.respond(storyService.getAll())
-            }
-            get("{id}") {
-                val id = call.parameters["id"]
-                val story = id?.let { storyService.getById(it) }
-                if (story != null) call.respond(story)
-                else call.respond(HttpStatusCode.NotFound)
-            }
-            post {
-                val story = call.receive<Story>()
-                val id = storyService.create(story)
-                call.respond(HttpStatusCode.Created, mapOf("id" to id))
-            }
-            put("{id}") {
-                val id = call.parameters["id"]
-                val updatedStory = call.receive<Story>()
-                if (id != null && storyService.update(id, updatedStory)) {
-                    call.respond(HttpStatusCode.OK)
-                } else {
-                    call.respond(HttpStatusCode.NotFound)
-                }
-            }
-            delete("{id}") {
-                val id = call.parameters["id"]
-                if (id != null && storyService.delete(id)) {
-                    call.respond(HttpStatusCode.NoContent)
-                } else {
-                    call.respond(HttpStatusCode.NotFound)
-                }
-            }
-        }
+                val collection = database.getCollection("users")
+                val userInDb = collection.find(Filters.eq("username", user.username)).first()
 
-        route("/users") {
-            get {
-                call.respond(userService.getAll())
-            }
-            get("{id}") {
-                val id = call.parameters["id"]
-                val user = id?.let { userService.getById(it) }
-                if (user != null) call.respond(user)
-                else call.respond(HttpStatusCode.NotFound)
-            }
-            post {
-                val user = call.receive<User>()
-                val id = userService.create(user)
-                call.respond(HttpStatusCode.Created, mapOf("id" to id))
-            }
-            put("{id}") {
-                val id = call.parameters["id"]
-                val updatedUser = call.receive<User>()
-                if (id != null && userService.update(id, updatedUser)) {
-                    call.respond(HttpStatusCode.OK)
-                } else {
-                    call.respond(HttpStatusCode.NotFound)
-                }
-            }
-            delete("{id}") {
-                val id = call.parameters["id"]
-                if (id != null && userService.delete(id)) {
-                    call.respond(HttpStatusCode.NoContent)
-                } else {
-                    call.respond(HttpStatusCode.NotFound)
+                userInDb?.let {
+                    if (it["password"] == user.password.sha512()) {
+                        call.respond(HttpStatusCode.OK)
+                    } else {
+                        call.respond(HttpStatusCode.Unauthorized)
+                    }
+                    return@post
                 }
             }
         }
-    }*/
+        route("/register") {
+            post {
+                val user = call.receive<DB_User>()
+                
+                val collection = database.getCollection("users")
+                val userInDb = collection.find(Filters.eq("username", user.username)).first()
+
+                userInDb?.let {
+                    call.respond(HttpStatusCode.Unauthorized)
+                    return@post
+                }
+                val document = Document()
+                    .append("username", user.username)
+                    .append("password", user.password.sha512())
+                collection.insertOne(document)
+            }
+        }
+        route("/history") {
+            get {
+            //call.respond(userService.getAll())
+            }
+        }
+    }
 }
 
 /**
