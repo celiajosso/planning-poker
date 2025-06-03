@@ -25,7 +25,7 @@
   let roomId = $state("");
 
   if (!login) {
-    let userName = randomName("");
+    userName = randomName("");
   }
 
   onMount(() => {
