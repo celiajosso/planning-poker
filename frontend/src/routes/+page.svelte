@@ -20,7 +20,7 @@
   import ButtonIcon from "$lib/ButtonIcon.svelte";
 
   let userName = $state(""); // change later when we will have the user entity
-  let login = $state(false);
+  let login = $state(true);
   let roomName = $state("");
   let roomId = $state("");
 

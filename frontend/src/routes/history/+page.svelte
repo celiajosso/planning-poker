@@ -7,137 +7,107 @@
   import { scaleBand, scaleLinear } from "d3-scale";
   import BackToHome from "$lib/backToHome.svelte";
 
-  type Vote = {
-    user: string;
-    role: string;
-    values: number[];
-  };
-
   type Issue = {
     title: string;
     description: string;
-    roomId: string;
-    lastModified: string;
-    finalEstimate: number;
-    votes: Vote[];
+    participants: String[];
+    votes: Record<string, number[]>;
+    timestamp: number;
   };
 
-  const issues = [
+  const issues: Issue[] = [
     {
       title: "Issue Title 1",
       description: "Issue Description",
-      roomId: "Room 1",
-      lastModified: "2025-01-01",
-      finalEstimate: 5,
-      votes: [
-        { user: "Alice", role: "Dev", values: [3, 5] },
-        { user: "Bob", role: "PO", values: [5, 5] },
-        { user: "Carol", role: "Dev", values: [8, 5] },
-      ],
+      participants: ["Alice", "Bob", "Carol"],
+      timestamp: Date.now(),
+      votes: {
+        Alice: [3, 5],
+        Bob: [5, 5],
+        Carol: [8, 5],
+      },
     },
     {
       title: "Fix login bug",
       description: "Users can't log in when using Safari.",
-      roomId: "Room 2",
-      lastModified: "2025-02-10",
-      finalEstimate: 3,
-      votes: [
-        { user: "Dave", role: "Dev", values: [2, 3] },
-        { user: "Eva", role: "PO", values: [3, 3] },
-      ],
+      participants: ["Dave", "Eva"],
+      timestamp: Date.now(),
+      votes: { Dave: [2, 3], Eva: [3, 3] },
     },
     {
       title: "Add dark mode",
       description: "Implement a dark theme for the app UI.",
-      roomId: "Room 3",
-      lastModified: "2025-03-15",
-      finalEstimate: 8,
-      votes: [
-        { user: "Frank", role: "Dev", values: [8, 8, 8] },
-        { user: "Grace", role: "Designer", values: [5, 6, 7] },
-        { user: "Helen", role: "PO", values: [8, 8, 8] },
-      ],
+      participants: ["Frank", "Grace", "Helen"],
+      timestamp: Date.now(),
+      votes: { Frank: [8, 8, 8], Grace: [5, 6, 7], Helen: [8, 8, 8] },
     },
     {
       title: "Optimize database queries",
       description: "Improve performance of user-related queries.",
-      roomId: "Room 1",
-      lastModified: "2025-04-01",
-      finalEstimate: 13,
-      votes: [
-        { user: "Ivan", role: "Dev", values: [13, 13] },
-        { user: "Jack", role: "DevOps", values: [8, 13] },
-      ],
+      participants: ["Ivan", "Jack"],
+      timestamp: Date.now(),
+      votes: { Ivan: [13, 13], Jack: [8, 13] },
     },
     {
       title: "Refactor legacy payment module",
       description: "Clean up and document the old payment processing code.",
-      roomId: "Room 2",
-      lastModified: "2025-05-20",
-      finalEstimate: 8,
-      votes: [
-        { user: "Kara", role: "Dev", values: [8, 8] },
-        { user: "Leo", role: "PO", values: [5, 8] },
-        { user: "Mia", role: "QA", values: [8, 8] },
-      ],
+      participants: ["Kara", "Leo", "Mia"],
+      timestamp: Date.now(),
+      votes: { Kara: [8, 8], Leo: [5, 8], Mia: [8, 8] },
     },
     {
       title: "Redesign landing page",
       description: "Create a new responsive design for the homepage.",
-      roomId: "UX Room",
-      lastModified: "2025-05-10",
-      finalEstimate: 8,
-      votes: [
-        { user: "Alice", role: "Designer", values: [5, 8, 8] },
-        { user: "Bob", role: "Dev", values: [8, 8, 8] },
-        { user: "Clara", role: "Dev", values: [8, 8, 8] },
-        { user: "Dylan", role: "QA", values: [5, 5, 8] },
-        { user: "Elena", role: "PO", values: [8, 8, 8] },
-      ],
+      participants: ["Alice", "Bob", "Clara", "Dylan", "Elena"],
+      timestamp: Date.now(),
+      votes: {
+        Alice: [5, 8, 8],
+        Bob: [8, 8, 8],
+        Clara: [8, 8, 8],
+        Dylan: [5, 5, 8],
+        Elena: [8, 8, 8],
+      },
     },
     {
       title: "Improve caching mechanism",
       description: "Add Redis caching to reduce database load.",
-      roomId: "Backend",
-      lastModified: "2025-05-12",
-      finalEstimate: 13,
-      votes: [
-        { user: "Fabien", role: "Dev", values: [13, 13] },
-        { user: "Giulia", role: "Dev", values: [8, 13] },
-        { user: "Hugo", role: "DevOps", values: [13, 13] },
-        { user: "Isabelle", role: "QA", values: [8, 13] },
-        { user: "Jules", role: "PO", values: [13, 13] },
-        { user: "Katia", role: "Scrum Master", values: [13, 13] },
-      ],
+      participants: ["Fabien", "Giulia", "Hugo", "Isabelle", "Jules", "Katia"],
+      timestamp: Date.now(),
+      votes: {
+        Fabien: [13, 13],
+        Giulia: [8, 13],
+        Hugo: [13, 13],
+        Isabelle: [8, 13],
+        Jules: [13, 13],
+        Katia: [13, 13],
+      },
     },
     {
       title: "Integrate payment gateway",
       description: "Support for Stripe and PayPal payments.",
-      roomId: "E-commerce",
-      lastModified: "2025-05-18",
-      finalEstimate: 8,
-      votes: [
-        { user: "Leo", role: "Dev", values: [8, 8] },
-        { user: "Mona", role: "Dev", values: [5, 8] },
-        { user: "Nicolas", role: "PO", values: [8, 8] },
-        { user: "Omar", role: "QA", values: [8, 8] },
-        { user: "Patricia", role: "Security", values: [8, 8] },
-        { user: "Quentin", role: "PM", values: [8, 8] },
-      ],
+      timestamp: Date.now(),
+      participants: ["Leo", "Mona", "Nicolas", "Omar", "Patricia", "Quentin"],
+      votes: {
+        Leo: [8, 8],
+        Mona: [5, 8],
+        Nicolas: [8, 8],
+        Omar: [8, 8],
+        Patricia: [8, 8],
+        Quentin: [8, 8],
+      },
     },
     {
       title: "Add real-time chat",
       description: "Allow users to message each other in real-time.",
-      roomId: "Messaging",
-      lastModified: "2025-05-22",
-      finalEstimate: 13,
-      votes: [
-        { user: "Rania", role: "Dev", values: [8, 13, 13] },
-        { user: "Sami", role: "Dev", values: [13, 13, 13] },
-        { user: "Théo", role: "Dev", values: [13, 13, 13] },
-        { user: "Ursula", role: "PO", values: [13, 13, 13] },
-        { user: "Victor", role: "UX", values: [5, 8, 13] },
-      ],
+      participants: ["Rania", "Sami", "Théo", "Ursula", "Victor"],
+      timestamp: Date.now(),
+      votes: {
+        Rania: [8, 13, 13],
+        Sami: [13, 13, 13],
+        Théo: [13, 13, 13],
+        Ursula: [13, 13, 13],
+        Victor: [5, 8, 13],
+      },
     },
   ];
 
@@ -161,7 +131,7 @@
   }
 
   let votesDistribution: { score: number; count: number }[] = [];
-  let participantsWithRoles: string[] = [];
+  let participants: string[] = [];
   let rounds = 0;
   let mean = 0;
   let median = 0;
@@ -169,12 +139,10 @@
   let convergenceRound: number | null = null;
 
   $: if (selectedIssue) {
-    rounds = selectedIssue.votes[0]?.values.length ?? 0;
-    participantsWithRoles = selectedIssue.votes.map(
-      (v) => `${v.user} (${v.role})`,
-    );
+    rounds = Object.values(selectedIssue.votes)[0]?.length ?? 0;
+    participants = Object.keys(selectedIssue.votes);
 
-    const firstVotes = selectedIssue.votes.map((v) => v.values[0]);
+    const firstVotes = Object.values(selectedIssue.votes).map((v) => v[0]);
 
     mean = firstVotes.reduce((a, b) => a + b, 0) / firstVotes.length;
 
@@ -190,8 +158,8 @@
         firstVotes.length,
     );
 
-    const finalRoundVotes = selectedIssue.votes.map(
-      (v) => v.values[v.values.length - 1],
+    const finalRoundVotes = Object.values(selectedIssue.votes).map((v) =>
+      v.at(-1),
     );
     const allSame = finalRoundVotes.every(
       (vote) => vote === finalRoundVotes[0],
@@ -240,7 +208,6 @@
         <Table.Head>Title</Table.Head>
         <Table.Head>Description</Table.Head>
         <Table.Head>Final Estimate</Table.Head>
-        <Table.Head>Room ID</Table.Head>
         <Table.Head>Charts</Table.Head>
       </Table.Row>
     </Table.Header>
@@ -249,8 +216,19 @@
         <Table.Row>
           <Table.Cell>{issue.title}</Table.Cell>
           <Table.Cell>{issue.description}</Table.Cell>
-          <Table.Cell>{issue.finalEstimate}</Table.Cell>
-          <Table.Cell>{issue.roomId}</Table.Cell>
+          <Table.Cell>
+            {#if Object.keys(issue.votes).length > 0}
+              {(
+                Object.values(issue.votes)
+                  .map((v) => v.at(-1) ?? 0)
+                  .reduce((a, b) => a + b, 0) /
+                Object.values(issue.votes).length
+              ).toFixed(1)}
+            {:else}
+              N/A
+            {/if}
+          </Table.Cell>
+
           <Table.Cell>
             <ButtonIcon
               onclick={() => openDrawer(issue)}
@@ -363,10 +341,9 @@
             <div class="space-y-2 text-sm pb-4">
               <p>
                 <strong>Participants:</strong>
-                {participantsWithRoles.join(", ")}
+                {participants.join(", ")}
               </p>
               <p><strong>Rounds:</strong> {rounds}</p>
-              <p><strong>Mean:</strong> {mean.toFixed(2)}</p>
               <p><strong>Median:</strong> {median}</p>
               <p><strong>Standard Deviation:</strong> {stdDev.toFixed(2)}</p>
               <p>
