@@ -73,7 +73,7 @@ function parseAndAddStories(csv: string) {
 		const description = cols[descriptionIndex]?.trim()
 
 		if (summary) {
-			Game.createStory2(summary, description, "");
+			Game.createStory2(summary, description, 0);
 		}
 	}
 	toast("User stories imported !")

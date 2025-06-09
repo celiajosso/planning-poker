@@ -63,23 +63,28 @@ class StoryService(/*private val db: MongoDatabase*/) {
             val room = RoomService.getById(story.roomId) ?: return
             val dto = room.toRoomDTO()
             val selected = dto.storySelected ?: return
-            selected.isSaved = true
+            dto.storySelected = null
 
-            val selected2 = dto.stories.find { it.id == selected.id } ?: return
-            selected2.isSaved = true
+            val story = dto.stories.find { it.id == selected.id } ?: return
 
             room.users.forEach { user ->
                 var userdto = user.toUserDTO()
-                selected.votes[userdto.username] = (selected.votes[userdto.username] ?: mutableListOf()) + userdto.card
+                story.votes[userdto.username] = (story.votes[userdto.username] ?: mutableListOf()) + userdto.card
+            }
+
+            story.isSaved = true
+
+            if (story.votes.values.isNotEmpty()) {
+                story.finalEstimate = story.votes.values.flatten().average().toFloat()
             }
 
             val db = DatabaseService.getDatabase()
             val collection = db.getCollection("stories")
             val document = org.bson.Document()
-                .append("title", selected.title)
-                .append("description", selected.description)
-                .append("votes", selected.votes)
-                .append("participants", selected.votes.keys.toList())
+                .append("title", story.title)
+                .append("description", story.description)
+                .append("votes", story.votes)
+                .append("participants", story.votes.keys.toList())
                 .append("timestamp", System.currentTimeMillis())
             collection.insertOne(document)
 

@@ -87,7 +87,6 @@
         >
           <FormRow field="title" value={selectedIssue!.title} />
           <FormRow field="description" value={selectedIssue!.description} />
-          <FormRowScore value={selectedIssue!.finalEstimate} />
           <SubmitButton />
         </form>
       </Dialog.Content>

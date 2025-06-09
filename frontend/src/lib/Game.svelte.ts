@@ -194,7 +194,7 @@ export namespace Game {
 		});
 	}
 
-	export function createStory2(title: string, description: string, score: string) {
+	export function createStory2(title: string, description: string, score: number) {
 		WebSocketManager.sendMessage("StoryCreate", null, null, {
 			id: "",
 			title: title,
@@ -230,7 +230,7 @@ export namespace Game {
 			id,
 			title: "",
 			description: "",
-			finalEstimate: "",
+			finalEstimate: 0,
 			roomId: storage.room.id,
 			votes:{},
 			isSaved:false
@@ -242,7 +242,7 @@ export namespace Game {
 			id:"",
 			title: "",
 			description: "",
-			finalEstimate: "",
+			finalEstimate: 0,
 			roomId: storage.room.id,
 			votes:{},
 			isSaved:false
@@ -254,7 +254,7 @@ export namespace Game {
 			id:"",
 			title: "",
 			description: "",
-			finalEstimate: "",
+			finalEstimate: 0,
 			roomId: storage.room.id,
 			votes:{},
 			isSaved:false
@@ -266,7 +266,7 @@ export namespace Game {
 			id: "",
 			title: "",
 			description: "",
-			finalEstimate: "",
+			finalEstimate: 0,
 			roomId: storage.room.id,
 			votes:{},
 			isSaved:false
@@ -278,7 +278,7 @@ export namespace Game {
 			id,
 			title: "",
 			description: "",
-			finalEstimate: "",
+			finalEstimate: 0,
 			roomId: storage.room.id,
 			votes:{},
 			isSaved:false

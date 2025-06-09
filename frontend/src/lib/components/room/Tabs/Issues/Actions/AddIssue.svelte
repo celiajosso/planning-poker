@@ -6,7 +6,6 @@
   import * as Dialog from "$lib/components/ui/dialog";
 
   import FormRow from "../Form/FormRow.svelte";
-  import FormRowScore from "../Form/FormRowScore.svelte";
   import SubmitButton from "../Form/SubmitButton.svelte";
 
   let { isAddOpen = $bindable() } = $props();
@@ -39,7 +38,6 @@
       >
         <FormRow field="title" />
         <FormRow field="description" />
-        <FormRowScore />
         <SubmitButton />
       </form>
     </Dialog.Content>
