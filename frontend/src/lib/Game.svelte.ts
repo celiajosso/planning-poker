@@ -138,6 +138,7 @@ export namespace Game {
 	export function restart() {
 		if (storage.room.storySelected === null) return
 		storage.user.card = -1;
+		Game.deckContainer.unselect()
 		WebSocketManager.sendMessage("UserUpdate", storage.user, null, null);
 		gameContainer.alpha = 0;
 		deckContainer.visible = true;

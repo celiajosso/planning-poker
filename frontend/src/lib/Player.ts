@@ -33,7 +33,7 @@ export class Player extends Container {
     }
 
     setCard(card: number) {
-        if (card == -1) {
+        if (card === -1) {
             this.card.select("");
         } else {
             this.card.select(card.toString());
