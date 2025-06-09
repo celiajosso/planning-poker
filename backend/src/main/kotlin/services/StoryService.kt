@@ -68,8 +68,10 @@ class StoryService(/*private val db: MongoDatabase*/) {
             val story = dto.stories.find { it.id == selected.id } ?: return
 
             room.users.forEach { user ->
-                var userdto = user.toUserDTO()
+                val userdto = user.toUserDTO()
                 story.votes[userdto.username] = (story.votes[userdto.username] ?: mutableListOf()) + userdto.card
+                userdto.card = -1
+                UserService.updateUser(socket, userdto)
             }
 
             story.isSaved = true
