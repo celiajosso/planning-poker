@@ -8,7 +8,23 @@
   import { isLogged } from "$lib/utils";
 </script>
 
-{#if $isLogged}
+{#if issue.isSaved}
+  <Tooltip.Provider>
+    <Tooltip.Root>
+      <Tooltip.Trigger>
+        <ButtonIcon
+          icon={CheckCircle}
+          size="size-5"
+          theme="solid"
+          onclick={() => Game.saveStory()}
+        ></ButtonIcon>
+      </Tooltip.Trigger>
+      <Tooltip.Content>
+        <p>Save Issue</p>
+      </Tooltip.Content>
+    </Tooltip.Root>
+  </Tooltip.Provider>
+{:else}
   <Tooltip.Provider>
     <Tooltip.Root>
       <Tooltip.Trigger>
