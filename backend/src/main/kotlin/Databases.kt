@@ -26,7 +26,7 @@ fun Application.configureDatabases() {
     database.createCollection("games")
 
     routing {
-        route("/login") {
+        route("/api/login") {
             post {
                 val user = call.receive<DB_User>()
 
@@ -43,7 +43,7 @@ fun Application.configureDatabases() {
                 }
             }
         }
-        route("/register") {
+        route("/api/register") {
             post {
                 val user = call.receive<DB_User>()
                 
@@ -57,10 +57,11 @@ fun Application.configureDatabases() {
                 val document = Document()
                     .append("username", user.username)
                     .append("password", user.password.sha512())
+                call.respond(HttpStatusCode.Created)
                 collection.insertOne(document)
             }
         }
-        route("/history") {
+        route("/api/history") {
             get {
             //call.respond(userService.getAll())
             }
