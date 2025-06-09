@@ -99,8 +99,10 @@
     >
       <div class="flex items-center justify-center gap-1 text-sm">
         <Icon class="size-5" src={LockClosed} theme="outline" />
-        Please <a href="/login" class="underline font-medium">log in</a> to save
-        your estimations and access your history
+        <p>
+          Please <a href="/login" class="underline font-medium">log in</a> to save
+          your estimations and access your history
+        </p>
       </div>
     </div>
   {/if}
