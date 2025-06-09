@@ -62,6 +62,21 @@ class StoryService(/*private val db: MongoDatabase*/) {
         suspend fun save(socket: DefaultWebSocketServerSession, story: StoryDTO) {
             val room = RoomService.getById(story.roomId) ?: return
             val dto = room.toRoomDTO()
+            val selected = dto.storySelected ?: return
+            selected.isSaved = true
+
+            val db = com.example.connectToMongoDB()
+            val collection = db.getCollection("stories")
+            val document = org.bson.Document()
+                .append("id", selected.id)
+                .append("title", selected.title)
+                .append("description", selected.description)
+                .append("finalEstimate", selected.finalEstimate)
+                .append("roomId", selected.roomId)
+                .append("votes", selected.votes)
+                .append("isSaved", selected.isSaved)
+            collection.insertOne(document)
+
             RoomService.updateRoom(socket, dto)
         }
 
