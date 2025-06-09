@@ -6,6 +6,8 @@
   import { WebSocketManager } from "$lib/WebsocketManager";
   import randomName from "@scaleway/random-name";
 
+  import { isLogged, username } from "$lib/utils";
+
   import * as Tabs from "$lib/components/ui/tabs/index.js";
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
@@ -16,17 +18,12 @@
     LockClosed,
     CheckCircle,
     ArchiveBox,
+    Power,
   } from "@steeze-ui/heroicons";
   import ButtonIcon from "$lib/ButtonIcon.svelte";
 
-  let userName = $state(""); // change later when we will have the user entity
-  let login = $state(false);
   let roomName = $state("");
   let roomId = $state("");
-
-  if (!login) {
-    let userName = randomName("");
-  }
 
   onMount(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -37,7 +34,7 @@
     e.preventDefault();
     await WebSocketManager.createSocket();
     Game.createRoom(
-      { id: "", username: userName, role: "Player", card: -1, roomId: "" },
+      { id: "", username: $username, role: "Player", card: -1, roomId: "" },
       { id: "", name: roomName, stories: [], storySelected: null },
     );
     await goto("/room");
@@ -48,7 +45,7 @@
     await WebSocketManager.createSocket();
     Game.joinRoom({
       id: "",
-      username: userName,
+      username: $username,
       role: "Player",
       card: -1,
       roomId: roomId,
@@ -60,13 +57,23 @@
 <div
   class="w-dvw p-2 text-center text-[#333] flex flex-col h-dvh items-center justify-center bg-[#f4f4f9]"
 >
-  {#if login}
-    <div class="absolute top-4 right-4">
+  {#if $isLogged}
+    <div class="absolute top-4 right-16">
       <ButtonIcon
         onclick={() => {
           goto("/history");
         }}
         icon={ArchiveBox}
+        size="size-8"
+        theme="outline"
+      />
+    </div>
+    <div class="absolute top-4 right-4">
+      <ButtonIcon
+        onclick={() => {
+          $isLogged = false;
+        }}
+        icon={Power}
         size="size-8"
         theme="outline"
       />
@@ -77,14 +84,13 @@
   <p class="text-lg my-4">
     Collaborate and estimate tasks efficiently with your team.
   </p>
-
-  {#if login}
+  {#if $isLogged}
     <div
       class="bg-green-100 border border-green-300 text-green-800 px-4 py-2 rounded-md mb-4 w-full max-w-lg"
     >
       <div class="flex items-center justify-center gap-2 text-sm">
         <Icon class="size-5" src={CheckCircle} theme="outline" />
-        <p>You are logged in as <strong>username</strong></p>
+        <p>You are logged in as <strong>{$username}</strong></p>
       </div>
     </div>
   {:else}
@@ -112,14 +118,14 @@
       <form
         class="flex-1 m-4 border border-gray-300 p-2 rounded-xl"
         onsubmit={join}
-        class:h-[235px]={!login}
+        class:h-[235px]={!$isLogged}
       >
         <h2 class="text-center text-xl mb-8 font-semibold">Join a room</h2>
-        {#if !login}
+        {#if !$isLogged}
           <Input
             placeholder="Pseudonym"
             required
-            bind:value={userName}
+            bind:value={$username}
             name="pseudonym"
             class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
           />
@@ -141,7 +147,7 @@
           <Input
             placeholder="Pseudonym"
             name="pseudonym"
-            bind:value={userName}
+            bind:value={$username}
             required
             class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
           />

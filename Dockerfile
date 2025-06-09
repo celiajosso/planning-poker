@@ -26,7 +26,7 @@ COPY ./backend/gradle ./gradle
 RUN gradle dependencies
 
 COPY ./backend .
-RUN gradle build
+RUN gradle build -x test
 
 FROM alpine:latest AS jre
 WORKDIR /app

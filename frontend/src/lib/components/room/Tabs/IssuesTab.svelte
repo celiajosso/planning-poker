@@ -16,7 +16,7 @@
   let isModifyOpen = $state(false);
   let isAddOpen = $state(false);
   let isDeleteOpen = $state(false);
-  let selectedIssue = $state();
+  let selectedIssue: StoryDTO | undefined = $state();
 </script>
 
 <Tabs.Content value="issues">
@@ -63,7 +63,7 @@
 
           <AlertDialog.Action
             onclick={() => {
-              Game.deleteStory(selectedIssue.id);
+              Game.deleteStory(selectedIssue!.id);
               isDeleteOpen = false;
             }}>Continue</AlertDialog.Action
           >
@@ -81,13 +81,12 @@
         <form
           class="grid gap-4 py-4"
           onsubmit={(e) => {
-            Game.updateStory(selectedIssue.id, e);
+            Game.updateStory(selectedIssue!.id, e);
             isModifyOpen = false;
           }}
         >
           <FormRow field="title" value={selectedIssue!.title} />
           <FormRow field="description" value={selectedIssue!.description} />
-          <FormRowScore value={selectedIssue!.finalEstimate} />
           <SubmitButton />
         </form>
       </Dialog.Content>
