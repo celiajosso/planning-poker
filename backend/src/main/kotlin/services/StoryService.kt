@@ -65,17 +65,23 @@ class StoryService(/*private val db: MongoDatabase*/) {
             val selected = dto.storySelected ?: return
             selected.isSaved = true
 
-            /* val db = com.example.connectToMongoDB()
+            val selected2 = dto.stories.find { it.id == selected.id } ?: return
+            selected2.isSaved = true
+
+            room.users.forEach { user ->
+                var userdto = user.toUserDTO()
+                selected.votes[userdto.username] = (selected.votes[userdto.username] ?: mutableListOf()) + userdto.card
+            }
+
+            val db = DatabaseService.getDatabase()
             val collection = db.getCollection("stories")
             val document = org.bson.Document()
-                .append("id", selected.id)
                 .append("title", selected.title)
                 .append("description", selected.description)
-                .append("finalEstimate", selected.finalEstimate)
-                .append("roomId", selected.roomId)
                 .append("votes", selected.votes)
-                .append("isSaved", selected.isSaved)
-            collection.insertOne(document) */
+                .append("participants", selected.votes.keys.toList())
+                .append("timestamp", System.currentTimeMillis())
+            collection.insertOne(document)
 
             RoomService.updateRoom(socket, dto)
         }
