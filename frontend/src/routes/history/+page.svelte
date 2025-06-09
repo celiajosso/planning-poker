@@ -7,142 +7,20 @@
   import { scaleBand, scaleLinear } from "d3-scale";
   import BackToHome from "$lib/backToHome.svelte";
 
-  type Vote = {
-    user: string;
-    role: string;
-    values: number[];
-  };
+  import { username } from "$lib/utils";
+  import { onMount } from "svelte";
 
   type Issue = {
+    id: string;
     title: string;
-    description: string;
-    roomId: string;
-    lastModified: string;
-    finalEstimate: number;
-    votes: Vote[];
+    description?: string;
+    timestamp: number;
+    votes: Record<string, number[]>;
   };
 
-  const issues = [
-    {
-      title: "Issue Title 1",
-      description: "Issue Description",
-      roomId: "Room 1",
-      lastModified: "2025-01-01",
-      finalEstimate: 5,
-      votes: [
-        { user: "Alice", role: "Dev", values: [3, 5] },
-        { user: "Bob", role: "PO", values: [5, 5] },
-        { user: "Carol", role: "Dev", values: [8, 5] },
-      ],
-    },
-    {
-      title: "Fix login bug",
-      description: "Users can't log in when using Safari.",
-      roomId: "Room 2",
-      lastModified: "2025-02-10",
-      finalEstimate: 3,
-      votes: [
-        { user: "Dave", role: "Dev", values: [2, 3] },
-        { user: "Eva", role: "PO", values: [3, 3] },
-      ],
-    },
-    {
-      title: "Add dark mode",
-      description: "Implement a dark theme for the app UI.",
-      roomId: "Room 3",
-      lastModified: "2025-03-15",
-      finalEstimate: 8,
-      votes: [
-        { user: "Frank", role: "Dev", values: [8, 8, 8] },
-        { user: "Grace", role: "Designer", values: [5, 6, 7] },
-        { user: "Helen", role: "PO", values: [8, 8, 8] },
-      ],
-    },
-    {
-      title: "Optimize database queries",
-      description: "Improve performance of user-related queries.",
-      roomId: "Room 1",
-      lastModified: "2025-04-01",
-      finalEstimate: 13,
-      votes: [
-        { user: "Ivan", role: "Dev", values: [13, 13] },
-        { user: "Jack", role: "DevOps", values: [8, 13] },
-      ],
-    },
-    {
-      title: "Refactor legacy payment module",
-      description: "Clean up and document the old payment processing code.",
-      roomId: "Room 2",
-      lastModified: "2025-05-20",
-      finalEstimate: 8,
-      votes: [
-        { user: "Kara", role: "Dev", values: [8, 8] },
-        { user: "Leo", role: "PO", values: [5, 8] },
-        { user: "Mia", role: "QA", values: [8, 8] },
-      ],
-    },
-    {
-      title: "Redesign landing page",
-      description: "Create a new responsive design for the homepage.",
-      roomId: "UX Room",
-      lastModified: "2025-05-10",
-      finalEstimate: 8,
-      votes: [
-        { user: "Alice", role: "Designer", values: [5, 8, 8] },
-        { user: "Bob", role: "Dev", values: [8, 8, 8] },
-        { user: "Clara", role: "Dev", values: [8, 8, 8] },
-        { user: "Dylan", role: "QA", values: [5, 5, 8] },
-        { user: "Elena", role: "PO", values: [8, 8, 8] },
-      ],
-    },
-    {
-      title: "Improve caching mechanism",
-      description: "Add Redis caching to reduce database load.",
-      roomId: "Backend",
-      lastModified: "2025-05-12",
-      finalEstimate: 13,
-      votes: [
-        { user: "Fabien", role: "Dev", values: [13, 13] },
-        { user: "Giulia", role: "Dev", values: [8, 13] },
-        { user: "Hugo", role: "DevOps", values: [13, 13] },
-        { user: "Isabelle", role: "QA", values: [8, 13] },
-        { user: "Jules", role: "PO", values: [13, 13] },
-        { user: "Katia", role: "Scrum Master", values: [13, 13] },
-      ],
-    },
-    {
-      title: "Integrate payment gateway",
-      description: "Support for Stripe and PayPal payments.",
-      roomId: "E-commerce",
-      lastModified: "2025-05-18",
-      finalEstimate: 8,
-      votes: [
-        { user: "Leo", role: "Dev", values: [8, 8] },
-        { user: "Mona", role: "Dev", values: [5, 8] },
-        { user: "Nicolas", role: "PO", values: [8, 8] },
-        { user: "Omar", role: "QA", values: [8, 8] },
-        { user: "Patricia", role: "Security", values: [8, 8] },
-        { user: "Quentin", role: "PM", values: [8, 8] },
-      ],
-    },
-    {
-      title: "Add real-time chat",
-      description: "Allow users to message each other in real-time.",
-      roomId: "Messaging",
-      lastModified: "2025-05-22",
-      finalEstimate: 13,
-      votes: [
-        { user: "Rania", role: "Dev", values: [8, 13, 13] },
-        { user: "Sami", role: "Dev", values: [13, 13, 13] },
-        { user: "Théo", role: "Dev", values: [13, 13, 13] },
-        { user: "Ursula", role: "PO", values: [13, 13, 13] },
-        { user: "Victor", role: "UX", values: [5, 8, 13] },
-      ],
-    },
-  ];
-
-  let selectedIssue: Issue | null = null;
-  let isDrawerOpen = false;
+  let issues: Issue[] = $state([]);
+  let selectedIssue: Issue | null = $state(null);
+  let isDrawerOpen = $state(false);
 
   let width = 300;
   let height = 200;
@@ -160,71 +38,126 @@
     isDrawerOpen = false;
   }
 
-  let votesDistribution: { score: number; count: number }[] = [];
-  let participantsWithRoles: string[] = [];
-  let rounds = 0;
-  let mean = 0;
-  let median = 0;
-  let stdDev = 0;
-  let convergenceRound: number | null = null;
-
-  $: if (selectedIssue) {
-    rounds = selectedIssue.votes[0]?.values.length ?? 0;
-    participantsWithRoles = selectedIssue.votes.map(
-      (v) => `${v.user} (${v.role})`,
-    );
-
-    const firstVotes = selectedIssue.votes.map((v) => v.values[0]);
-
-    mean = firstVotes.reduce((a, b) => a + b, 0) / firstVotes.length;
-
-    const sorted = [...firstVotes].sort((a, b) => a - b);
-    const mid = Math.floor(sorted.length / 2);
-    median =
-      sorted.length % 2 === 0
-        ? (sorted[mid - 1] + sorted[mid]) / 2
-        : sorted[mid];
-
-    stdDev = Math.sqrt(
-      firstVotes.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) /
-        firstVotes.length,
-    );
-
-    const finalRoundVotes = selectedIssue.votes.map(
-      (v) => v.values[v.values.length - 1],
-    );
-    const allSame = finalRoundVotes.every(
-      (vote) => vote === finalRoundVotes[0],
-    );
-    convergenceRound = allSame ? rounds : null;
-
-    const distribution = new Map<number, number>();
-    for (let i = 0; i <= 13; i++) {
-      distribution.set(i, 0);
+  onMount(async () => {
+    try {
+      const response = await fetch(
+        `${window.location.protocol}//${import.meta.env.PROD ? window.location.host : "localhost:8080"}/api/history?username=${$username}`,
+      );
+      if (!response.ok) throw new Error("Failed to fetch issues");
+      const data = await response.json();
+      issues = data;
+    } catch (error) {
+      console.error("Error loading issues:", error);
     }
+  });
 
-    firstVotes.forEach((vote) => {
-      const current = distribution.get(vote) || 0;
-      distribution.set(vote, current + 1);
-    });
+  let firstRoundDistribution: { score: number; count: number }[] = $state([]);
+  let lastRoundDistribution: { score: number; count: number }[] = $state([]);
+  let participants: string[] = $state([]);
+  let rounds = $state(0);
+  let meanFirst = $state(0);
+  let medianFirst = $state(0);
+  let stdDevFirst = $state(0);
+  let meanLast = $state(0);
+  let medianLast = $state(0);
+  let stdDevLast = $state(0);
+  let convergenceRound: number | null = $state(null);
 
-    votesDistribution = Array.from(distribution.entries()).map(
-      ([score, count]) => ({
-        score,
-        count,
-      }),
-    );
-  }
+  $effect(() => {
+    if (selectedIssue) {
+      rounds = Object.values(selectedIssue.votes)[0]?.length ?? 0;
+      participants = Object.keys(selectedIssue.votes);
 
-  $: xScale = scaleBand()
-    .domain(votesDistribution.map((d) => d.score.toString()))
-    .range([0, innerWidth])
-    .padding(0.1);
+      const firstVotes = Object.values(selectedIssue.votes).map((v) => v[0]);
+      const lastVotes = Object.values(selectedIssue.votes).map(
+        (v) => v.at(-1) ?? 0,
+      );
 
-  $: yScale = scaleLinear()
-    .domain([0, Math.max(...votesDistribution.map((d) => d.count), 1)])
-    .range([innerHeight, 0])
-    .nice();
+      meanFirst = firstVotes.reduce((a, b) => a + b, 0) / firstVotes.length;
+      meanLast = lastVotes.reduce((a, b) => a + b, 0) / lastVotes.length;
+
+      const sortedFirst = [...firstVotes].sort((a, b) => a - b);
+      const midFirst = Math.floor(sortedFirst.length / 2);
+      medianFirst =
+        sortedFirst.length % 2 === 0
+          ? (sortedFirst[midFirst - 1] + sortedFirst[midFirst]) / 2
+          : sortedFirst[midFirst];
+
+      const sortedLast = [...lastVotes].sort((a, b) => a - b);
+      const midLast = Math.floor(sortedLast.length / 2);
+      medianLast =
+        sortedLast.length % 2 === 0
+          ? (sortedLast[midLast - 1] + sortedLast[midLast]) / 2
+          : sortedLast[midLast];
+
+      stdDevFirst = Math.sqrt(
+        firstVotes
+          .map((x) => Math.pow(x - meanFirst, 2))
+          .reduce((a, b) => a + b, 0) / firstVotes.length,
+      );
+
+      stdDevLast = Math.sqrt(
+        lastVotes
+          .map((x) => Math.pow(x - meanLast, 2))
+          .reduce((a, b) => a + b, 0) / lastVotes.length,
+      );
+
+      const allSame = lastVotes.every((vote) => vote === lastVotes[0]);
+      convergenceRound = allSame ? rounds : null;
+
+      const firstDistribution = new Map<number, number>();
+      for (let i = 0; i <= 13; i++) {
+        firstDistribution.set(i, 0);
+      }
+      firstVotes.forEach((vote) => {
+        const current = firstDistribution.get(vote) || 0;
+        firstDistribution.set(vote, current + 1);
+      });
+      firstRoundDistribution = Array.from(firstDistribution.entries()).map(
+        ([score, count]) => ({ score, count }),
+      );
+
+      const lastDistribution = new Map<number, number>();
+      for (let i = 0; i <= 13; i++) {
+        lastDistribution.set(i, 0);
+      }
+      lastVotes.forEach((vote) => {
+        const current = lastDistribution.get(vote) || 0;
+        lastDistribution.set(vote, current + 1);
+      });
+      lastRoundDistribution = Array.from(lastDistribution.entries()).map(
+        ([score, count]) => ({ score, count }),
+      );
+    }
+  });
+
+  let firstRoundXScale = $derived(
+    scaleBand()
+      .domain(firstRoundDistribution.map((d) => d.score.toString()))
+      .range([0, innerWidth])
+      .padding(0.1),
+  );
+
+  let firstRoundYScale = $derived(
+    scaleLinear()
+      .domain([0, Math.max(...firstRoundDistribution.map((d) => d.count), 1)])
+      .range([innerHeight, 0])
+      .nice(),
+  );
+
+  let lastRoundXScale = $derived(
+    scaleBand()
+      .domain(lastRoundDistribution.map((d) => d.score.toString()))
+      .range([0, innerWidth])
+      .padding(0.1),
+  );
+
+  let lastRoundYScale = $derived(
+    scaleLinear()
+      .domain([0, Math.max(...lastRoundDistribution.map((d) => d.count), 1)])
+      .range([innerHeight, 0])
+      .nice(),
+  );
 </script>
 
 <div
@@ -240,7 +173,7 @@
         <Table.Head>Title</Table.Head>
         <Table.Head>Description</Table.Head>
         <Table.Head>Final Estimate</Table.Head>
-        <Table.Head>Room ID</Table.Head>
+        <Table.Head>Date</Table.Head>
         <Table.Head>Charts</Table.Head>
       </Table.Row>
     </Table.Header>
@@ -249,8 +182,21 @@
         <Table.Row>
           <Table.Cell>{issue.title}</Table.Cell>
           <Table.Cell>{issue.description}</Table.Cell>
-          <Table.Cell>{issue.finalEstimate}</Table.Cell>
-          <Table.Cell>{issue.roomId}</Table.Cell>
+
+          <Table.Cell>
+            {#if Object.keys(issue.votes).length > 0}
+              {(
+                Object.values(issue.votes)
+                  .map((v) => v.at(-1) ?? 0)
+                  .reduce((a, b) => a + b, 0) /
+                Object.values(issue.votes).length
+              ).toFixed(1)}
+            {:else}
+              N/A
+            {/if}
+          </Table.Cell>
+          <Table.Cell>{new Date(issue.timestamp).toLocaleString()}</Table.Cell>
+
           <Table.Cell>
             <ButtonIcon
               onclick={() => openDrawer(issue)}
@@ -278,20 +224,35 @@
 
         <div class="flex-1 overflow-hidden p-4 pt-0">
           <div class="h-full overflow-y-auto overflow-x-hidden">
+            <div class="space-y-2 text-sm pb-4">
+              <p>
+                <strong>Participants:</strong>
+                {participants.join(", ")}
+              </p>
+              <p><strong>Rounds:</strong> {rounds}</p>
+
+              <p>
+                <strong>Convergence:</strong>
+                {convergenceRound ? `Yes` : "No"}
+              </p>
+            </div>
+            <h3 class="text-center font-semibold mb-2 pt-5">
+              First Round Distribution
+            </h3>
             <svg {width} {height} class="block mx-auto mb-4">
               <g transform={`translate(${margin.left},${margin.top})`}>
-                {#each Array.from({ length: Math.max(...votesDistribution.map((d) => d.count), 1) + 1 }, (_, i) => i) as tick}
+                {#each Array.from({ length: Math.max(...firstRoundDistribution.map((d) => d.count), 1) + 1 }, (_, i) => i) as tick}
                   <line
                     x1="0"
                     x2={innerWidth}
-                    y1={yScale(tick)}
-                    y2={yScale(tick)}
+                    y1={firstRoundYScale(tick)}
+                    y2={firstRoundYScale(tick)}
                     stroke="#ddd"
                     stroke-width="1"
                   />
                   <text
                     x="-10"
-                    y={yScale(tick)}
+                    y={firstRoundYScale(tick)}
                     text-anchor="end"
                     alignment-baseline="middle"
                     font-size="10"
@@ -301,9 +262,10 @@
                   </text>
                 {/each}
 
-                {#each votesDistribution as d}
+                {#each firstRoundDistribution as d}
                   <text
-                    x={xScale(d.score.toString()) + xScale.bandwidth() / 2}
+                    x={firstRoundXScale(d.score.toString()) +
+                      firstRoundXScale.bandwidth() / 2}
                     y={innerHeight + 15}
                     text-anchor="middle"
                     font-size="10"
@@ -313,23 +275,20 @@
                   </text>
                 {/each}
 
-                {#each votesDistribution as d}
+                {#each firstRoundDistribution as d}
                   {#if d.count > 0}
                     <rect
-                      x={xScale(d.score.toString())}
-                      y={yScale(d.count)}
-                      width={xScale.bandwidth()}
-                      height={innerHeight - yScale(d.count)}
-                      fill="#000"
-                      stroke="#000"
-                      stroke-width="1"
+                      x={firstRoundXScale(d.score.toString())}
+                      y={firstRoundYScale(d.count)}
+                      width={firstRoundXScale.bandwidth()}
+                      height={innerHeight - firstRoundYScale(d.count)}
                     />
                     <text
-                      x={xScale(d.score.toString()) + xScale.bandwidth() / 2}
-                      y={yScale(d.count) - 5}
+                      x={firstRoundXScale(d.score.toString()) +
+                        firstRoundXScale.bandwidth() / 2}
+                      y={firstRoundYScale(d.count) - 5}
                       text-anchor="middle"
                       font-size="10"
-                      fill="#333"
                     >
                       {d.count}
                     </text>
@@ -341,7 +300,6 @@
                   y={innerHeight + 35}
                   text-anchor="middle"
                   font-size="12"
-                  fill="#333"
                   font-weight="bold"
                 >
                   Score
@@ -351,7 +309,6 @@
                   y={innerHeight / 2}
                   text-anchor="middle"
                   font-size="12"
-                  fill="#333"
                   font-weight="bold"
                   transform={`rotate(-90, -25, ${innerHeight / 2})`}
                 >
@@ -361,17 +318,100 @@
             </svg>
 
             <div class="space-y-2 text-sm pb-4">
+              <p><strong>Mean:</strong> {meanFirst.toFixed(2)}</p>
+              <p><strong>Median:</strong> {medianFirst}</p>
               <p>
-                <strong>Participants:</strong>
-                {participantsWithRoles.join(", ")}
+                <strong>Standard Deviation:</strong>
+                {stdDevFirst.toFixed(2)}
               </p>
-              <p><strong>Rounds:</strong> {rounds}</p>
-              <p><strong>Mean:</strong> {mean.toFixed(2)}</p>
-              <p><strong>Median:</strong> {median}</p>
-              <p><strong>Standard Deviation:</strong> {stdDev.toFixed(2)}</p>
+            </div>
+
+            <h3 class="text-center font-semibold mb-2 pt-5">
+              Last Round Distribution
+            </h3>
+            <svg {width} {height} class="block mx-auto mb-4">
+              <g transform={`translate(${margin.left},${margin.top})`}>
+                {#each Array.from({ length: Math.max(...lastRoundDistribution.map((d) => d.count), 1) + 1 }, (_, i) => i) as tick}
+                  <line
+                    x1="0"
+                    x2={innerWidth}
+                    y1={lastRoundYScale(tick)}
+                    y2={lastRoundYScale(tick)}
+                    stroke="#ddd"
+                    stroke-width="1"
+                  />
+                  <text
+                    x="-10"
+                    y={lastRoundYScale(tick)}
+                    text-anchor="end"
+                    alignment-baseline="middle"
+                    font-size="10"
+                    fill="#666"
+                  >
+                    {tick}
+                  </text>
+                {/each}
+
+                {#each lastRoundDistribution as d}
+                  <text
+                    x={lastRoundXScale(d.score.toString()) +
+                      lastRoundXScale.bandwidth() / 2}
+                    y={innerHeight + 15}
+                    text-anchor="middle"
+                    font-size="10"
+                  >
+                    {d.score}
+                  </text>
+                {/each}
+
+                {#each lastRoundDistribution as d}
+                  {#if d.count > 0}
+                    <rect
+                      x={lastRoundXScale(d.score.toString())}
+                      y={lastRoundYScale(d.count)}
+                      width={lastRoundXScale.bandwidth()}
+                      height={innerHeight - lastRoundYScale(d.count)}
+                    />
+                    <text
+                      x={lastRoundXScale(d.score.toString()) +
+                        lastRoundXScale.bandwidth() / 2}
+                      y={lastRoundYScale(d.count) - 5}
+                      text-anchor="middle"
+                      font-size="10"
+                    >
+                      {d.count}
+                    </text>
+                  {/if}
+                {/each}
+
+                <text
+                  x={innerWidth / 2}
+                  y={innerHeight + 35}
+                  text-anchor="middle"
+                  font-size="12"
+                  font-weight="bold"
+                >
+                  Score
+                </text>
+                <text
+                  x="-25"
+                  y={innerHeight / 2}
+                  text-anchor="middle"
+                  font-size="12"
+                  font-weight="bold"
+                  transform={`rotate(-90, -25, ${innerHeight / 2})`}
+                >
+                  Number of Votes
+                </text>
+              </g>
+            </svg>
+
+            <div class="space-y-2 text-sm pb-4">
+              <p><strong>Mean:</strong> {meanLast.toFixed(2)}</p>
+              <p><strong>Median:</strong> {medianLast}</p>
               <p>
-                <strong>Convergence:</strong>
-                {convergenceRound ? `Yes (round ${convergenceRound})` : "No"}
+                <strong>Standard Deviation:</strong>
+                {stdDevLast.toFixed(2)}
               </p>
             </div>
           </div>

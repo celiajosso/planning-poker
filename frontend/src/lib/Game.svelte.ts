@@ -189,16 +189,20 @@ export namespace Game {
 			description: data.description,
 			finalEstimate: data.score,
 			roomId: storage.room.id,
+			votes:{},
+			isSaved:false
 		});
 	}
 
-	export function createStory2(title: string, description: string, score: string) {
+	export function createStory2(title: string, description: string, score: number) {
 		WebSocketManager.sendMessage("StoryCreate", null, null, {
 			id: "",
 			title: title,
 			description: description,
 			finalEstimate: score,
 			roomId: storage.room.id,
+			votes:{},
+			isSaved:false
 		});
 	}
 
@@ -216,6 +220,8 @@ export namespace Game {
 			description: data.description,
 			finalEstimate: data.score,
 			roomId: storage.room.id,
+			votes:{},
+			isSaved:false
 		});
 	}
 
@@ -224,8 +230,34 @@ export namespace Game {
 			id,
 			title: "",
 			description: "",
-			finalEstimate: "",
+			finalEstimate: 0,
 			roomId: storage.room.id,
+			votes:{},
+			isSaved:false
+		});
+	}
+
+	export function saveStory() {
+		WebSocketManager.sendMessage("StorySave", null, null, {
+			id:"",
+			title: "",
+			description: "",
+			finalEstimate: 0,
+			roomId: storage.room.id,
+			votes:{},
+			isSaved:false
+		});
+	}
+
+	export function newRoundStory() {
+		WebSocketManager.sendMessage("StoryNewRound", null, null, {
+			id:"",
+			title: "",
+			description: "",
+			finalEstimate: 0,
+			roomId: storage.room.id,
+			votes:{},
+			isSaved:false
 		});
 	}
 
@@ -234,8 +266,10 @@ export namespace Game {
 			id: "",
 			title: "",
 			description: "",
-			finalEstimate: "",
+			finalEstimate: 0,
 			roomId: storage.room.id,
+			votes:{},
+			isSaved:false
 		});
 	}
 
@@ -244,8 +278,10 @@ export namespace Game {
 			id,
 			title: "",
 			description: "",
-			finalEstimate: "",
+			finalEstimate: 0,
 			roomId: storage.room.id,
+			votes:{},
+			isSaved:false
 		});
 	}
 }

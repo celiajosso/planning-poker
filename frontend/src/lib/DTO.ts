@@ -10,8 +10,10 @@ interface StoryDTO {
     id: string;
     title: string;
     description: string;
-    finalEstimate: string;
+    finalEstimate: number;
     roomId: string;
+    votes: Record<string, number[]>,
+    isSaved: boolean
 }
 
 interface RoomDTO {
