@@ -41,6 +41,12 @@ class StoryService(/*private val db: MongoDatabase*/) {
             val selected = dto.stories.find { it.id == story.id } ?: return
             dto.storySelected = selected
 
+            room.users.forEach { user ->
+                val userdto = user.toUserDTO()
+                userdto.card = -1
+                UserService.updateUser(userdto)
+            }
+
             RoomService.updateRoom(socket, dto)
         }
 
@@ -53,7 +59,7 @@ class StoryService(/*private val db: MongoDatabase*/) {
                 var userdto = user.toUserDTO()
                 selected.votes[userdto.username] = (selected.votes[userdto.username] ?: mutableListOf()) + userdto.card
                 userdto.card = -1
-                UserService.updateUser(socket, userdto)
+                UserService.updateUser(userdto)
             }
 
             RoomService.updateRoom(socket, dto)
@@ -71,7 +77,7 @@ class StoryService(/*private val db: MongoDatabase*/) {
                 val userdto = user.toUserDTO()
                 story.votes[userdto.username] = (story.votes[userdto.username] ?: mutableListOf()) + userdto.card
                 userdto.card = -1
-                UserService.updateUser(socket, userdto)
+                UserService.updateUser(userdto)
             }
 
             story.isSaved = true
