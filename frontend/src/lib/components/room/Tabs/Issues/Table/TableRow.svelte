@@ -13,7 +13,7 @@
   } = $props();
 </script>
 
-{#if issue.isSaved}
+{#if !issue.isSaved}
   <Table.Row>
     <Table.Cell>{issue.title}</Table.Cell>
     <Table.Cell class="truncate max-w-96">

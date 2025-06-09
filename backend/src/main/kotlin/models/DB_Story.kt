@@ -8,5 +8,5 @@ data class DB_Story(
     var description: String,
     var participants: List<String>,
     var votes: HashMap<String, List<Int>>,
-    var timestamp: Int,
+    var timestamp: Long,
 )

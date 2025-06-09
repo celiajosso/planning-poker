@@ -1,6 +1,7 @@
 package com.example
 
 import com.example.models.DB_User
+import com.example.services.DatabaseService
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters
@@ -20,10 +21,8 @@ fun String.sha512(): String {
 }
 
 fun Application.configureDatabases() {
-    val database = connectToMongoDB()
-    database.createCollection("users")
-    database.createCollection("stories")
-
+    DatabaseService.init(connectToMongoDB())
+    var database = DatabaseService.getDatabase()
     routing {
         route("/api/login") {
             post {
@@ -69,11 +68,24 @@ fun Application.configureDatabases() {
                 }
                 val collection = database.getCollection("stories")
                 val storiesInDb = collection.find(Filters.`in`("participants", username)).toList()
-                call.respond(storiesInDb)
+                call.respond(
+                    storiesInDb.map {
+                        com.example.models.DB_Story(
+                            title = it["title"].toString(),
+                            description = it["description"].toString(),
+                            votes = (it["votes"] as Document).entries.associate { entry ->
+                                entry.key to (entry.value as List<Int>)
+                            } as HashMap<String, List<Int>>,
+                            participants = it["participants"] as ArrayList<String>,
+                            timestamp = it["timestamp"] as Long
+                        )
+                    }
+                )
             }
         }
     }
 }
+
 
 /**
  * Establishes connection with a MongoDB database.
