@@ -2,6 +2,7 @@ package com.example.services
 
 import com.example.models.StoryDTO
 import com.example.models.toRoomDTO
+import com.example.models.toUserDTO
 import io.ktor.server.websocket.*
 import java.util.*
 
@@ -49,9 +50,10 @@ class StoryService(/*private val db: MongoDatabase*/) {
             val selected = dto.stories.find { it.id == story.id } ?: return
 
             room.users.forEach { user ->
-                selected.votes[user.username] = (selected.votes[user.username] ?: mutableListOf()) + user.card
-                RoomService.updateRoom(socket, dto)
-                user.card = -1
+                var userdto = user.toUserDTO()
+                selected.votes[userdto.username] = (selected.votes[userdto.username] ?: mutableListOf()) + userdto.card
+                userdto.card = -1
+                UserService.updateUser(socket, userdto)
             }
 
             RoomService.updateRoom(socket, dto)
