@@ -10,6 +10,7 @@ open class Story(
     var finalEstimate: String,
     val roomId: String,
     var votes: HashMap<String, List<Int>>,
+    var isSaved: Boolean,
 )
 
 @Serializable
@@ -20,14 +21,15 @@ data class StoryDTO(
     var finalEstimate: String,
     val roomId: String,
     var votes: HashMap<String, List<Int>>,
+    var isSaved: Boolean,
 )
 
 fun Story.toStoryDTO(): StoryDTO {
-    return StoryDTO(id, title, description, finalEstimate, roomId, votes)
+    return StoryDTO(id, title, description, finalEstimate, roomId, votes, isSaved)
 }
 
 fun StoryDTO.toStory(): Story {
     return Story(
-        id, title, description, finalEstimate, roomId, votes
+        id, title, description, finalEstimate, roomId, votes, isSaved
     )
 }
