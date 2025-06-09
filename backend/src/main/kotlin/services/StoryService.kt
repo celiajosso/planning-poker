@@ -83,7 +83,7 @@ class StoryService(/*private val db: MongoDatabase*/) {
             story.isSaved = true
 
             if (story.votes.values.isNotEmpty()) {
-                story.finalEstimate = story.votes.values.flatten().average().toFloat()
+                story.finalEstimate = story.votes.values.map{it[story.votes.values.size - 1]}.average().toFloat()
             }
 
             val db = DatabaseService.getDatabase()
