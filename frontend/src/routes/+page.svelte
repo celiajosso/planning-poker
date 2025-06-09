@@ -6,7 +6,7 @@
   import { WebSocketManager } from "$lib/WebsocketManager";
   import randomName from "@scaleway/random-name";
 
-  import { isLogged } from "$lib/utils";
+  import { isLogged, username } from "$lib/utils";
 
   import * as Tabs from "$lib/components/ui/tabs/index.js";
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
@@ -21,13 +21,8 @@
   } from "@steeze-ui/heroicons";
   import ButtonIcon from "$lib/ButtonIcon.svelte";
 
-  let userName = $state(""); // change later when we will have the user entity
   let roomName = $state("");
   let roomId = $state("");
-
-  if (!$isLogged) {
-    userName = randomName("");
-  }
 
   onMount(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -38,7 +33,7 @@
     e.preventDefault();
     await WebSocketManager.createSocket();
     Game.createRoom(
-      { id: "", username: userName, role: "Player", card: -1, roomId: "" },
+      { id: "", username: $username, role: "Player", card: -1, roomId: "" },
       { id: "", name: roomName, stories: [], storySelected: null },
     );
     await goto("/room");
@@ -49,7 +44,7 @@
     await WebSocketManager.createSocket();
     Game.joinRoom({
       id: "",
-      username: userName,
+      username: $username,
       role: "Player",
       card: -1,
       roomId: roomId,
@@ -84,7 +79,7 @@
     >
       <div class="flex items-center justify-center gap-2 text-sm">
         <Icon class="size-5" src={CheckCircle} theme="outline" />
-        <p>You are logged in as <strong>{userName}</strong></p>
+        <p>You are logged in as <strong>{$username}</strong></p>
       </div>
     </div>
   {:else}
@@ -119,7 +114,7 @@
           <Input
             placeholder="Pseudonym"
             required
-            bind:value={userName}
+            bind:value={$username}
             name="pseudonym"
             class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
           />
@@ -141,7 +136,7 @@
           <Input
             placeholder="Pseudonym"
             name="pseudonym"
-            bind:value={userName}
+            bind:value={$username}
             required
             class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
           />

@@ -17,4 +17,4 @@ export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?:
 
 export let isLogged = writable(false);
 
-export let username = randomName("");
+export let username = writable(randomName(""));

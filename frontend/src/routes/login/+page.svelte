@@ -68,7 +68,7 @@
       .catch((err) => {
         toast.error(err.message || "An error occurred during login");
       });
-    // await goto("/");
+    await goto("/");
     return true;
   }
 </script>

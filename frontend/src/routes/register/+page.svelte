@@ -66,7 +66,7 @@
       `${window.location.protocol}//${import.meta.env.PROD ? window.location.host : "localhost:8080"}/api/register`,
       {
         method: "POST",
-        headers: {'content-type': 'application/json'},
+        headers: { "content-type": "application/json" },
         body: JSON.stringify({
           username: verify.data.username,
           password: verify.data.password,
@@ -78,8 +78,9 @@
           throw new Error("Registration failed");
         }
       })
-      .then(() => {
+      .then(async () => {
         toast.success("Registration successful! Redirecting to login...");
+        await goto("/login");
       })
       .catch((err) => {
         toast.error(err.message || "An error occurred during registration");
