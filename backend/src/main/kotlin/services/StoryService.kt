@@ -46,17 +46,20 @@ class StoryService(/*private val db: MongoDatabase*/) {
         suspend fun newRound(socket: DefaultWebSocketServerSession, story: StoryDTO) {
             val room = RoomService.getById(story.roomId) ?: return
             val dto = room.toRoomDTO()
+            val selected = dto.stories.find { it.id == story.id } ?: return
 
-            // TODO
-
+            room.users.forEach { user ->
+                selected.votes[user.username] = (selected.votes[user.username] ?: mutableListOf()) + user.card
+                RoomService.updateRoom(socket, dto)
+                user.card = -1
+            }
 
             RoomService.updateRoom(socket, dto)
         }
 
         suspend fun save(socket: DefaultWebSocketServerSession, story: StoryDTO) {
-            // TODO
-
-
+            val room = RoomService.getById(story.roomId) ?: return
+            val dto = room.toRoomDTO()
             RoomService.updateRoom(socket, dto)
         }
 
