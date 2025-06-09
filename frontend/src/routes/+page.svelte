@@ -146,14 +146,15 @@
       ><form class="flex-1 m-4" onsubmit={create}>
         <div class="border border-gray-300 p-2 rounded-xl">
           <h2 class="text-center text-xl mb-8 font-semibold">Create a room</h2>
-          <Input
-            placeholder="Pseudonym"
-            name="pseudonym"
-            bind:value={$username}
-            required
-            class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
-          />
-
+          {#if !$isLogged}
+            <Input
+              placeholder="Pseudonym"
+              name="pseudonym"
+              bind:value={$username}
+              required
+              class="text-main-100 bg-main-900 w-full px-4 py-2 mb-6 text-sm outline-0 focus:border rounded-lg focus:border-main-800"
+            />
+          {/if}
           <Button type="submit">Create</Button>
         </div>
       </form></Tabs.Content
