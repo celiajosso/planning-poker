@@ -47,7 +47,7 @@ class StoryService(/*private val db: MongoDatabase*/) {
         suspend fun newRound(socket: DefaultWebSocketServerSession, story: StoryDTO) {
             val room = RoomService.getById(story.roomId) ?: return
             val dto = room.toRoomDTO()
-            val selected = dto.stories.find { it.id == story.id } ?: return
+            val selected = dto.storySelected ?: return
 
             room.users.forEach { user ->
                 var userdto = user.toUserDTO()

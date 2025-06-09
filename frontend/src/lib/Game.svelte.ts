@@ -229,6 +229,26 @@ export namespace Game {
 		});
 	}
 
+	export function saveStory() {
+		WebSocketManager.sendMessage("StorySave", null, null, {
+			id:"",
+			title: "",
+			description: "",
+			finalEstimate: "",
+			roomId: storage.room.id,
+		});
+	}
+
+	export function newRoundStory() {
+		WebSocketManager.sendMessage("StoryNewRound", null, null, {
+			id:"",
+			title: "",
+			description: "",
+			finalEstimate: "",
+			roomId: storage.room.id,
+		});
+	}
+
 	export function unselectStory() {
 		WebSocketManager.sendMessage("StorySelect", null, null, {
 			id: "",
