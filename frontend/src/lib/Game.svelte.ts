@@ -189,6 +189,7 @@ export namespace Game {
 			description: data.description,
 			finalEstimate: data.score,
 			roomId: storage.room.id,
+			votes:{}
 		});
 	}
 
@@ -199,6 +200,7 @@ export namespace Game {
 			description: description,
 			finalEstimate: score,
 			roomId: storage.room.id,
+			votes:{}
 		});
 	}
 
@@ -216,6 +218,7 @@ export namespace Game {
 			description: data.description,
 			finalEstimate: data.score,
 			roomId: storage.room.id,
+			votes:{}
 		});
 	}
 
@@ -226,6 +229,7 @@ export namespace Game {
 			description: "",
 			finalEstimate: "",
 			roomId: storage.room.id,
+			votes:{}
 		});
 	}
 
@@ -236,6 +240,7 @@ export namespace Game {
 			description: "",
 			finalEstimate: "",
 			roomId: storage.room.id,
+			votes:{}
 		});
 	}
 
@@ -246,6 +251,7 @@ export namespace Game {
 			description: "",
 			finalEstimate: "",
 			roomId: storage.room.id,
+			votes:{}
 		});
 	}
 
@@ -256,6 +262,7 @@ export namespace Game {
 			description: "",
 			finalEstimate: "",
 			roomId: storage.room.id,
+			votes:{}
 		});
 	}
 
@@ -266,6 +273,7 @@ export namespace Game {
 			description: "",
 			finalEstimate: "",
 			roomId: storage.room.id,
+			votes:{}
 		});
 	}
 }

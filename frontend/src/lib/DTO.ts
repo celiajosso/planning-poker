@@ -12,6 +12,7 @@ interface StoryDTO {
     description: string;
     finalEstimate: string;
     roomId: string;
+    votes: Record<string, number[]>,
 }
 
 interface RoomDTO {
