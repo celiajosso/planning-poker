@@ -9,7 +9,6 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import jdk.internal.classfile.impl.AbstractPoolEntry.hashString
 import org.bson.Document
 import java.security.MessageDigest
 
@@ -23,7 +22,7 @@ fun String.sha512(): String {
 fun Application.configureDatabases() {
     val database = connectToMongoDB()
     database.createCollection("users")
-    database.createCollection("games")
+    database.createCollection("stories")
 
     routing {
         route("/api/login") {
@@ -46,7 +45,7 @@ fun Application.configureDatabases() {
         route("/api/register") {
             post {
                 val user = call.receive<DB_User>()
-                
+
                 val collection = database.getCollection("users")
                 val userInDb = collection.find(Filters.eq("username", user.username)).first()
 
@@ -63,7 +62,14 @@ fun Application.configureDatabases() {
         }
         route("/api/history") {
             get {
-            //call.respond(userService.getAll())
+                val username = call.request.queryParameters["username"]
+                if (username == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing username")
+                    return@get
+                }
+                val collection = database.getCollection("stories")
+                val storiesInDb = collection.find(Filters.`in`("participants", username)).toList()
+                call.respond(storiesInDb)
             }
         }
     }

@@ -59,6 +59,14 @@ fun Application.configureSockets() {
                                 StoryService.updateStory(this, message.story!!)
                             }
 
+                            "StoryNewRound" -> {
+                                StoryService.newRound(this, message.story!!)
+                            }
+
+                            "StorySave" -> {
+                                StoryService.newRound(this, message.story!!)
+                            }
+
                             "StorySelect" -> {
                                 StoryService.selectStory(this, message.story!!)
                             }

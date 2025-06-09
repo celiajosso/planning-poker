@@ -9,6 +9,8 @@ open class Story(
     var description: String,
     var finalEstimate: String,
     val roomId: String,
+
+    
     // val votes: List<Vote> = listOf(),
 )
 
