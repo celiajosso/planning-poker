@@ -7,110 +7,18 @@
   import { scaleBand, scaleLinear } from "d3-scale";
   import BackToHome from "$lib/backToHome.svelte";
 
+  import { username } from "$lib/utils";
+  import { onMount } from "svelte";
+
   type Issue = {
+    id: string;
     title: string;
-    description: string;
-    participants: String[];
-    votes: Record<string, number[]>;
+    description?: string;
     timestamp: number;
+    votes: Record<string, number[]>;
   };
 
-  const issues: Issue[] = [
-    {
-      title: "Issue Title 1",
-      description: "Issue Description",
-      participants: ["Alice", "Bob", "Carol"],
-      timestamp: Date.now(),
-      votes: {
-        Alice: [3, 5],
-        Bob: [5, 5],
-        Carol: [8, 5],
-      },
-    },
-    {
-      title: "Fix login bug",
-      description: "Users can't log in when using Safari.",
-      participants: ["Dave", "Eva"],
-      timestamp: Date.now(),
-      votes: { Dave: [2, 3], Eva: [3, 3] },
-    },
-    {
-      title: "Add dark mode",
-      description: "Implement a dark theme for the app UI.",
-      participants: ["Frank", "Grace", "Helen"],
-      timestamp: Date.now(),
-      votes: { Frank: [8, 8, 8], Grace: [5, 6, 7], Helen: [8, 8, 8] },
-    },
-    {
-      title: "Optimize database queries",
-      description: "Improve performance of user-related queries.",
-      participants: ["Ivan", "Jack"],
-      timestamp: Date.now(),
-      votes: { Ivan: [13, 13], Jack: [8, 13] },
-    },
-    {
-      title: "Refactor legacy payment module",
-      description: "Clean up and document the old payment processing code.",
-      participants: ["Kara", "Leo", "Mia"],
-      timestamp: Date.now(),
-      votes: { Kara: [8, 8], Leo: [5, 8], Mia: [8, 8] },
-    },
-    {
-      title: "Redesign landing page",
-      description: "Create a new responsive design for the homepage.",
-      participants: ["Alice", "Bob", "Clara", "Dylan", "Elena"],
-      timestamp: Date.now(),
-      votes: {
-        Alice: [5, 8, 8],
-        Bob: [8, 8, 8],
-        Clara: [8, 8, 8],
-        Dylan: [5, 5, 8],
-        Elena: [8, 8, 8],
-      },
-    },
-    {
-      title: "Improve caching mechanism",
-      description: "Add Redis caching to reduce database load.",
-      participants: ["Fabien", "Giulia", "Hugo", "Isabelle", "Jules", "Katia"],
-      timestamp: Date.now(),
-      votes: {
-        Fabien: [13, 13],
-        Giulia: [8, 13],
-        Hugo: [13, 13],
-        Isabelle: [8, 13],
-        Jules: [13, 13],
-        Katia: [13, 13],
-      },
-    },
-    {
-      title: "Integrate payment gateway",
-      description: "Support for Stripe and PayPal payments.",
-      timestamp: Date.now(),
-      participants: ["Leo", "Mona", "Nicolas", "Omar", "Patricia", "Quentin"],
-      votes: {
-        Leo: [8, 8],
-        Mona: [5, 8],
-        Nicolas: [8, 8],
-        Omar: [8, 8],
-        Patricia: [8, 8],
-        Quentin: [8, 8],
-      },
-    },
-    {
-      title: "Add real-time chat",
-      description: "Allow users to message each other in real-time.",
-      participants: ["Rania", "Sami", "Théo", "Ursula", "Victor"],
-      timestamp: Date.now(),
-      votes: {
-        Rania: [8, 13, 13],
-        Sami: [13, 13, 13],
-        Théo: [13, 13, 13],
-        Ursula: [13, 13, 13],
-        Victor: [5, 8, 13],
-      },
-    },
-  ];
-
+  let issues: Issue[] = $state([]);
   let selectedIssue: Issue | null = $state(null);
   let isDrawerOpen = $state(false);
 
@@ -129,6 +37,19 @@
     selectedIssue = null;
     isDrawerOpen = false;
   }
+
+  onMount(async () => {
+    try {
+      const response = await fetch(
+        `${window.location.protocol}//${import.meta.env.PROD ? window.location.host : "localhost:8080"}/api/history?username=${$username}`,
+      );
+      if (!response.ok) throw new Error("Failed to fetch issues");
+      const data = await response.json();
+      issues = data;
+    } catch (error) {
+      console.error("Error loading issues:", error);
+    }
+  });
 
   let firstRoundDistribution: { score: number; count: number }[] = $state([]);
   let lastRoundDistribution: { score: number; count: number }[] = $state([]);

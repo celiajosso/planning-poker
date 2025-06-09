@@ -18,6 +18,7 @@
     LockClosed,
     CheckCircle,
     ArchiveBox,
+    Power,
   } from "@steeze-ui/heroicons";
   import ButtonIcon from "$lib/ButtonIcon.svelte";
 
@@ -57,12 +58,22 @@
   class="w-dvw p-2 text-center text-[#333] flex flex-col h-dvh items-center justify-center bg-[#f4f4f9]"
 >
   {#if $isLogged}
-    <div class="absolute top-4 right-4">
+    <div class="absolute top-4 right-16">
       <ButtonIcon
         onclick={() => {
           goto("/history");
         }}
         icon={ArchiveBox}
+        size="size-8"
+        theme="outline"
+      />
+    </div>
+    <div class="absolute top-4 right-4">
+      <ButtonIcon
+        onclick={() => {
+          $isLogged = false;
+        }}
+        icon={Power}
         size="size-8"
         theme="outline"
       />

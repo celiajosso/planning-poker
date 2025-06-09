@@ -5,20 +5,23 @@
   import { Game } from "$lib/Game.svelte";
 
   let { selectedIssue = $bindable(), issue } = $props();
+  import { isLogged } from "$lib/utils";
 </script>
 
-<Tooltip.Provider>
-  <Tooltip.Root>
-    <Tooltip.Trigger>
-      <ButtonIcon
-        icon={CheckCircle}
-        size="size-5"
-        theme="outline"
-        onclick={() => Game.saveStory()}
-      ></ButtonIcon>
-    </Tooltip.Trigger>
-    <Tooltip.Content>
-      <p>Save Issue</p>
-    </Tooltip.Content>
-  </Tooltip.Root>
-</Tooltip.Provider>
+{#if $isLogged}
+  <Tooltip.Provider>
+    <Tooltip.Root>
+      <Tooltip.Trigger>
+        <ButtonIcon
+          icon={CheckCircle}
+          size="size-5"
+          theme="outline"
+          onclick={() => Game.saveStory()}
+        ></ButtonIcon>
+      </Tooltip.Trigger>
+      <Tooltip.Content>
+        <p>Save Issue</p>
+      </Tooltip.Content>
+    </Tooltip.Root>
+  </Tooltip.Provider>
+{/if}
