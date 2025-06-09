@@ -6,6 +6,8 @@
   import { WebSocketManager } from "$lib/WebsocketManager";
   import randomName from "@scaleway/random-name";
 
+  import { isLogged } from "$lib/utils";
+
   import * as Tabs from "$lib/components/ui/tabs/index.js";
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
@@ -20,11 +22,10 @@
   import ButtonIcon from "$lib/ButtonIcon.svelte";
 
   let userName = $state(""); // change later when we will have the user entity
-  let login = $state(true);
   let roomName = $state("");
   let roomId = $state("");
 
-  if (!login) {
+  if (!$isLogged) {
     userName = randomName("");
   }
 
@@ -60,7 +61,7 @@
 <div
   class="w-dvw p-2 text-center text-[#333] flex flex-col h-dvh items-center justify-center bg-[#f4f4f9]"
 >
-  {#if login}
+  {#if $isLogged}
     <div class="absolute top-4 right-4">
       <ButtonIcon
         onclick={() => {
@@ -77,14 +78,13 @@
   <p class="text-lg my-4">
     Collaborate and estimate tasks efficiently with your team.
   </p>
-
-  {#if login}
+  {#if $isLogged}
     <div
       class="bg-green-100 border border-green-300 text-green-800 px-4 py-2 rounded-md mb-4 w-full max-w-lg"
     >
       <div class="flex items-center justify-center gap-2 text-sm">
         <Icon class="size-5" src={CheckCircle} theme="outline" />
-        <p>You are logged in as <strong>username</strong></p>
+        <p>You are logged in as <strong>{userName}</strong></p>
       </div>
     </div>
   {:else}
@@ -112,10 +112,10 @@
       <form
         class="flex-1 m-4 border border-gray-300 p-2 rounded-xl"
         onsubmit={join}
-        class:h-[235px]={!login}
+        class:h-[235px]={!$isLogged}
       >
         <h2 class="text-center text-xl mb-8 font-semibold">Join a room</h2>
-        {#if !login}
+        {#if !$isLogged}
           <Input
             placeholder="Pseudonym"
             required

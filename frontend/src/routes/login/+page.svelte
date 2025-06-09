@@ -7,6 +7,8 @@
   import { Button } from "$lib/components/ui/button/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
 
+  import { isLogged, username as usernameStore } from "$lib/utils";
+
   import { z } from "zod";
 
   const loginSchema = z.object({
@@ -46,7 +48,7 @@
       `${window.location.protocol}//${import.meta.env.PROD ? window.location.host : "localhost:8080"}/api/login`,
       {
         method: "POST",
-        headers: {'content-type': 'application/json'},
+        headers: { "content-type": "application/json" },
         body: JSON.stringify({
           username: verify.data.username,
           password: verify.data.password,
@@ -60,6 +62,8 @@
       })
       .then(() => {
         toast.success("Login successful!");
+        isLogged.set(true);
+        usernameStore.set(username);
       })
       .catch((err) => {
         toast.error(err.message || "An error occurred during login");
