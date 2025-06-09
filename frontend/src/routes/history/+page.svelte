@@ -134,9 +134,12 @@
   let lastRoundDistribution: { score: number; count: number }[] = [];
   let participants: string[] = [];
   let rounds = 0;
-  let mean = 0;
-  let median = 0;
-  let stdDev = 0;
+  let meanFirst = 0;
+  let medianFirst = 0;
+  let stdDevFirst = 0;
+  let meanLast = 0;
+  let medianLast = 0;
+  let stdDevLast = 0;
   let convergenceRound: number | null = null;
 
   $: if (selectedIssue) {
@@ -148,18 +151,33 @@
       (v) => v.at(-1) ?? 0,
     );
 
-    mean = firstVotes.reduce((a, b) => a + b, 0) / firstVotes.length;
+    meanFirst = firstVotes.reduce((a, b) => a + b, 0) / firstVotes.length;
+    meanLast = lastVotes.reduce((a, b) => a + b, 0) / lastVotes.length;
 
-    const sorted = [...firstVotes].sort((a, b) => a - b);
-    const mid = Math.floor(sorted.length / 2);
-    median =
-      sorted.length % 2 === 0
-        ? (sorted[mid - 1] + sorted[mid]) / 2
-        : sorted[mid];
+    const sortedFirst = [...firstVotes].sort((a, b) => a - b);
+    const midFirst = Math.floor(sortedFirst.length / 2);
+    medianFirst =
+      sortedFirst.length % 2 === 0
+        ? (sortedFirst[midFirst - 1] + sortedFirst[midFirst]) / 2
+        : sortedFirst[midFirst];
 
-    stdDev = Math.sqrt(
-      firstVotes.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) /
-        firstVotes.length,
+    const sortedLast = [...lastVotes].sort((a, b) => a - b);
+    const midLast = Math.floor(sortedLast.length / 2);
+    medianLast =
+      sortedLast.length % 2 === 0
+        ? (sortedLast[midLast - 1] + sortedLast[midLast]) / 2
+        : sortedLast[midLast];
+
+    stdDevFirst = Math.sqrt(
+      firstVotes
+        .map((x) => Math.pow(x - meanFirst, 2))
+        .reduce((a, b) => a + b, 0) / firstVotes.length,
+    );
+
+    stdDevLast = Math.sqrt(
+      lastVotes
+        .map((x) => Math.pow(x - meanLast, 2))
+        .reduce((a, b) => a + b, 0) / lastVotes.length,
     );
 
     const allSame = lastVotes.every((vote) => vote === lastVotes[0]);
@@ -224,6 +242,7 @@
         <Table.Head>Title</Table.Head>
         <Table.Head>Description</Table.Head>
         <Table.Head>Final Estimate</Table.Head>
+        <Table.Head>Date</Table.Head>
         <Table.Head>Charts</Table.Head>
       </Table.Row>
     </Table.Header>
@@ -232,18 +251,8 @@
         <Table.Row>
           <Table.Cell>{issue.title}</Table.Cell>
           <Table.Cell>{issue.description}</Table.Cell>
-          <Table.Cell>
-            {#if Object.keys(issue.votes).length > 0}
-              {(
-                Object.values(issue.votes)
-                  .map((v) => v.at(-1) ?? 0)
-                  .reduce((a, b) => a + b, 0) /
-                Object.values(issue.votes).length
-              ).toFixed(1)}
-            {:else}
-              N/A
-            {/if}
-          </Table.Cell>
+          <Table.Cell>{meanLast.toFixed(2)}</Table.Cell>
+          <Table.Cell>{issue.timestamp}</Table.Cell>
 
           <Table.Cell>
             <ButtonIcon
@@ -270,22 +279,21 @@
           >
         </Drawer.Header>
 
-        <div class="space-y-2 text-sm pb-4">
-          <p>
-            <strong>Participants:</strong>
-            {participants.join(", ")}
-          </p>
-          <p><strong>Rounds:</strong> {rounds}</p>
-          
-          <p>
-            <strong>Convergence:</strong>
-            {convergenceRound ? `Yes` : "No"}
-          </p>
-        </div>
-
         <div class="flex-1 overflow-hidden p-4 pt-0">
           <div class="h-full overflow-y-auto overflow-x-hidden">
-            <h3 class="text-center font-semibold mb-2">
+            <div class="space-y-2 text-sm pb-4">
+              <p>
+                <strong>Participants:</strong>
+                {participants.join(", ")}
+              </p>
+              <p><strong>Rounds:</strong> {rounds}</p>
+
+              <p>
+                <strong>Convergence:</strong>
+                {convergenceRound ? `Yes` : "No"}
+              </p>
+            </div>
+            <h3 class="text-center font-semibold mb-2 pt-5">
               First Round Distribution
             </h3>
             <svg {width} {height} class="block mx-auto mb-4">
@@ -366,7 +374,16 @@
               </g>
             </svg>
 
-            <h3 class="text-center font-semibold mb-2">
+            <div class="space-y-2 text-sm pb-4">
+              <p><strong>Mean:</strong> {meanFirst.toFixed(2)}</p>
+              <p><strong>Median:</strong> {medianFirst}</p>
+              <p>
+                <strong>Standard Deviation:</strong>
+                {stdDevFirst.toFixed(2)}
+              </p>
+            </div>
+
+            <h3 class="text-center font-semibold mb-2 pt-5">
               Last Round Distribution
             </h3>
             <svg {width} {height} class="block mx-auto mb-4">
@@ -447,9 +464,12 @@
             </svg>
 
             <div class="space-y-2 text-sm pb-4">
-              <p><strong>Mean:</strong> {mean}</p>            
-              <p><strong>Median:</strong> {median}</p>
-              <p><strong>Standard Deviation:</strong> {stdDev.toFixed(2)}</p>
+              <p><strong>Mean:</strong> {meanLast.toFixed(2)}</p>
+              <p><strong>Median:</strong> {medianLast}</p>
+              <p>
+                <strong>Standard Deviation:</strong>
+                {stdDevLast.toFixed(2)}
+              </p>
             </div>
           </div>
         </div>
