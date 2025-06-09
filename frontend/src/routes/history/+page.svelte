@@ -130,7 +130,8 @@
     isDrawerOpen = false;
   }
 
-  let votesDistribution: { score: number; count: number }[] = [];
+  let firstRoundDistribution: { score: number; count: number }[] = [];
+  let lastRoundDistribution: { score: number; count: number }[] = [];
   let participants: string[] = [];
   let rounds = 0;
   let mean = 0;
@@ -143,6 +144,9 @@
     participants = Object.keys(selectedIssue.votes);
 
     const firstVotes = Object.values(selectedIssue.votes).map((v) => v[0]);
+    const lastVotes = Object.values(selectedIssue.votes).map(
+      (v) => v.at(-1) ?? 0,
+    );
 
     mean = firstVotes.reduce((a, b) => a + b, 0) / firstVotes.length;
 
@@ -158,39 +162,51 @@
         firstVotes.length,
     );
 
-    const finalRoundVotes = Object.values(selectedIssue.votes).map((v) =>
-      v.at(-1),
-    );
-    const allSame = finalRoundVotes.every(
-      (vote) => vote === finalRoundVotes[0],
-    );
+    const allSame = lastVotes.every((vote) => vote === lastVotes[0]);
     convergenceRound = allSame ? rounds : null;
 
-    const distribution = new Map<number, number>();
+    const firstDistribution = new Map<number, number>();
     for (let i = 0; i <= 13; i++) {
-      distribution.set(i, 0);
+      firstDistribution.set(i, 0);
     }
-
     firstVotes.forEach((vote) => {
-      const current = distribution.get(vote) || 0;
-      distribution.set(vote, current + 1);
+      const current = firstDistribution.get(vote) || 0;
+      firstDistribution.set(vote, current + 1);
     });
+    firstRoundDistribution = Array.from(firstDistribution.entries()).map(
+      ([score, count]) => ({ score, count }),
+    );
 
-    votesDistribution = Array.from(distribution.entries()).map(
-      ([score, count]) => ({
-        score,
-        count,
-      }),
+    const lastDistribution = new Map<number, number>();
+    for (let i = 0; i <= 13; i++) {
+      lastDistribution.set(i, 0);
+    }
+    lastVotes.forEach((vote) => {
+      const current = lastDistribution.get(vote) || 0;
+      lastDistribution.set(vote, current + 1);
+    });
+    lastRoundDistribution = Array.from(lastDistribution.entries()).map(
+      ([score, count]) => ({ score, count }),
     );
   }
 
-  $: xScale = scaleBand()
-    .domain(votesDistribution.map((d) => d.score.toString()))
+  $: firstRoundXScale = scaleBand()
+    .domain(firstRoundDistribution.map((d) => d.score.toString()))
     .range([0, innerWidth])
     .padding(0.1);
 
-  $: yScale = scaleLinear()
-    .domain([0, Math.max(...votesDistribution.map((d) => d.count), 1)])
+  $: firstRoundYScale = scaleLinear()
+    .domain([0, Math.max(...firstRoundDistribution.map((d) => d.count), 1)])
+    .range([innerHeight, 0])
+    .nice();
+
+  $: lastRoundXScale = scaleBand()
+    .domain(lastRoundDistribution.map((d) => d.score.toString()))
+    .range([0, innerWidth])
+    .padding(0.1);
+
+  $: lastRoundYScale = scaleLinear()
+    .domain([0, Math.max(...lastRoundDistribution.map((d) => d.count), 1)])
     .range([innerHeight, 0])
     .nice();
 </script>
@@ -254,22 +270,38 @@
           >
         </Drawer.Header>
 
+        <div class="space-y-2 text-sm pb-4">
+          <p>
+            <strong>Participants:</strong>
+            {participants.join(", ")}
+          </p>
+          <p><strong>Rounds:</strong> {rounds}</p>
+          
+          <p>
+            <strong>Convergence:</strong>
+            {convergenceRound ? `Yes` : "No"}
+          </p>
+        </div>
+
         <div class="flex-1 overflow-hidden p-4 pt-0">
           <div class="h-full overflow-y-auto overflow-x-hidden">
+            <h3 class="text-center font-semibold mb-2">
+              First Round Distribution
+            </h3>
             <svg {width} {height} class="block mx-auto mb-4">
               <g transform={`translate(${margin.left},${margin.top})`}>
-                {#each Array.from({ length: Math.max(...votesDistribution.map((d) => d.count), 1) + 1 }, (_, i) => i) as tick}
+                {#each Array.from({ length: Math.max(...firstRoundDistribution.map((d) => d.count), 1) + 1 }, (_, i) => i) as tick}
                   <line
                     x1="0"
                     x2={innerWidth}
-                    y1={yScale(tick)}
-                    y2={yScale(tick)}
+                    y1={firstRoundYScale(tick)}
+                    y2={firstRoundYScale(tick)}
                     stroke="#ddd"
                     stroke-width="1"
                   />
                   <text
                     x="-10"
-                    y={yScale(tick)}
+                    y={firstRoundYScale(tick)}
                     text-anchor="end"
                     alignment-baseline="middle"
                     font-size="10"
@@ -279,9 +311,10 @@
                   </text>
                 {/each}
 
-                {#each votesDistribution as d}
+                {#each firstRoundDistribution as d}
                   <text
-                    x={xScale(d.score.toString()) + xScale.bandwidth() / 2}
+                    x={firstRoundXScale(d.score.toString()) +
+                      firstRoundXScale.bandwidth() / 2}
                     y={innerHeight + 15}
                     text-anchor="middle"
                     font-size="10"
@@ -291,23 +324,20 @@
                   </text>
                 {/each}
 
-                {#each votesDistribution as d}
+                {#each firstRoundDistribution as d}
                   {#if d.count > 0}
                     <rect
-                      x={xScale(d.score.toString())}
-                      y={yScale(d.count)}
-                      width={xScale.bandwidth()}
-                      height={innerHeight - yScale(d.count)}
-                      fill="#000"
-                      stroke="#000"
-                      stroke-width="1"
+                      x={firstRoundXScale(d.score.toString())}
+                      y={firstRoundYScale(d.count)}
+                      width={firstRoundXScale.bandwidth()}
+                      height={innerHeight - firstRoundYScale(d.count)}
                     />
                     <text
-                      x={xScale(d.score.toString()) + xScale.bandwidth() / 2}
-                      y={yScale(d.count) - 5}
+                      x={firstRoundXScale(d.score.toString()) +
+                        firstRoundXScale.bandwidth() / 2}
+                      y={firstRoundYScale(d.count) - 5}
                       text-anchor="middle"
                       font-size="10"
-                      fill="#333"
                     >
                       {d.count}
                     </text>
@@ -319,7 +349,6 @@
                   y={innerHeight + 35}
                   text-anchor="middle"
                   font-size="12"
-                  fill="#333"
                   font-weight="bold"
                 >
                   Score
@@ -329,7 +358,86 @@
                   y={innerHeight / 2}
                   text-anchor="middle"
                   font-size="12"
-                  fill="#333"
+                  font-weight="bold"
+                  transform={`rotate(-90, -25, ${innerHeight / 2})`}
+                >
+                  Number of Votes
+                </text>
+              </g>
+            </svg>
+
+            <h3 class="text-center font-semibold mb-2">
+              Last Round Distribution
+            </h3>
+            <svg {width} {height} class="block mx-auto mb-4">
+              <g transform={`translate(${margin.left},${margin.top})`}>
+                {#each Array.from({ length: Math.max(...lastRoundDistribution.map((d) => d.count), 1) + 1 }, (_, i) => i) as tick}
+                  <line
+                    x1="0"
+                    x2={innerWidth}
+                    y1={lastRoundYScale(tick)}
+                    y2={lastRoundYScale(tick)}
+                    stroke="#ddd"
+                    stroke-width="1"
+                  />
+                  <text
+                    x="-10"
+                    y={lastRoundYScale(tick)}
+                    text-anchor="end"
+                    alignment-baseline="middle"
+                    font-size="10"
+                    fill="#666"
+                  >
+                    {tick}
+                  </text>
+                {/each}
+
+                {#each lastRoundDistribution as d}
+                  <text
+                    x={lastRoundXScale(d.score.toString()) +
+                      lastRoundXScale.bandwidth() / 2}
+                    y={innerHeight + 15}
+                    text-anchor="middle"
+                    font-size="10"
+                  >
+                    {d.score}
+                  </text>
+                {/each}
+
+                {#each lastRoundDistribution as d}
+                  {#if d.count > 0}
+                    <rect
+                      x={lastRoundXScale(d.score.toString())}
+                      y={lastRoundYScale(d.count)}
+                      width={lastRoundXScale.bandwidth()}
+                      height={innerHeight - lastRoundYScale(d.count)}
+                    />
+                    <text
+                      x={lastRoundXScale(d.score.toString()) +
+                        lastRoundXScale.bandwidth() / 2}
+                      y={lastRoundYScale(d.count) - 5}
+                      text-anchor="middle"
+                      font-size="10"
+                    >
+                      {d.count}
+                    </text>
+                  {/if}
+                {/each}
+
+                <text
+                  x={innerWidth / 2}
+                  y={innerHeight + 35}
+                  text-anchor="middle"
+                  font-size="12"
+                  font-weight="bold"
+                >
+                  Score
+                </text>
+                <text
+                  x="-25"
+                  y={innerHeight / 2}
+                  text-anchor="middle"
+                  font-size="12"
                   font-weight="bold"
                   transform={`rotate(-90, -25, ${innerHeight / 2})`}
                 >
@@ -339,17 +447,9 @@
             </svg>
 
             <div class="space-y-2 text-sm pb-4">
-              <p>
-                <strong>Participants:</strong>
-                {participants.join(", ")}
-              </p>
-              <p><strong>Rounds:</strong> {rounds}</p>
+              <p><strong>Mean:</strong> {mean}</p>            
               <p><strong>Median:</strong> {median}</p>
               <p><strong>Standard Deviation:</strong> {stdDev.toFixed(2)}</p>
-              <p>
-                <strong>Convergence:</strong>
-                {convergenceRound ? `Yes (round ${convergenceRound})` : "No"}
-              </p>
             </div>
           </div>
         </div>

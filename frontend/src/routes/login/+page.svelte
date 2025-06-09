@@ -60,10 +60,11 @@
           throw new Error("Login failed");
         }
       })
-      .then(() => {
+      .then(async () => {
         toast.success("Login successful!");
         isLogged.set(true);
         usernameStore.set(username);
+        await goto("/");
       })
       .catch((err) => {
         toast.error(err.message || "An error occurred during login");

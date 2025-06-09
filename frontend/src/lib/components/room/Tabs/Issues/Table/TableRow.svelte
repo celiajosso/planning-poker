@@ -13,19 +13,21 @@
   } = $props();
 </script>
 
-<Table.Row>
-  <Table.Cell>{issue.title}</Table.Cell>
-  <Table.Cell class="truncate max-w-96">
-    {issue.description}
-  </Table.Cell>
-  <Table.Cell>
-    <!-- <ScoreSelection /> -->
-    {issue.finalEstimate}
-  </Table.Cell>
-  <Table.Cell class="flex flex-row items-center h-full gap-2">
-    <DeleteIssue bind:isDeleteOpen {issue} bind:selectedIssue />
-    <ModifyIssue bind:isModifyOpen {issue} bind:selectedIssue />
-    <VoteIssue {issue} />
-    <CompleteUncompleteIssue {issue} bind:selectedIssue />
-  </Table.Cell>
-</Table.Row>
+{#if issue.isSaved}
+  <Table.Row>
+    <Table.Cell>{issue.title}</Table.Cell>
+    <Table.Cell class="truncate max-w-96">
+      {issue.description}
+    </Table.Cell>
+    <Table.Cell>
+      <!-- <ScoreSelection /> -->
+      {issue.finalEstimate}
+    </Table.Cell>
+    <Table.Cell class="flex flex-row items-center h-full gap-2">
+      <DeleteIssue bind:isDeleteOpen {issue} bind:selectedIssue />
+      <ModifyIssue bind:isModifyOpen {issue} bind:selectedIssue />
+      <VoteIssue {issue} />
+      <CompleteUncompleteIssue {issue} bind:selectedIssue />
+    </Table.Cell>
+  </Table.Row>
+{/if}

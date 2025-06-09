@@ -2,7 +2,7 @@
   import RoomShare from "$lib/components/room/RoomActions/RoomShare.svelte";
   import RoomQuit from "$lib/components/room/RoomActions/RoomQuit.svelte";
   import RoomReset from "$lib/components/room/RoomActions/RoomReset.svelte";
-  import RoomNewRound from "./RoomActions/RoomNewRound.svelte";
+  import RoomNewRound from "$lib/components/room/RoomActions/RoomNewRound.svelte";
 </script>
 
 <div
