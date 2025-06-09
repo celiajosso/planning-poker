@@ -63,9 +63,10 @@
       return;
     }
     fetch(
-      `{window.location.protocol}//${import.meta.env.PROD ? window.location.host : "localhost:8080"}/api/register`,
+      `${window.location.protocol}//${import.meta.env.PROD ? window.location.host : "localhost:8080"}/api/register`,
       {
         method: "POST",
+        headers: {'content-type': 'application/json'},
         body: JSON.stringify({
           username: verify.data.username,
           password: verify.data.password,
@@ -76,7 +77,6 @@
         if (!res.ok) {
           throw new Error("Registration failed");
         }
-        return res.json();
       })
       .then(() => {
         toast.success("Registration successful! Redirecting to login...");
