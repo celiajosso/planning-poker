@@ -111,8 +111,8 @@
     },
   ];
 
-  let selectedIssue: Issue | null = null;
-  let isDrawerOpen = false;
+  let selectedIssue: Issue | null = $state(null);
+  let isDrawerOpen = $state(false);
 
   let width = 300;
   let height = 200;
@@ -130,103 +130,113 @@
     isDrawerOpen = false;
   }
 
-  let firstRoundDistribution: { score: number; count: number }[] = [];
-  let lastRoundDistribution: { score: number; count: number }[] = [];
-  let participants: string[] = [];
-  let rounds = 0;
-  let meanFirst = 0;
-  let medianFirst = 0;
-  let stdDevFirst = 0;
-  let meanLast = 0;
-  let medianLast = 0;
-  let stdDevLast = 0;
-  let convergenceRound: number | null = null;
+  let firstRoundDistribution: { score: number; count: number }[] = $state([]);
+  let lastRoundDistribution: { score: number; count: number }[] = $state([]);
+  let participants: string[] = $state([]);
+  let rounds = $state(0);
+  let meanFirst = $state(0);
+  let medianFirst = $state(0);
+  let stdDevFirst = $state(0);
+  let meanLast = $state(0);
+  let medianLast = $state(0);
+  let stdDevLast = $state(0);
+  let convergenceRound: number | null = $state(null);
 
-  $: if (selectedIssue) {
-    rounds = Object.values(selectedIssue.votes)[0]?.length ?? 0;
-    participants = Object.keys(selectedIssue.votes);
+  $effect(() => {
+    if (selectedIssue) {
+      rounds = Object.values(selectedIssue.votes)[0]?.length ?? 0;
+      participants = Object.keys(selectedIssue.votes);
 
-    const firstVotes = Object.values(selectedIssue.votes).map((v) => v[0]);
-    const lastVotes = Object.values(selectedIssue.votes).map(
-      (v) => v.at(-1) ?? 0,
-    );
+      const firstVotes = Object.values(selectedIssue.votes).map((v) => v[0]);
+      const lastVotes = Object.values(selectedIssue.votes).map(
+        (v) => v.at(-1) ?? 0,
+      );
 
-    meanFirst = firstVotes.reduce((a, b) => a + b, 0) / firstVotes.length;
-    meanLast = lastVotes.reduce((a, b) => a + b, 0) / lastVotes.length;
+      meanFirst = firstVotes.reduce((a, b) => a + b, 0) / firstVotes.length;
+      meanLast = lastVotes.reduce((a, b) => a + b, 0) / lastVotes.length;
 
-    const sortedFirst = [...firstVotes].sort((a, b) => a - b);
-    const midFirst = Math.floor(sortedFirst.length / 2);
-    medianFirst =
-      sortedFirst.length % 2 === 0
-        ? (sortedFirst[midFirst - 1] + sortedFirst[midFirst]) / 2
-        : sortedFirst[midFirst];
+      const sortedFirst = [...firstVotes].sort((a, b) => a - b);
+      const midFirst = Math.floor(sortedFirst.length / 2);
+      medianFirst =
+        sortedFirst.length % 2 === 0
+          ? (sortedFirst[midFirst - 1] + sortedFirst[midFirst]) / 2
+          : sortedFirst[midFirst];
 
-    const sortedLast = [...lastVotes].sort((a, b) => a - b);
-    const midLast = Math.floor(sortedLast.length / 2);
-    medianLast =
-      sortedLast.length % 2 === 0
-        ? (sortedLast[midLast - 1] + sortedLast[midLast]) / 2
-        : sortedLast[midLast];
+      const sortedLast = [...lastVotes].sort((a, b) => a - b);
+      const midLast = Math.floor(sortedLast.length / 2);
+      medianLast =
+        sortedLast.length % 2 === 0
+          ? (sortedLast[midLast - 1] + sortedLast[midLast]) / 2
+          : sortedLast[midLast];
 
-    stdDevFirst = Math.sqrt(
-      firstVotes
-        .map((x) => Math.pow(x - meanFirst, 2))
-        .reduce((a, b) => a + b, 0) / firstVotes.length,
-    );
+      stdDevFirst = Math.sqrt(
+        firstVotes
+          .map((x) => Math.pow(x - meanFirst, 2))
+          .reduce((a, b) => a + b, 0) / firstVotes.length,
+      );
 
-    stdDevLast = Math.sqrt(
-      lastVotes
-        .map((x) => Math.pow(x - meanLast, 2))
-        .reduce((a, b) => a + b, 0) / lastVotes.length,
-    );
+      stdDevLast = Math.sqrt(
+        lastVotes
+          .map((x) => Math.pow(x - meanLast, 2))
+          .reduce((a, b) => a + b, 0) / lastVotes.length,
+      );
 
-    const allSame = lastVotes.every((vote) => vote === lastVotes[0]);
-    convergenceRound = allSame ? rounds : null;
+      const allSame = lastVotes.every((vote) => vote === lastVotes[0]);
+      convergenceRound = allSame ? rounds : null;
 
-    const firstDistribution = new Map<number, number>();
-    for (let i = 0; i <= 13; i++) {
-      firstDistribution.set(i, 0);
+      const firstDistribution = new Map<number, number>();
+      for (let i = 0; i <= 13; i++) {
+        firstDistribution.set(i, 0);
+      }
+      firstVotes.forEach((vote) => {
+        const current = firstDistribution.get(vote) || 0;
+        firstDistribution.set(vote, current + 1);
+      });
+      firstRoundDistribution = Array.from(firstDistribution.entries()).map(
+        ([score, count]) => ({ score, count }),
+      );
+
+      const lastDistribution = new Map<number, number>();
+      for (let i = 0; i <= 13; i++) {
+        lastDistribution.set(i, 0);
+      }
+      lastVotes.forEach((vote) => {
+        const current = lastDistribution.get(vote) || 0;
+        lastDistribution.set(vote, current + 1);
+      });
+      lastRoundDistribution = Array.from(lastDistribution.entries()).map(
+        ([score, count]) => ({ score, count }),
+      );
     }
-    firstVotes.forEach((vote) => {
-      const current = firstDistribution.get(vote) || 0;
-      firstDistribution.set(vote, current + 1);
-    });
-    firstRoundDistribution = Array.from(firstDistribution.entries()).map(
-      ([score, count]) => ({ score, count }),
-    );
+  });
 
-    const lastDistribution = new Map<number, number>();
-    for (let i = 0; i <= 13; i++) {
-      lastDistribution.set(i, 0);
-    }
-    lastVotes.forEach((vote) => {
-      const current = lastDistribution.get(vote) || 0;
-      lastDistribution.set(vote, current + 1);
-    });
-    lastRoundDistribution = Array.from(lastDistribution.entries()).map(
-      ([score, count]) => ({ score, count }),
-    );
-  }
+  let firstRoundXScale = $derived(
+    scaleBand()
+      .domain(firstRoundDistribution.map((d) => d.score.toString()))
+      .range([0, innerWidth])
+      .padding(0.1),
+  );
 
-  $: firstRoundXScale = scaleBand()
-    .domain(firstRoundDistribution.map((d) => d.score.toString()))
-    .range([0, innerWidth])
-    .padding(0.1);
+  let firstRoundYScale = $derived(
+    scaleLinear()
+      .domain([0, Math.max(...firstRoundDistribution.map((d) => d.count), 1)])
+      .range([innerHeight, 0])
+      .nice(),
+  );
 
-  $: firstRoundYScale = scaleLinear()
-    .domain([0, Math.max(...firstRoundDistribution.map((d) => d.count), 1)])
-    .range([innerHeight, 0])
-    .nice();
+  let lastRoundXScale = $derived(
+    scaleBand()
+      .domain(lastRoundDistribution.map((d) => d.score.toString()))
+      .range([0, innerWidth])
+      .padding(0.1),
+  );
 
-  $: lastRoundXScale = scaleBand()
-    .domain(lastRoundDistribution.map((d) => d.score.toString()))
-    .range([0, innerWidth])
-    .padding(0.1);
-
-  $: lastRoundYScale = scaleLinear()
-    .domain([0, Math.max(...lastRoundDistribution.map((d) => d.count), 1)])
-    .range([innerHeight, 0])
-    .nice();
+  let lastRoundYScale = $derived(
+    scaleLinear()
+      .domain([0, Math.max(...lastRoundDistribution.map((d) => d.count), 1)])
+      .range([innerHeight, 0])
+      .nice(),
+  );
 </script>
 
 <div
@@ -251,8 +261,20 @@
         <Table.Row>
           <Table.Cell>{issue.title}</Table.Cell>
           <Table.Cell>{issue.description}</Table.Cell>
-          <Table.Cell>{meanLast.toFixed(2)}</Table.Cell>
-          <Table.Cell>{issue.timestamp}</Table.Cell>
+
+          <Table.Cell>
+            {#if Object.keys(issue.votes).length > 0}
+              {(
+                Object.values(issue.votes)
+                  .map((v) => v.at(-1) ?? 0)
+                  .reduce((a, b) => a + b, 0) /
+                Object.values(issue.votes).length
+              ).toFixed(1)}
+            {:else}
+              N/A
+            {/if}
+          </Table.Cell>
+          <Table.Cell>{new Date(issue.timestamp).toLocaleString()}</Table.Cell>
 
           <Table.Cell>
             <ButtonIcon
