@@ -35,6 +35,6 @@ export class GameContainer extends Container {
   }
 
   updatePlayer(user: UserDTO): void {
-	this.players[user.id].update(user);
-}
+    this.players[user.id].update(user);
+  }
 }

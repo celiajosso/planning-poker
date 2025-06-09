@@ -9,7 +9,6 @@
   import * as Table from "$lib/components/ui/table/index.js";
   import * as Dialog from "$lib/components/ui/dialog";
   import FormRow from "./Issues/Form/FormRow.svelte";
-  import FormRowScore from "./Issues/Form/FormRowScore.svelte";
   import SubmitButton from "./Issues/Form/SubmitButton.svelte";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
 

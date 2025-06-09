@@ -59,7 +59,27 @@ class UserService() {
             user.role = updatedUser.role ?: user.role
             user.card = updatedUser.card ?: user.card
 
-            val room = RoomService.getById(user.roomId!!) ?: return
+            val room = RoomService.getById(user.roomId) ?: return
+            for (otherUser in room.users) {
+                otherUser.session.sendSerialized(
+                    SocketMessage(
+                        "UserUpdated",
+                        user = user.toUserDTO(),
+                        room = null,
+                        story = null
+                    )
+                )
+            }
+        }
+
+        suspend fun updateUser(updatedUser: UserDTO) {
+            val user = getById(updatedUser.id) ?: return
+
+            user.username = updatedUser.username ?: user.username
+            user.role = updatedUser.role ?: user.role
+            user.card = updatedUser.card ?: user.card
+
+            val room = RoomService.getById(user.roomId) ?: return
             for (otherUser in room.users) {
                 otherUser.session.sendSerialized(
                     SocketMessage(
