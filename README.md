@@ -5,6 +5,8 @@ Made by :
 - JOSSO Célia
 - LECORGNE Elouan
 
+Website : https://projects-pokerplanning.wya7vm.easypanel.host/
+
 ## User documentation
 
 ### Login & Register
