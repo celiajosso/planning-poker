@@ -23,7 +23,8 @@ export function exportToCSV() {
 	csvRows.push(headers.join(","));
 
 	for (const issue of Game.storage.room.stories) {
-		const row = [issue.title, issue.description, issue.finalEstimate];
+		const row = [issue.title, issue.description, `${issue.finalEstimate|0}`];
+		console.log(row)
 		csvRows.push(
 			row.map((value) => `${value.replace(/"/g, '""')}`).join(","),
 		);
