@@ -40,17 +40,23 @@ You are the admin (and the only one) of the room if you created it.
 
 To join a room, type the room id the admin provided to you.
 
-![image](https://github.com/user-attachments/assets/90e2583a-594b-4659-9569-60f11a03f02f)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/90e2583a-594b-4659-9569-60f11a03f02f" height="250"/>
+</p>
 
 To create a room, simply click on "Create".
 
-![image](https://github.com/user-attachments/assets/7e732d66-f05b-4262-ba34-56ff80bc23e8)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/7e732d66-f05b-4262-ba34-56ff80bc23e8" height="250"/>
+</p>
 
 ## Room
 
 When you create the room, you have this display:
 
-![image](https://github.com/user-attachments/assets/e069ee9c-5ec8-4b55-8c05-bddf12af2ef1)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/e069ee9c-5ec8-4b55-8c05-bddf12af2ef1" height="250"/>
+</p>
 
  ### Icons
 
@@ -60,7 +66,9 @@ When you create the room, you have this display:
 
 This icon is to toggle the side panel. Here is what it looks like at the beginning for the issue tab (only for administrators) :
 
-![image](https://github.com/user-attachments/assets/1941d812-4e1c-4f31-9a90-3d4cf2c890da)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/1941d812-4e1c-4f31-9a90-3d4cf2c890da" height="250"/>
+</p>
 
 ##### Import issues
 
@@ -82,11 +90,15 @@ This button is to add a story.
 
 Then, when you click on it, you have to enter a title and a description. Both are required.
 
-![image](https://github.com/user-attachments/assets/7336c671-6880-4232-a33d-5a58d2cec358)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/7336c671-6880-4232-a33d-5a58d2cec358" height="250"/>
+</p>
 
 Once added, the table looks like that
 
-![image](https://github.com/user-attachments/assets/9828c744-60bb-4e99-9bca-3415a2ccf0f5)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/9828c744-60bb-4e99-9bca-3415a2ccf0f5" height="250"/>
+</p>
 
 ##### Delete the story
 
@@ -94,7 +106,9 @@ Once added, the table looks like that
 
 This icon permits to delete the story. You have a dialog window in case you misclicked and do not want to delete the issue.
 
-![image](https://github.com/user-attachments/assets/15cfe2b1-51d5-4106-b54e-086ec97736b3)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/15cfe2b1-51d5-4106-b54e-086ec97736b3" height="250"/>
+</p>
 
 ##### Modify the story
 
@@ -102,7 +116,9 @@ This icon permits to delete the story. You have a dialog window in case you misc
 
 This icon permits to modify the story. You have a dialog window in which you can change the title and the description.
 
-![image](https://github.com/user-attachments/assets/7f60f839-afc9-43a5-9b48-89e7b9c61ac8)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/7f60f839-afc9-43a5-9b48-89e7b9c61ac8" height="250"/>
+</p>
 
 ##### Send the story to vote
 
@@ -110,7 +126,9 @@ This icon permits to modify the story. You have a dialog window in which you can
 
 This icon permits to send the story to vote. By clicking in this button, this story will appear in the room for every participant and everyone has a deck of cards to vote.
 
-![image](https://github.com/user-attachments/assets/021bb9f8-e93b-4bb5-adff-f84030ff77fc)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/021bb9f8-e93b-4bb5-adff-f84030ff77fc" height="250"/>
+</p>
 
 ##### Save story
 
@@ -118,8 +136,9 @@ This icon permits to send the story to vote. By clicking in this button, this st
 
 This icon permits to save the story. So, it will calculate the final estimate (mean of scores of all participants during the last round). Then, it will also save all the data related to the story into the database so  you can find in the `/history` page. To specify that the story is saved, the icon appears darker. For example, let us suppose that we have two participants. In the last round, one voted 7 and the other 8. The administrator decides to save the issue. Here is the display:
 
-![image](https://github.com/user-attachments/assets/6ccb1615-9832-4e76-8afd-58363642e353)
-
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/6ccb1615-9832-4e76-8afd-58363642e353" height="250"/>
+</p>
 
  #### New Round : Administrator only
 
@@ -141,7 +160,9 @@ This icon permits to save the story. So, it will calculate the final estimate (m
  
  #### Share room
 
- ![image](https://github.com/user-attachments/assets/4b14b3a6-a6d0-45cf-8796-381efe9afc6b)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/4b14b3a6-a6d0-45cf-8796-381efe9afc6b" height="250"/>
+</p>
 
  This icon is to share the room. You can share
 
@@ -151,7 +172,7 @@ This icon permits to save the story. So, it will calculate the final estimate (m
 
 ## History : only for logged in administrators
 
-![Sans titre](https://github.com/user-attachments/assets/9652969d-6564-4cf7-bd68-df92687ce1ef)
+![](https://github.com/user-attachments/assets/9652969d-6564-4cf7-bd68-df92687ce1ef3)
 
 This is in the `/history` page. It permits to have some statistics for every story. The main display is composed of :
 
@@ -163,7 +184,7 @@ This is in the `/history` page. It permits to have some statistics for every sto
 
 Here is how it looks like when you click on the charts icon:
 
-  ![Sans titre1](https://github.com/user-attachments/assets/cb4d564b-a3eb-41b6-8c12-27fb7e964be3)
+![](https://github.com/user-attachments/assets/cb4d564b-a3eb-41b6-8c12-27fb7e964be3)
 
 As you can see, you have :
 
