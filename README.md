@@ -10,7 +10,7 @@ Made by :
 ### Login & Register
 
 You can login and register with the `/login` and `/register` endpoints.
-If you are not logged in, your planning poker history won't be saved.
+If you are not logged in, your planning poker history won't be shown in the frontend part.
 
 You have some verifications when logging in or registering:
 
@@ -54,11 +54,11 @@ When you create the room, you have this display:
 
  ### Icons
 
- #### Issue tab : Administrator only
+ #### Side panel
 
  ![image](https://github.com/user-attachments/assets/67b6abda-f769-416a-93c9-f1368eb0164a)
 
-This icon is to toggle the issue tab. Here is what it looks like at the beginning :
+This icon is to toggle the side panel. Here is what it looks like at the beginning for the issue tab (only for administrators) :
 
 ![image](https://github.com/user-attachments/assets/1941d812-4e1c-4f31-9a90-3d4cf2c890da)
 
@@ -112,11 +112,11 @@ This icon permits to send the story to vote. By clicking in this button, this st
 
 ![image](https://github.com/user-attachments/assets/021bb9f8-e93b-4bb5-adff-f84030ff77fc)
 
-##### Save story : Only for logged in administrators
+##### Save story
 
 ![image](https://github.com/user-attachments/assets/f54510d0-5e4f-4731-9a15-e0e08a88eb2f)
 
-This icon permits to save the story. So, it will calculate the final estimate (mean of scores of all participant during the last round), display it, and copy the data in the `/history` page. To specify that the story is saved, the icon appears darker. For example, let us suppose that we have two participants. In the last round, one voted 7 and the other. The administrator decides to save the issue. Here is the display:
+This icon permits to save the story. So, it will calculate the final estimate (mean of scores of all participants during the last round). Then, it will also save all the data related to the story into the database so  you can find in the `/history` page. To specify that the story is saved, the icon appears darker. For example, let us suppose that we have two participants. In the last round, one voted 7 and the other 8. The administrator decides to save the issue. Here is the display:
 
 ![image](https://github.com/user-attachments/assets/6ccb1615-9832-4e76-8afd-58363642e353)
 
@@ -125,9 +125,9 @@ This icon permits to save the story. So, it will calculate the final estimate (m
 
  ![image](https://github.com/user-attachments/assets/d7733fb5-7cdc-4093-a723-2a6b566cb901)
 
- This icon is to start a new round for an planning poker estimation. So it resets the score for all the users so that the participants can submit a new estimation.
+ This icon is to start a new round for a planning poker estimation. So the participants can submit a new estimation for this new round.
  
- #### Reset animation
+ #### Reset estimation
 
 ![image](https://github.com/user-attachments/assets/57f1aab1-ef8b-445f-b2ab-f69bcda484e9)
 
@@ -161,7 +161,7 @@ This is in the `/history` page. It permits to have some statistics for every sto
 - The date (DD/MM/YYYY HH:mm:ss) the story has been saved
 - The charts icon for more detailed statistics
 
-  Here is how it looks when you click on the charts icon:
+Here is how it looks like when you click on the charts icon:
 
   ![Sans titre1](https://github.com/user-attachments/assets/cb4d564b-a3eb-41b6-8c12-27fb7e964be3)
 
@@ -206,7 +206,7 @@ MONGO_DB=sharkinfo
 
 1. Build and start the containers:
    ```bash
-   docker compose up --watch
+   docker compose up --watch --build
    ```
 2. Access the application:
    [http://localhost:8080](http://localhost:8080)
